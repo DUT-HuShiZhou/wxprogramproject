@@ -48,8 +48,12 @@ body {
 
 
 #hr {
-    margin: 0;
     background-color: black;
+}
+
+
+hr {
+    margin: 0;
 }
 
 
@@ -87,3 +91,12 @@ a:hover {
     font-size: 24px;
     text-decoration: underline;
 }
+
+
+.no-copy {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  

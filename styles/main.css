@@ -1,0 +1,89 @@
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+#root {
+    display: flex;
+	flex-direction: column;
+}
+
+
+.sidebar,
+.main-content {
+    height: calc(100vh - 70px);
+}
+
+
+.web-top,
+.extra-container {
+    background-color: whitesmoke;
+    padding: auto;
+}
+
+
+.web-top {
+    height: 50px;
+}
+
+
+.extra-container {
+    height: 20px;
+}
+
+
+#top-name {
+    padding-left: 5px;
+    font-size: 24px;
+}
+
+
+#out-button {
+    position: absolute;
+    right: 12px;
+
+}
+
+
+#hr {
+    margin: 0;
+    background-color: black;
+}
+
+
+.main-section {
+    display: flex;
+}
+
+
+.sidebar {
+    font-size: larger;
+    width: 10%;
+    background-color: aqua;
+}
+
+
+.main-content {
+    flex: 1;
+    width: 90%;
+}
+
+
+.sidebar-body {
+    text-align: center;
+    font-weight: bold;
+}
+
+
+a {
+    font-size: 16px;
+    text-decoration: none;
+}
+
+
+a:hover {
+    font-size: 24px;
+    text-decoration: underline;
+}

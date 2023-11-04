@@ -1,0 +1,121 @@
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+@font-face {
+    font-family: "寒蝉晨风";
+    src: url("../font/Hanchan/ChenFeng.ttf") format("truetype");
+}
+
+
+@font-face {
+    font-family: "寒蝉秋红";
+    src: url("../font/Hanchan/QiuHong.ttf") format("truetype");
+}
+
+
+#root {
+    display: flex;
+	flex-direction: column;
+}
+
+
+.web-top,
+.extra-container {
+    background-color: whitesmoke;
+    padding: auto;
+}
+
+
+.web-top {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;  
+}
+
+
+
+.main-section {
+    display: flex;
+}
+
+
+.extra-container {
+    height: 20px;
+}
+
+
+#top-name {
+    position: absolute;
+    padding-left: 5px;
+    font-size: 24px;
+    left: 12px;
+    font-family: "寒蝉秋红", sans-serif;
+}
+
+
+#out-button {
+    position: absolute;
+    right: 12px;
+
+}
+
+
+#hr {
+    background-color: black;
+}
+
+
+hr {
+    margin: 0;
+}
+
+
+.sidebar,
+.main-content {
+    height: calc(100vh - 70px);
+}
+
+
+.sidebar {
+    font-size: larger;
+    width: 10%;
+    background-color: aqua;
+}
+
+
+.main-content {
+    flex: 1;
+    width: 90%;
+}
+
+
+.sidebar-body {
+    text-align: center;
+    font-weight: bold;
+}
+
+
+a {
+    font-size: 16px;
+    text-decoration: none;
+}
+
+
+a:hover {
+    font-size: 24px;
+    text-decoration: underline;
+}
+
+
+.no-copy {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  

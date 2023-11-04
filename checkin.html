@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="checkin" content="登录" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        <link rel="stylesheet" href="styles/check.css" />
+        <script src="scripts/checkin.js" defer></script>
+        <title>登录</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="login-wrapper">
+                <div class="header">登录</div>
+                <div class="form-wrapper">
+                    <input type="text" name="username" placeholder="username" class="input-item" id="un">
+                    <input type="password" name="password" placeholder="password" class="input-item" id="pw">
+                    <button class="btn">Login</button>
+                </div>
+                <div class="login-failed">
+                    <span id="failed"></span>
+                </div>
+                <div class="msg">
+                    Don't have account?
+                    <a href="#">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

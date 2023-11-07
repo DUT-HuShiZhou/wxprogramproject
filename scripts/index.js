@@ -1,6 +1,6 @@
 const links = document.querySelectorAll(".page");
 let iframe = document.getElementById('ifm');
-let nm = document.getElementById("top-name");
+let btn = document.getElementById("out-button");
 
 if (sessionStorage.getItem("present-page") != null) {
     iframe.src = sessionStorage.getItem("present-page");
@@ -16,3 +16,7 @@ links.forEach(link => {
         return false;
     }
 });
+
+btn.onclick = function() {
+    window.location.href = "htmls/checkin.html";
+};

@@ -5,16 +5,34 @@
         <meta name="create", content="剧本创作" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" href="" />
+        <link rel="stylesheet" href="../styles/create.css" />
         <script src="../scripts/page-load.js" defer></script>
+        <script src="../scripts/create.js" defer></script>
         <title>剧本创作</title>
     </head>
     <body>
-        <div class="root">
-            <div class="line-choose">
-                <button class="choose">请选择路线</button>
-                <iframe class="line-ifm" src="drama-line.htm?showWay=drama" style="display: none;"></iframe>
+        <div id="root">
+            <div class="column">
+                <main>
+                    <div class="line-show">
+                        <iframe class="line-ifm" src="" allowfullscreen loading="lazy"
+                        width="100%" height="100%"></iframe>
+                    </div>
+                    <div class="workplace">
+                    </div>
+                </main>
+                <aside class="bottom sidebar">
+                    <nav>
+                    </nav>
+                </aside>
             </div>
+            <aside class="right sidebar">
+                <nav>
+                    <div class="select-line">
+                        <button class="sl-btn">路线选择</button>
+                    </div>
+                </nav>
+            </aside>
         </div>
     </body>
 </html>

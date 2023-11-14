@@ -6,7 +6,7 @@ btn.onclick = function() {
     let failed = document.getElementById("failed");
     if (un.value == "elab" && pw.value == "elab") {
         failed.textContent = "";
-        window.location.href = "../index.html";
+        window.location.href = "index.html";
     }
     else {
         if (un.value == "" || pw.value == "") {

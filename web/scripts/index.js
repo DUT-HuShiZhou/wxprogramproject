@@ -6,7 +6,7 @@ if (sessionStorage.getItem("present-page") != null) {
     iframe.src = sessionStorage.getItem("present-page");
 }
 else{
-    iframe.src = "htmls/first.html";
+    iframe.src = "first.html";
 }
 
 links.forEach(link => {
@@ -18,5 +18,5 @@ links.forEach(link => {
 });
 
 btn.onclick = function() {
-    window.location.href = "htmls/checkin.html";
+    window.location.href = "checkin.html";
 };

@@ -1,5 +1,5 @@
 table {
-    width: 50%;
+    width: 100%;
     border-collapse: collapse;
     margin: 0 auto; /* 将表格水平居中 */
     table-layout: fixed;
@@ -14,7 +14,7 @@ button:hover {
 th, td {
     border: 1px solid black;
     padding: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 

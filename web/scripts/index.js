@@ -6,7 +6,7 @@ if (sessionStorage.getItem("present-page") != null) {
     iframe.src = sessionStorage.getItem("present-page");
 }
 else{
-    iframe.src = "first.html";
+    iframe.src = "../htmls/first.html";
 }
 
 links.forEach(link => {

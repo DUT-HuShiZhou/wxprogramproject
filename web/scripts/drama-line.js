@@ -22,14 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var courseCell = row.insertCell();
             courseCell.innerHTML = grades[i].course;
             var gradeCell = row.insertCell();
-            gradeCell.innerHTML = grades[i].grade;
+            var gradeButton = document.createElement("button");
+            gradeButton.textContent = "选择";
+            gradeCell.appendChild(gradeButton);
         }
         }
 
     var course = 0;
-    var grade = 0;
     for (var j = 0; j < num; j++)
-        grades.push({order: j + 1, course: course, grade: grade });
+        grades.push({order: j + 1, course: course});
     // 刷新表格
     displayGrades();
     });

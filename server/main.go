@@ -2,18 +2,19 @@ package main
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
-func loginCheck(){
-	
+func loginCheck() {
+
 }
 func main() {
-	database,err:=sqlx.Open("mysql","root:123456@tcp(127.0.0.1:3306)/wxproj")
-	if(err!=nil){
-		println("连接数据库失败："+err.Error())
+	database, err := sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/wxproj")
+	if err != nil {
+		println("连接数据库失败：" + err.Error())
 	}
 	r := gin.Default()
 	r.LoadHTMLGlob("../web/htmls/*")
@@ -44,16 +45,46 @@ func main() {
 	r.GET("/checkin", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "checkin.html", nil)
 	})
+
+	r.GET("/context.html", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "context.html", nil)
+	})
+	//这个drama line是否后期是要根据后端数据修改参数大小
+	r.GET("/drama-line.html", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "drama-line.html", nil)
+	})
+
 	//这里要做登录验证数据的处理,前端那边的checkin.js要能够向我们发送信息
-	r.POST("/user/:id",func(c *gin.Context) {
-		un:=c.Param("id")
-		println(un)
-		sqlstr:="select user_password from userinfo where user_account= 2513677"
+	r.POST("/user", func(c *gin.Context) {
+		username, flag1 := c.GetPostForm("username")
+		if flag1 {
+			println(username)
+		} else {
+			println("获取表单失败")
+			c.String(http.StatusOK, "登录失败，请重试（网络原因）")
+		}
+		userpassword, flag2 := c.GetPostForm("userpassword")
+		if flag2 {
+			println(userpassword)
+		} else {
+			println("获取表单失败")
+			c.String(http.StatusOK, "登录失败请重试")
+		}
+		sqlstr := "select user_password from userinfo where user_account= ?"
 		var result string
-		database.QueryRow(sqlstr).Scan(&result)
+		database.QueryRow(sqlstr, username).Scan(&result)
+		if result == "" {
+			c.String(http.StatusOK, "account doesn't exist")
+		} else {
+			if result == userpassword {
+				c.String(http.StatusOK, "login success")
+			} else {
+				c.String(http.StatusOK, "not correct password")
+			}
+		}
 		println("执行到这里了")
 		println(result)
-		c.String(http.StatusOK,"login success")
 	})
+
 	r.Run(":8000")
 }

@@ -7,7 +7,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
-
 func loginCheck() {
 
 }
@@ -42,7 +41,7 @@ func main() {
 		c.HTML(http.StatusOK, "drama.html", nil)
 	})
 
-	r.GET("/checkin", func(c *gin.Context) {
+	r.GET("/checkin.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "checkin.html", nil)
 	})
 
@@ -85,6 +84,34 @@ func main() {
 		println("执行到这里了")
 		println(result)
 	})
-
+	//查询路线列表并发送
+	r.POST("/searchRoute",func(c *gin.Context) {
+		command,flag1:=c.GetPostForm("type")
+		if(flag1){
+			//说明正常接收了
+			if(command=="lines"){
+				var linenum string
+				var result string
+				database.QueryRow("select count(*) from routelistof2513677").Scan(&linenum) //这里后期要改成索引某个用户的数据表
+				rows,err := database.Query("select routename from routelistof2513677")
+				println(linenum)
+				result = linenum
+				if(err!=nil){
+					println("获取数据失败")
+				}else{
+					for rows.Next(){
+						var routename string
+						rows.Scan(&routename)
+						result = result+";"+routename
+					}
+				}
+				println(result)
+				c.String(http.StatusOK,result)
+			}
+		}else{
+			println("获取表单数据失败")//这部分后期都换成记录运行日志的函数
+			c.String(http.StatusOK,"get Form-Data failed")
+		}
+	})
 	r.Run(":8000")
 }

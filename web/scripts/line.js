@@ -3,7 +3,7 @@ let sl = document.querySelector("button.sl-btn");
 let container = document.querySelector("nav.container");
 
 var xhr = new XMLHttpRequest();
-var url = "the post url";
+var url = "/searchRoute";
 
 sl.onclick = function() {
     let ifm = document.querySelector("iframe.line-ifm");

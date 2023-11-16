@@ -18,6 +18,7 @@ sl.onclick = function() {
     else {
         var params = new FormData();
         params.append("type", "lines");
+        params.append("un", sessionStorage.getItem("un"));
         xhr.open("POST", url, false);
 
         xhr.onreadystatechange =  function() {

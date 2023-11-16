@@ -1,5 +1,4 @@
 let sl = document.querySelector("button.sl-btn");
-let fw = document.querySelector("button.fw-btn");
 
 let container = document.querySelector("nav.container");
 
@@ -23,30 +22,11 @@ sl.onclick = function() {
 
         xhr.onreadystatechange =  function() {
             var data = xhr.responseText;
-            ifm.src = "drama-line.html?choose=" + data;
+            ifm.src = "drama-line.html?revise=" + data;
             ifm.style.backgroundColor = "white";
             ls.style.display = "block";
         };
 
         xhr.send(params);
     }
-};
-
-fw.onclick - function() {
-    var params = new FormData();
-    params.append("type", "formworksnum");
-    xhr.open("POST", url, true);
-
-    //xhr.setRequestHeader(); 设置请求头，如果有需要
-    xhr.onreadystatechange = function() {
-        var data = xhr.responseText;
-        for (var i = 0; i < data; i++) {
-            var button = document.createElement("button");
-            button.textContent = "模板" + (i + 1);
-            button.id = "num" + (i + 1);
-            container.appendChild(button);
-        }
-    }
-
-    xhr.send(params)
 };

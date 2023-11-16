@@ -5,11 +5,44 @@
         <meta name="line", content="路线列表" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" href="" />
+        <link rel="stylesheet" href="../styles/line.css" />
         <script src="../scripts/page-load.js" defer></script>
+        <script src="../scripts/line.js" defer></script>
         <title>路线列表</title>
     </head>
     <body>
-        
+        <div id="root">
+            <div class="column">
+                <main>
+                    <div class="line-show">
+                        <iframe class="line-ifm" allowfullscreen loading="lazy"
+                        src = "about:blank" ></iframe>
+                    </div>
+                    <div class="workplace">
+                        <div class="mainplace">
+                            <div class="pointsplace">
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <aside class="bottom sidebar">
+                    <nav class="container">
+                    </nav>
+                </aside>
+            </div>
+            <aside class="right sidebar">
+                <nav>
+                    <div class="select-line dbtn">
+                        <button class="sl-btn bbtn">路线选择</button>
+                    </div>
+                    <div class="pointselect dbtn">
+                        <button class="ps-btn bbtn">点位选择</button>
+                    </div>
+                    <div class="finish dbtn">
+                        <button class="fs-btn bbtn">完成设置</button>
+                    </div>
+                </nav>
+            </aside>
+        </div>
     </body>
 </html>

@@ -3,6 +3,9 @@ let fw = document.querySelector("button.fw-btn");
 
 let container = document.querySelector("nav.container");
 
+var xhr = new XMLHttpRequest();
+var url = "the post url";
+
 sl.onclick = function() {
     let ifm = document.querySelector("iframe.line-ifm");
     let ls = document.querySelector("div.line-show");
@@ -13,16 +16,24 @@ sl.onclick = function() {
         ls.style.display = "none";
     }
     else {
-        ifm.src = "drama-line.html?num=50 ";
-        ifm.style.backgroundColor = "white";
-        ls.style.display = "block";
+        var params = new FormData();
+        params.append("type", "linesnum");
+        xhr.open("POST", url, false);
+
+        xhr.onreadystatechange =  function() {
+            var data = xhr.responseText;
+            ifm.src = "drama-line.html?num=" + data;
+            ifm.style.backgroundColor = "white";
+            ls.style.display = "block";
+        };
+
+        xhr.send(params);
     }
 };
 
 fw.onclick - function() {
-    var xhr = new XMLHttpRequest();
-    var url = "the post url";
-    var params = "type=formworknum"
+    var params = new FormData();
+    params.append("type", "formworksnum");
     xhr.open("POST", url, true);
 
     //xhr.setRequestHeader(); 设置请求头，如果有需要

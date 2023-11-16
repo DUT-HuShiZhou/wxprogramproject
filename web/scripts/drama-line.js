@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     let content = document.getElementById('content');
     let urlParams = new URLSearchParams(window.location.search);
-    let num = urlParams.get('num');
+    let lines = urlParams.get('lines');
+
+    var line = lines.split(";");
 
     var grades = [];
 
@@ -27,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
             gradeCell.appendChild(gradeButton);
         }
         }
-
+        
     var course = 0;
-    for (var j = 0; j < num; j++)
-        grades.push({order: j + 1, course: course});
+    for (var j = 0; j < line[0]; j++)
+        grades.push({order: j + 1, course: line[j + 1]});
     // 刷新表格
     displayGrades();
     });

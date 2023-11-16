@@ -1,22 +1,28 @@
-const links = document.querySelectorAll(".page");
-let iframe = document.getElementById('ifm');
-let btn = document.getElementById("out-button");
+document.addEventListener('DOMContentLoaded', function() {
+    let urlParams = new URLSearchParams(window.location.search);
+    let un = urlParams.get("un");
+    sessionStorage.setItem("un", un);
 
-if (sessionStorage.getItem("present-page") != null) {
-    iframe.src = sessionStorage.getItem("present-page");
-}
-else{
-    iframe.src = "first.html";
-}
+    const links = document.querySelectorAll(".page");
+    let iframe = document.getElementById('ifm');
+    let btn = document.getElementById("out-button");
 
-links.forEach(link => {
-    link.onclick = function () {
-        iframe.src = link.getAttribute("href");
-        sessionStorage.setItem("present-page", link.getAttribute("href"));
-        return false;
+    if (sessionStorage.getItem("present-page") != null) {
+        iframe.src = sessionStorage.getItem("present-page");
     }
-});
+    else{
+        iframe.src = "first.html";
+    }
 
-btn.onclick = function() {
-    window.location.href = "checkin.html";
-};
+    links.forEach(link => {
+        link.onclick = function () {
+            iframe.src = link.getAttribute("href");
+            sessionStorage.setItem("present-page", link.getAttribute("href"));
+            return false;
+        }
+    });
+
+    btn.onclick = function() {
+        window.location.href = "checkin.html";
+    };
+});

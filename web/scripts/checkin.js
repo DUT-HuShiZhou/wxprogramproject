@@ -32,7 +32,7 @@ btn.onclick = function() {
                 if(result=="login success"){
                     console.log('login success');
                     failed.textContent = "";
-                    window.location.href = "/index";
+                    window.location.href = "/index?un=" + un.value;
                 }
                 if(result=="account doesn't exist"){
                     failed.textContent = "登陆失败:账号不存在";

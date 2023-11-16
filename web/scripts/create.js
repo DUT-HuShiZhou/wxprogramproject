@@ -17,12 +17,12 @@ sl.onclick = function() {
     }
     else {
         var params = new FormData();
-        params.append("type", "linesnum");
+        params.append("type", "lines");
         xhr.open("POST", url, false);
 
         xhr.onreadystatechange =  function() {
             var data = xhr.responseText;
-            ifm.src = "drama-line.html?num=" + data;
+            ifm.src = "drama-line.html?lines=" + data;
             ifm.style.backgroundColor = "white";
             ls.style.display = "block";
         };

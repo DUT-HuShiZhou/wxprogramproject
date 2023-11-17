@@ -5,6 +5,7 @@ let container = document.querySelector("nav.container");
 
 var xhr = new XMLHttpRequest();
 var url = "/searchRoute";
+xhr.open("POST", url, true);
 
 sl.onclick = function() {
     let ifm = document.querySelector("iframe.line-ifm");
@@ -19,7 +20,6 @@ sl.onclick = function() {
         var params = new FormData();
         params.append("type", "lines");
         params.append("un", sessionStorage.getItem("un"));
-        xhr.open("POST", url, false);
 
         xhr.onreadystatechange =  function() {
             var data = xhr.responseText;
@@ -35,7 +35,6 @@ sl.onclick = function() {
 fw.onclick - function() {
     var params = new FormData();
     params.append("type", "formworksnum");
-    xhr.open("POST", url, true);
 
     //xhr.setRequestHeader(); 设置请求头，如果有需要
     xhr.onreadystatechange = function() {

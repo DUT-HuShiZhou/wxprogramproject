@@ -5,14 +5,40 @@
         <meta name="first-page" content="首页" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" href="" />
+        <link rel="stylesheet" href="../styles/first.css" />
         <script src="../scripts/page-load.js" defer></script>
+        <script src="../scripts/first.js" defer></script>
         <title>首页</title>
     </head>
-    <body id="page-body">
-        <div class="page-root">
-            <p class="text"></p>
-            <img id="test" src="../images/test.jpg" />
+    <body>
+        <div id="root">
+            <main class="datashow">
+                <div class="data-show">
+                    <div class="data data1">
+                        <span>在线人数:</span>
+                        <span class="num-online"></span>
+                    </div>
+                    <div class="data">
+                        <span>管理路线进行人数:</span>
+                        <span class="mnum-online"></span>
+                    </div>
+                    <div class="data">
+                        <span>管理路线完成人数:</span>
+                        <span class="mnum-finish"></span>
+                    </div>
+                </div>
+            </main>
+            <div class="uninf">
+                <div class="username">
+                    <p class="name"></p>
+                </div>
+            </div>
+            <div class="operate">
+                <div class="pwchange">
+                </div>
+                <div class="">
+                </div>
+            </div>
         </div>
     </body>
 </html>

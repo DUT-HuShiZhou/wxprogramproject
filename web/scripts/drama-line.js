@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let content = document.getElementById('content');
     let urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('choose') != null){
         var lines = urlParams.get('choose');
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         }
         
-    var course = 0;
     for (var j = 0; j < parseInt(line[0]); j++)
         grades.push({order: j + 1, course: line[j + 1]});
     // 刷新表格

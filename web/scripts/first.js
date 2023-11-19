@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr.send(params);
 
     function sendpost() {
+        xhr.open("POST", url, true);
         var params = new FormData();
 
         params.append("un", sessionStorage.getItem("un"));

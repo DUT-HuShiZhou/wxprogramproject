@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var xhr = new XMLHttpRequest();
     var url = "/searchRoute";
-    xhr.open("POST", url, true);
 
     sl.onclick = function() {
         let ifm = document.querySelector("iframe.line-ifm");
@@ -18,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ls.style.display = "none";
         }
         else {
+            xhr.open("POST", url, true);
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
             params.append("type", "lines");

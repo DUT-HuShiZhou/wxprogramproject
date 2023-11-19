@@ -5,7 +5,6 @@ let container = document.querySelector("nav.container");
 
 var xhr = new XMLHttpRequest();
 var url = "/searchRoute";
-xhr.open("POST", url, true);
 
 sl.onclick = function() {
     let ifm = document.querySelector("iframe.line-ifm");
@@ -17,6 +16,7 @@ sl.onclick = function() {
         ls.style.display = "none";
     }
     else {
+        xhr.open("POST", url, true);
         var params = new FormData();
         params.append("type", "lines");
         params.append("un", sessionStorage.getItem("un"));
@@ -33,6 +33,7 @@ sl.onclick = function() {
 };
 
 fw.onclick - function() {
+    xhr.open("POST", url, true);
     var params = new FormData();
     params.append("type", "formworksnum");
 

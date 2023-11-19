@@ -2,11 +2,14 @@ package main
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
+
 func loginCheck() {
 
 }
@@ -85,32 +88,81 @@ func main() {
 		println(result)
 	})
 	//查询路线列表并发送
-	r.POST("/searchRoute",func(c *gin.Context) {
-		command,flag1:=c.GetPostForm("type")
-		if(flag1){
+	r.POST("/searchRoute", func(c *gin.Context) {
+		command, flag1 := c.GetPostForm("type")
+		if flag1 {
 			//说明正常接收了
-			if(command=="lines"){
+			if command == "lines" {
 				var linenum string
 				var result string
 				database.QueryRow("select count(*) from routelistof2513677").Scan(&linenum) //这里后期要改成索引某个用户的数据表
-				rows,err := database.Query("select routename from routelistof2513677")
+				rows, err := database.Query("select routename from routelistof2513677")
 				println(linenum)
 				result = linenum
-				if(err!=nil){
+				if err != nil {
 					println("获取数据失败")
-				}else{
-					for rows.Next(){
+				} else {
+					for rows.Next() {
 						var routename string
 						rows.Scan(&routename)
-						result = result+";"+routename
+						result = result + ";" + routename
 					}
 				}
 				println(result)
-				c.String(http.StatusOK,result)
+				c.String(http.StatusOK, result)
+			}
+		} else {
+			println("获取表单数据失败") //这部分后期都换成记录运行日志的函数
+			c.String(http.StatusOK, "get Form-Data failed")
+		}
+	})
+	r.POST("/createNewRoute",func(c *gin.Context) {
+		var routenumstr string
+		username,errflag1:=c.GetPostForm("username")
+		if(!errflag1){
+			println("用户名称获取失败")
+			c.String(http.StatusOK,"用户名称获取失败")
+		}
+		database.QueryRow("select count(*) from routelistof"+username).Scan(&routenumstr)
+		routenum,errflag2:=strconv.Atoi(routenumstr)
+		if(errflag2!=nil){
+			println("获取用户路线个数的格式错误")
+			c.String(http.StatusOK,"获取用户路线个数的格式错误")
+		}
+		routenum++
+		routenumstr=strconv.Itoa(routenum)
+		_,errflag3:=database.Exec("create table route"+routenumstr+"(pointID int(100),longitude float,latitude float)")
+		if(errflag3!=nil){
+			println("路径数据表创建失败")
+			c.String(http.StatusOK,"路径数据表创建失败")
+		}
+		numstr,errflag4:=c.GetPostForm("pointNum")
+		if(errflag4){
+			num,errflag5:=strconv.Atoi(numstr)
+			if(errflag5!=nil){
+				println("用户点位个数格式错误")
+				c.String(http.StatusOK,"用户点位数据获取失败(情况2)")
+			}
+			for i:=1;i <= num;i++{
+				pointdata,errflag6:=c.GetPostForm(strconv.Itoa(i))
+				if(errflag6){
+					longitude:=strings.Split(pointdata, ";")[0]
+					latitude:=strings.Split(pointdata,";")[1]
+					
+					_,errflag7:=database.Exec("insert route"+routenumstr+"(pointID,longitude,latitude) values(?,?,?)",strconv.Itoa(i),longitude,latitude)
+					if(errflag7!=nil){
+						println("插入点位数据失败")
+						c.String(http.StatusOK,"插入点位数据失败")
+					}
+
+				}else{
+					println("用户点位经纬度数据获取失败")
+					c.String(http.StatusOK,"用户点位数据获取失败(情况3)")
+				}
 			}
 		}else{
-			println("获取表单数据失败")//这部分后期都换成记录运行日志的函数
-			c.String(http.StatusOK,"get Form-Data failed")
+			println("用户点位个数获取失败")
+			c.String(http.StatusOK,"用户点位数据获取失败(情况2)")
 		}
 	})
 	r.Run(":8000")

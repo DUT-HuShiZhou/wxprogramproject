@@ -131,26 +131,38 @@ func main() {
 		}
 		routenum++
 		routenumstr=strconv.Itoa(routenum)
-		_,errflag3:=database.Exec("create table route"+routenumstr+"(pointID int(100),longitude float,latitude float)")
+		_,errflag3:=database.Exec("create table route"+routenumstr+"of"+username+"(pointID int(100),longitude float,latitude float)")
 		if(errflag3!=nil){
 			println("路径数据表创建失败")
 			c.String(http.StatusOK,"路径数据表创建失败")
 		}
-		numstr,errflag4:=c.GetPostForm("pointNum")
-		if(errflag4){
-			num,errflag5:=strconv.Atoi(numstr)
+		routename,errflag4:=c.GetPostForm("routename")
+		if(!errflag4){
+			println("新路线名称获取失败")
+			c.String(http.StatusOK,"新路线名称获取失败")
+		}else{
+			_,errflag5:=database.Exec("insert routelistof"+username+"(id,routename) values(?,?)",routenumstr,routename)
 			if(errflag5!=nil){
+				println("新路线插入路线列表数据库失败")
+				c.String(http.StatusOK,"新路线插入路线列表数据库失败")
+			}
+		}
+		
+		numstr,errflag6:=c.GetPostForm("pointNum")
+		if(errflag6){
+			num,errflag7:=strconv.Atoi(numstr)
+			if(errflag7!=nil){
 				println("用户点位个数格式错误")
 				c.String(http.StatusOK,"用户点位数据获取失败(情况2)")
 			}
 			for i:=1;i <= num;i++{
-				pointdata,errflag6:=c.GetPostForm(strconv.Itoa(i))
-				if(errflag6){
-					longitude:=strings.Split(pointdata, ";")[0]
-					latitude:=strings.Split(pointdata,";")[1]
+				pointdata,errflag8:=c.GetPostForm(strconv.Itoa(i))
+				if(errflag8){
+					longitude:=strings.Split(pointdata, "|")[0]
+					latitude:=strings.Split(pointdata,"|")[1]
 					
-					_,errflag7:=database.Exec("insert route"+routenumstr+"(pointID,longitude,latitude) values(?,?,?)",strconv.Itoa(i),longitude,latitude)
-					if(errflag7!=nil){
+					_,errflag9:=database.Exec("insert route"+routenumstr+"of"+username+"(pointID,longitude,latitude) values(?,?,?)",strconv.Itoa(i),longitude,latitude)
+					if(errflag9!=nil){
 						println("插入点位数据失败")
 						c.String(http.StatusOK,"插入点位数据失败")
 					}

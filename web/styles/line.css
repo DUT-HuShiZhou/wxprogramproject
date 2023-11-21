@@ -47,6 +47,67 @@ main {
 }
 
 
+.table {
+    position: absolute;
+    display: flex;
+}
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto; /* 将表格水平居中 */
+    table-layout: fixed;
+}
+
+
+.gradesTable {
+}
+
+
+.operateTable {
+    width: 90vw;
+    bottom: 10vh;
+    position: fixed;
+}
+
+
+button:hover {
+    background-color: #8a8383; /* 设置悬停时的背景颜色 */
+}
+
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    height: 9vh;
+    text-align: center;
+}
+
+
+.operate {
+    border: none;
+}
+
+
+th {
+    background-color: #f2f2f2;
+}
+
+
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+
 .context {
     width: 30%;
     height: 100%;

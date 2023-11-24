@@ -8,6 +8,13 @@
         <link rel="stylesheet" href="../styles/line.css" />
         <script src="../scripts/page-load.js" defer></script>
         <script src="../scripts/line.js" defer></script>
+        <script type="text/javascript">
+            window._AMapSecurityConfig = {
+              securityJsCode: "683da8ec0832cd253f614d7fe69c678d",
+            };
+        </script>
+        <script src="https://webapi.amap.com/loader.js"></script>
+        <script type="text/javascript" src="../scripts/mapload.js"></script>
         <title>路线列表</title>
     </head>
     <body>
@@ -20,12 +27,14 @@
                     </div>
                     <div class="workplace">
                         <div class="mainplace">
-                            <div class="pointsplace">
+                            <div class="pointsplace" id="pointsplace">
                             </div>
                         </div>
                         <div class="table">
-                            <table class="gradesTable">
-                            </table>
+                            <div class="Table">
+                                <table class="gradesTable">
+                                </table>
+                            </div>
                             <table class="operateTable">
                             </table>
                         </div>

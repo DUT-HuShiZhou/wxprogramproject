@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     let sl = document.querySelector("button.sl-btn");
     let sp = document.querySelector("button.sp-btn");
+    let ifm = document.querySelector("iframe.line-ifm");
+    let ls = document.querySelector("div.line-show");
 
     let table = document.querySelector("table.gradesTable");
     let operate = document.querySelector("table.operateTable");
@@ -13,15 +15,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var url = "/searchRoute";
 
     sl.onclick = function() {
-        let ifm = document.querySelector("iframe.line-ifm");
-        let ls = document.querySelector("div.line-show");
-        
         if (ifm.src != "about:blank") {
-            ifm.src = "about:blank";
-            ifm.style.backgroundColor = null;
-            ls.style.display = "none";
+            clear();
         }
         else {
+            clear()
             xhr.open("POST", url, true);
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
@@ -40,11 +38,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     sp.onclick = function() {
         if (table.hasChildNodes()) { // 检查是否存在子元素
-            table.innerHTML = "";
-            operate.innerHTML = "";
+            clear();
         }
 
         else {
+            clear();
             var rowHeader = table.insertRow();
             var pointnum = rowHeader.insertCell();
             pointnum.innerHTML = "<p>点位<p>";
@@ -77,18 +75,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
             let cancel = document.querySelector("button.Cancel");
             cancel.onclick = function() {
-                table.innerHTML = "";
-                operate.innerHTML = "";
+                clear();
             };
 
             let add = document.querySelector("button.addPoint");
             add.onclick = function() {
                 var rowPoint = table.insertRow();
 
-                var nums = table.getElementsByTagName("tr");
+                var nums = table.getElementsByTagName("tr").length;
 
                 var num = rowPoint.insertCell();
-                num.innerHTML = nums.length - 1;
+                num.innerHTML = nums - 1;
                 var latitude = rowPoint.insertCell();
                 var input = document.createElement("input");
                 input.className = "latitude";
@@ -100,24 +97,36 @@ document.addEventListener("DOMContentLoaded", function() {
                 var deletebtn = rowPoint.insertCell();
                 var btn = document.createElement("button");
                 btn.textContent = "删除";
+                
+                btn.onclick = function() {
+                    var tbody = table.getElementsByTagName("tbody")[0];
+                    tbody.removeChild(rowPoint);
+
+                    var lines = table.getElementsByTagName("tr");
+                    for (var i = 1; i < lines.length; i++){
+                        var cell = lines[i].getElementsByTagName("td")[0];
+                        cell.innerHTML = i;
+                    }
+                };
+
                 deletebtn.appendChild(btn);
             };
 
             let sure = document.querySelector("button.Confirm");
             sure.onclick = function() {
-                var nums = table.getElementsByTagName("tr");
-                nums = nums.length - 1
+                var nums = table.getElementsByTagName("tr").length;
+                nums = nums - 1
                 if (nums > 0) {
                     var name = prompt("请输入路线名称");
                     var params = new FormData();
                     params.append("un", sessionStorage.getItem("un"));
                     params.append("routename", name);
-                    params.append("pointNum")
+                    params.append("pointNum", nums);
 
                     var latitudes = table.querySelectorAll("input.latitude");
                     var longitudes = table.querySelectorAll("input.longitude");
                     for (var i = 0; i < nums; i++) {
-                        params.append(i + 1, longitudes[i] + "|" + latitudes[i]);
+                        params.append(i + 1, longitudes[i].value + "|" + latitudes[i].value);
                     }
 
                     xhr.open("POST", "/createNewRoute", true);
@@ -130,4 +139,12 @@ document.addEventListener("DOMContentLoaded", function() {
             };
         }
     };
+
+    function clear () {
+        ifm.src = "about:blank";
+        ifm.style.backgroundColor = null;
+        ls.style.display = "none";
+        table.innerHTML = "";
+        operate.innerHTML = "";
+    }
 })

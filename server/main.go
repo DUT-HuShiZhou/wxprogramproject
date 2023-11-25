@@ -177,5 +177,66 @@ func main() {
 			c.String(http.StatusOK, "用户点位数据获取失败(情况2)")
 		}
 	})
+	//注册新账号
+	r.POST("/createAccount",func(c *gin.Context) {
+		username,errflag1:=c.GetPostForm("username")
+		if(!errflag1){
+			println("获取用户名失败")
+			c.String(http.StatusOK,"获取用户名失败")
+		}
+		useraccount,errflag2:=c.GetPostForm("useraccount")
+		if(!errflag2){
+			println("获取用户账号失败")
+			c.String(http.StatusOK,"获取用户账号失败")
+		}
+		userpassword,errflag3:=c.GetPostForm("userpassword")
+		if(!errflag3){
+			println("获取用户密码失败")
+			c.String(http.StatusOK,"获取用户密码失败")
+		}
+		_,errflag4:=database.Exec("insert into userinfo(user_account,user_name,user_password) values(?,?,?)",useraccount,username,userpassword)
+		if(errflag4!=nil){
+			println("创建用户账号记录失败（数据库")
+			c.String(http.StatusOK,"创建用户失败（情况1），请联系技术人员解决")
+		}else{
+			//创建每个用户都有的几个表:路线列表，活动列表，剧本列表
+			_,errflag5:=database.Exec("create table routelistof"+useraccount+`(
+				id INT UNSIGNED AUTO_INCREMENT,
+				routename varchar(100),
+				primary key (id)
+			)`)
+			if(errflag5!=nil){
+				println("创建用户路线列表数据库失败")
+				c.String(http.StatusOK,"创建用户失败(情况2)")
+			}else{
+				//创建活动列表和剧本列表，if嵌套问题由于赶工期暂时不管
+				_,errflag6:=database.Exec("create table activitylistof"+useraccount+`(
+					id INT UNSIGNED AUTO_INCREMENT,
+					activityname varchar(100),
+					testQRCodeurl varchar(100),
+					formalQRCodeurl varchar(100),
+					totalParticipateNum int(100),
+					avarageParticipateTime int(100),
+					primary key(id)
+				)`)
+				if(errflag6!=nil){
+					println("创建用户活动列表数据库失败")
+					c.String(http.StatusOK,"创建用户失败(情况3)")
+				}else{
+					_,errflag7:=database.Exec("create table dramascriptlistof"+useraccount+`(
+						id INT UNSIGNED AUTO_INCREMENT,
+						dramascriptname varchar(100),
+						primary key(id)
+					)`)
+					if(errflag7!=nil){
+						println("创建用户剧本列表数据库失败")
+						c.String(http.StatusOK,"创建用户失败（情况4）")
+					}
+				}
+			}
+			println("创建用户成功")
+			c.String(http.StatusOK,"创建用户成功，10s后跳转到登录页面进行登录")
+		}
+	})
 	r.Run(":8000")
 }

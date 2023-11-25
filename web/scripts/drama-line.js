@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var grades = [];
 
+    var xhr = new XMLHttpRequest();
 
     function displayGrades() {
         var table = document.getElementById('gradesTable');
@@ -44,6 +45,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 var button2 = document.createElement("button");
                 button1.textContent = "编辑";
                 button2.textContent = "删除";
+
+                button1.onclick = function() {
+                    var params = new FormData();
+                    params.append("un", sessionStorage.getItem("un"));
+                    params.append("style", "command");
+                    params.append("id", i + 1);
+
+                    url = "";
+                    xhr.open("OPST", url, true);
+
+                    xhr.onreadystatechange = function () {
+
+                        parent.postMessage({ action: "pointStates", num: num, states:states}, "index.html");
+                    }
+                    xhr.send(params);
+                }
+
                 gradeButton.appendChild(button1);
                 gradeButton.appendChild(button2);
             }

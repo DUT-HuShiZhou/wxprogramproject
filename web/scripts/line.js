@@ -4,10 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
     let ifm = document.querySelector("iframe.line-ifm");
     let ls = document.querySelector("div.line-show");
 
+    let test = document.querySelector("button.test-btn");
+    let mainplace = document.querySelector("div.mainplace");
+
     let table = document.querySelector("table.gradesTable");
     let operate = document.querySelector("table.operateTable");
-    table.innerHTML = "";
-    operate.innerHTML = "";
+    
+    clear();
+
+    mainplace.style.display = "flex";
 
     let container = document.querySelector("nav.container");
 
@@ -17,9 +22,12 @@ document.addEventListener("DOMContentLoaded", function() {
     sl.onclick = function() {
         if (ifm.src != "about:blank") {
             clear();
+            mainplace.style.display = "flex";
         }
         else {
             clear()
+            ifm.style.display = "block";
+
             xhr.open("POST", url, true);
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
@@ -39,17 +47,20 @@ document.addEventListener("DOMContentLoaded", function() {
     sp.onclick = function() {
         if (table.hasChildNodes()) { // 检查是否存在子元素
             clear();
+            mainplace.style.display = "flex";
         }
 
         else {
             clear();
+            table.style.display = "table";
+            operate.style.display = "table";
             var rowHeader = table.insertRow();
             var pointnum = rowHeader.insertCell();
             pointnum.innerHTML = "<p>点位<p>";
-            var Latitude = rowHeader.insertCell();
-            Latitude.innerHTML = "<p>经度<p>";
             var Longitude = rowHeader.insertCell();
-            Longitude.innerHTML = "<p>纬度<p>";
+            Longitude.innerHTML = "<p>经度<p>";
+            var Latitude = rowHeader.insertCell();
+            Latitude.innerHTML = "<p>纬度<p>";
             var Deletebtn = rowHeader.insertCell();
             Deletebtn.innerHTML = "<p>操作<p>";
 
@@ -86,14 +97,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 var num = rowPoint.insertCell();
                 num.innerHTML = nums - 1;
-                var latitude = rowPoint.insertCell();
-                var input = document.createElement("input");
-                input.className = "latitude";
-                latitude.appendChild(input);
                 var longitude = rowPoint.insertCell();
                 var input = document.createElement("input");
                 input.className = "longitude";
                 longitude.appendChild(input);
+                var latitude = rowPoint.insertCell();
+                var input = document.createElement("input");
+                input.className = "latitude";
+                latitude.appendChild(input);
                 var deletebtn = rowPoint.insertCell();
                 var btn = document.createElement("button");
                 btn.textContent = "删除";
@@ -123,8 +134,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     params.append("routename", name);
                     params.append("pointNum", nums);
 
-                    var latitudes = table.querySelectorAll("input.latitude");
                     var longitudes = table.querySelectorAll("input.longitude");
+                    var latitudes = table.querySelectorAll("input.latitude");
                     for (var i = 0; i < nums; i++) {
                         params.append(i + 1, longitudes[i].value + "|" + latitudes[i].value);
                     }
@@ -141,6 +152,10 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     function clear () {
+        ifm.style.display = "none";
+        mainplace.style.display = "none";
+        table.style.display = "none";
+        operate.style.display = "none";
         ifm.src = "about:blank";
         ifm.style.backgroundColor = null;
         ls.style.display = "none";

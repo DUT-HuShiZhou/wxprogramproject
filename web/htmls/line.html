@@ -8,13 +8,6 @@
         <link rel="stylesheet" href="../styles/line.css" />
         <script src="../scripts/page-load.js" defer></script>
         <script src="../scripts/line.js" defer></script>
-        <script type="text/javascript">
-            window._AMapSecurityConfig = {
-              securityJsCode: "683da8ec0832cd253f614d7fe69c678d",
-            };
-        </script>
-        <script src="https://webapi.amap.com/loader.js"></script>
-        <script type="text/javascript" src="../scripts/mapload.js"></script>
         <title>路线列表</title>
     </head>
     <body>
@@ -53,8 +46,18 @@
                     <div class="setpoint dbtn">
                         <button class="sp-btn bbtn">创建路线</button>
                     </div>
+                    <div class="test dbtn">
+                        <button class="test-btn bbtn">测试</button>
+                    </div>
                 </nav>
             </aside>
         </div>
     </body>
+    <script type="text/javascript" defer>
+        window._AMapSecurityConfig = {
+          securityJsCode: "683da8ec0832cd253f614d7fe69c678d",
+        };
+    </script>
+    <script src="https://webapi.amap.com/loader.js" defer></script>
+    <script type="text/javascript" src="../scripts/mapload.js" defer></script>
 </html>

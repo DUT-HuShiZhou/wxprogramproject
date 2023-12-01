@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     xhr.onreadystatechange = function () {
 
-                        parent.postMessage({ action: "pointStates", num: num, states:states}, "index.html");
+                        parent.postMessage({ action: "pointStates", num: num, states:states}, "drama-line");
                     }
                     xhr.send(params);
                 }

@@ -3,6 +3,7 @@ let test = document.querySelector("button.test-btn");
 AMapLoader.load({
     key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
     version: "2.0", //指定要加载的 JS API 的版本，缺省时默认为 1.4.15
+    plugin: "AMap.Walking" 
     })
     .then((AMap) => {
         window.addEventListener("message", function(event){
@@ -14,7 +15,7 @@ AMapLoader.load({
                 var latitudes = []
                 for (var i = 0; i < states.length; i++){
                     longitudes.push(states[i].split(":")[0]);
-                    latitudes.push(states.split(":")[1]);
+                    latitudes.push(states[i].split(":")[1]);
                 }
 
                 const layer = new AMap.createDefaultLayer({
@@ -53,21 +54,37 @@ AMapLoader.load({
                     map.add(marker);
                 }
 
-                map.plugin('AMap.Walking', function () {
-                    var walking = new AMap.Walking({
-                        policy: AMap.WalkingPolicy.LEAST_TIME,
+                AMap.plugin('AMap.Walking',function(){
+                    const walking = new AMap.Walking({
                         map: map,
                         panel: "panel"
-                    })
-
-                    // path 是驾车导航的起、途径和终点，最多支持16个途经点
-                    var path = []
-                    
-                    for (var i = 0; i < 5; i++){
-                        path.push([latitudes[i], longitudes[i]]);
-                    }
-                    // 查询导航路径并开启拖拽导航
-                    route.search(path)
+                    });
+        
+                    for (var i = 0; i < latitudes.length - 1; i++) {
+                        (function (index) {
+                            walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
+                                if (status === 'complete') {
+                                    // 绘制步行导航路线
+                                    var path = result.routes[0].steps.map(step => step.path);
+                                    var polyline = new AMap.Polyline({
+                                        path: [].concat.apply([], path),
+                                        isOutline: true,
+                                        outlineColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
+                                        borderWeight: 1,
+                                        strokeColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
+                                        strokeOpacity: 0.9,
+                                        strokeWeight: 2,
+                                        strokeStyle: "solid",
+                                        lineJoin: "round",
+                                        lineCap: "round",
+                                    });
+                                    map.add(polyline);
+                                } else {
+                                    alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
+                                }
+                            });
+                        })(i);
+                    }  
                 })
             }
             return;
@@ -94,15 +111,16 @@ AMapLoader.load({
         });
         map.add(traffic);
 
-        const markerContent = '' +
-        '<div class="custom-content-marker">' +
-        '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">'; // 打点图标
-
-        var longitudes = [38.878836, 38.879255, 38.881568, 38.884894, 38.886344];
+        var longitudes = [38.878836, 38.879255, 38.881568, 38.884894, 38.886284];
         var latitudes = [121.60142, 121.601946, 121.602505, 121.605681, 121.604963];
         for(var i = 0; i < 5; i++){
-            const position = new AMap.LngLat( latitudes[i], longitudes[i]);
-            const marker = new AMap.Marker({
+            var markerContent = '' +
+            '<div class="custom-content-marker">' +
+            '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
+            '   <div class="num">'+ (i + 1) +'</div>'
+            '</div>'; // 打点图标
+            var position = new AMap.LngLat( latitudes[i], longitudes[i]);
+            var marker = new AMap.Marker({
                 position: position,
                 content: markerContent, // 将 html 传给 content
                 offset: new AMap.Pixel(-13, -30) // 以 icon 的 [center bottom] 为原点
@@ -110,7 +128,45 @@ AMapLoader.load({
         
             map.add(marker);
         }
+
+        AMap.plugin('AMap.Walking',function(){
+            const walking = new AMap.Walking({
+                map: map,
+                panel: "panel"
+            });
+
+            for (var i = 0; i < latitudes.length - 1; i++) {
+                (function (index) {
+                    walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
+                        if (status === 'complete') {
+                            // 绘制步行导航路线
+                            var path = result.routes[0].steps.map(step => step.path);
+                            var polyline = new AMap.Polyline({
+                                path: [].concat.apply([], path),
+                                isOutline: true,
+                                outlineColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
+                                borderWeight: 1,
+                                strokeColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
+                                strokeOpacity: 0.9,
+                                strokeWeight: 2,
+                                strokeStyle: "solid",
+                                lineJoin: "round",
+                                lineCap: "round",
+                            });
+                            map.add(polyline);
+                        } else {
+                            alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
+                        }
+                    });
+                })(i);
+            }  
+        })
+
+
+
     })
     .catch((e) => {
         alert(e); //加载错误提示
     });
+
+    

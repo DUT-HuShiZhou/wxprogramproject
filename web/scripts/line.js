@@ -3,18 +3,79 @@ document.addEventListener("DOMContentLoaded", function() {
     let sp = document.querySelector("button.sp-btn");
     let ifm = document.querySelector("iframe.line-ifm");
     let ls = document.querySelector("div.line-show");
+    let Plist = document.querySelector(".PList");
 
-    let test = document.querySelector("button.test-btn");
     let mainplace = document.querySelector("div.mainplace");
 
     let table = document.querySelector("table.gradesTable");
     let operate = document.querySelector("table.operateTable");
     
+    const resetPointsEvent = new CustomEvent("resetPoints", {detail: {id: "resetPoints"}});
+
+    function clear () {
+        ifm.style.display = "none";
+        mainplace.style.display = "none";
+        table.style.display = "none";
+        operate.style.display = "none";
+        ifm.src = "about:blank";
+        ifm.style.backgroundColor = null;
+        ls.style.display = "none";
+        table.innerHTML = "";
+        operate.innerHTML = "";
+    }
+
+    this.addEventListener("PointsLoaded", function(event){
+        if(event.detail.id === "loadNum"){
+            var points = JSON.parse(sessionStorage.getItem("points"));
+
+            for(var i = 0; i < points.length; i++){
+                (function (index) {
+                var newRow = Plist.insertRow();
+                newRow.className = "PO";
+                
+                var buttonCell = newRow.insertCell();
+                buttonCell.className = "PO1";
+                var buttoncontainer = document.createElement("div");
+                var bnext = document.createElement("button");
+                var bbefore = document.createElement("button");
+                bnext.classList.add("Next");
+                bnext.classList.add(String(i + 1));
+                bnext.textContent = "▼";
+                bbefore.classList.add("Before");
+                bbefore.classList.add(String(i + 1));
+                bbefore.textContent = "▲";
+                buttoncontainer.appendChild(bbefore);
+                buttoncontainer.appendChild(bnext);
+                buttonCell.appendChild(buttoncontainer);
+                
+                var nameCell = newRow.insertCell();
+                nameCell.classList.add("PO2");
+                nameCell.innerHTML = points[i][2];
+
+                bbefore.onclick = function() {
+                    var rowIndex = parseInt(bbefore.classList[1]);
+                    var PO2 = document.querySelectorAll(".PO2");
+                    var change = PO2[rowIndex].textContent;
+                    PO2[rowIndex].textContent = PO2[rowIndex - 1].textContent;
+                    PO2[rowIndex - 1].textContent = change;
+                };
+                bnext.onclick = function() {
+                    var rowIndex = parseInt(bnext.classList[1]);
+                    var PO2 = document.querySelectorAll(".PO2");
+                    var change = PO2[rowIndex].textContent;
+                    PO2[rowIndex].textContent = PO2[rowIndex + 1].textContent;
+                    PO2[rowIndex + 1].textContent = change;
+                };
+            })(i);
+            }
+
+            BNbtnDisplace();
+        }
+    })
+    
     clear();
 
     mainplace.style.display = "flex";
-
-    let container = document.querySelector("nav.container");
 
     var xhr = new XMLHttpRequest();
     var url = "/searchRoute";
@@ -151,15 +212,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    function clear () {
-        ifm.style.display = "none";
-        mainplace.style.display = "none";
-        table.style.display = "none";
-        operate.style.display = "none";
-        ifm.src = "about:blank";
-        ifm.style.backgroundColor = null;
-        ls.style.display = "none";
-        table.innerHTML = "";
-        operate.innerHTML = "";
+    function BNbtnDisplace () {
+        var btns = document.querySelectorAll(".Before");
+        btns[0].style.display = "none";
+
+        var btns = document.querySelectorAll(".Next");
+        btns[btns.length - 1].style.display = "none";
     }
 })

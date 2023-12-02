@@ -49,15 +49,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 button1.onclick = function() {
                     var params = new FormData();
                     params.append("un", sessionStorage.getItem("un"));
-                    params.append("style", "command");
-                    params.append("id", i + 1);
+                    params.append("RouteId", i + 1);
 
-                    url = "";
-                    xhr.open("OPST", url, true);
+                    url = "/getPoints";
+                    xhr.open("POST", url, true);
 
                     xhr.onreadystatechange = function () {
-
-                        parent.postMessage({ action: "pointStates", num: num, states:states}, "drama-line");
+                        var text = xhr.responseText;
+                        var num = text.split(";")[0];
+                        var states = text.split(";").slice(1);
+                        sessionStorage.setItem("points", []);
+                        var points = [];
+                        for (var i = 0; i < num; i++){
+                            var state = states.split(":");
+                            points.append(state);
+                        }
+                        sessionStorage.setItem("points", JSON.stringify(points));
+                        parent.postMessage({ action: "pointStates", num: num}, "drama-line");
                     }
                     xhr.send(params);
                 }

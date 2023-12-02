@@ -159,11 +159,61 @@ a:hover {
 }
 
 
-hr {
+.up {
+    height: 50vh;
     width: 100%;
+}
+
+
+hr {
+    margin: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #010000;
+    border: 0;
     position: fixed;
     top: 50vh;
-    color: black;
+}
+
+
+.down, .pointsList {
+    height: 50vh;
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+}
+
+
+.PList {
+    table-layout: fixed;
+    width: 100%;
+}
+
+
+.title {
+    font-size: small;
+    text-align: center;
+}
+
+
+.PO, .PO1, .PO2 {
+    font-size: small;
+    height: 6vh;
+    max-height: 6vh;
+}
+
+
+.PO1 {
+    width: 30%;
+}
+
+
+.Before, .Next {
+    font-size: 2vh;
+    margin: 0;
+    border: 0;
+    padding: 0;
+
 }
 
 
@@ -188,25 +238,40 @@ hr {
   }
   
 .custom-content-marker img {
-width: 100%;
-height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .custom-content-marker .num {
-position: absolute;
-top: -5px;
-right: -6px;
-width: 15px;
-height: 15px;
-font-size: 12px;
-background: #ffffff;
-border-radius: 50%;
-color: #010000;
-text-align: center;
-line-height: 15px;
-box-shadow: -1px 1px 1px rgba(10, 10, 10, .2);
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    width: 15px;
+    height: 15px;
+    font-size: 12px;
+    background: #ffffff;
+    border-radius: 50%;
+    color: #010000;
+    text-align: center;
+    line-height: 15px;
+    box-shadow: -1px 1px 1px rgba(10, 10, 10, .2);
 }
 
 .custom-content-marker .num:hover{
-background: #797979;
-  }
+    background: #797979;
+}
+
+/* 鼠标悬停时的样式，显示元素内容 */
+.num:hover::after {
+    content: attr(point-name); /* 使用属性值作为内容 */
+    display: block;
+    position: absolute;
+    width: auto;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: transparent;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

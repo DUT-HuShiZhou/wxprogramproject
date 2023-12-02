@@ -10,9 +10,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func loginCheck() {
-
-}
 func main() {
 	database, err := sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/wxproj")
 	if err != nil {
@@ -178,39 +175,39 @@ func main() {
 		}
 	})
 	//注册新账号
-	r.POST("/createAccount",func(c *gin.Context) {
-		username,errflag1:=c.GetPostForm("username")
-		if(!errflag1){
+	r.POST("/createAccount", func(c *gin.Context) {
+		username, errflag1 := c.GetPostForm("username")
+		if !errflag1 {
 			println("获取用户名失败")
-			c.String(http.StatusOK,"获取用户名失败")
+			c.String(http.StatusOK, "获取用户名失败")
 		}
-		useraccount,errflag2:=c.GetPostForm("useraccount")
-		if(!errflag2){
+		useraccount, errflag2 := c.GetPostForm("useraccount")
+		if !errflag2 {
 			println("获取用户账号失败")
-			c.String(http.StatusOK,"获取用户账号失败")
+			c.String(http.StatusOK, "获取用户账号失败")
 		}
-		userpassword,errflag3:=c.GetPostForm("userpassword")
-		if(!errflag3){
+		userpassword, errflag3 := c.GetPostForm("userpassword")
+		if !errflag3 {
 			println("获取用户密码失败")
-			c.String(http.StatusOK,"获取用户密码失败")
+			c.String(http.StatusOK, "获取用户密码失败")
 		}
-		_,errflag4:=database.Exec("insert into userinfo(user_account,user_name,user_password) values(?,?,?)",useraccount,username,userpassword)
-		if(errflag4!=nil){
+		_, errflag4 := database.Exec("insert into userinfo(user_account,user_name,user_password) values(?,?,?)", useraccount, username, userpassword)
+		if errflag4 != nil {
 			println("创建用户账号记录失败（数据库")
-			c.String(http.StatusOK,"创建用户失败（情况1），请联系技术人员解决")
-		}else{
+			c.String(http.StatusOK, "创建用户失败（情况1），请联系技术人员解决")
+		} else {
 			//创建每个用户都有的几个表:路线列表，活动列表，剧本列表
-			_,errflag5:=database.Exec("create table routelistof"+useraccount+`(
+			_, errflag5 := database.Exec("create table routelistof" + useraccount + `(
 				id INT UNSIGNED AUTO_INCREMENT,
 				routename varchar(100),
 				primary key (id)
 			)`)
-			if(errflag5!=nil){
+			if errflag5 != nil {
 				println("创建用户路线列表数据库失败")
-				c.String(http.StatusOK,"创建用户失败(情况2)")
-			}else{
+				c.String(http.StatusOK, "创建用户失败(情况2)")
+			} else {
 				//创建活动列表和剧本列表，if嵌套问题由于赶工期暂时不管
-				_,errflag6:=database.Exec("create table activitylistof"+useraccount+`(
+				_, errflag6 := database.Exec("create table activitylistof" + useraccount + `(
 					id INT UNSIGNED AUTO_INCREMENT,
 					activityname varchar(100),
 					testQRCodeurl varchar(100),
@@ -219,23 +216,117 @@ func main() {
 					avarageParticipateTime int(100),
 					primary key(id)
 				)`)
-				if(errflag6!=nil){
+				if errflag6 != nil {
 					println("创建用户活动列表数据库失败")
-					c.String(http.StatusOK,"创建用户失败(情况3)")
-				}else{
-					_,errflag7:=database.Exec("create table dramascriptlistof"+useraccount+`(
+					c.String(http.StatusOK, "创建用户失败(情况3)")
+				} else {
+					_, errflag7 := database.Exec("create table dramascriptlistof" + useraccount + `(
 						id INT UNSIGNED AUTO_INCREMENT,
 						dramascriptname varchar(100),
 						primary key(id)
 					)`)
-					if(errflag7!=nil){
+					if errflag7 != nil {
 						println("创建用户剧本列表数据库失败")
-						c.String(http.StatusOK,"创建用户失败（情况4）")
+						c.String(http.StatusOK, "创建用户失败（情况4）")
 					}
 				}
 			}
 			println("创建用户成功")
-			c.String(http.StatusOK,"创建用户成功，10s后跳转到登录页面进行登录")
+			c.String(http.StatusOK, "创建用户成功，10s后跳转到登录页面进行登录")
+		}
+	})
+	r.POST("/getPoints", func(c *gin.Context) {
+		var result string
+		var pointsnum int
+		username, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取用户名失败")
+		} else {
+			println(username)
+		}
+		id, errflag2 := c.GetPostForm("RouteId")
+		if !errflag2 {
+			println("获取路线id失败")
+		} else {
+			println(id)
+			rows, errflag3 := database.Query("select * from route" + id + "of" + username)
+			if errflag3 != nil {
+				println("线路点位获取失败")
+			} else {
+				database.QueryRow("select count(*) from route" + id + "of" + username).Scan(&pointsnum)
+				pointsnumstr := strconv.Itoa(pointsnum)
+				result = result + pointsnumstr
+				for rows.Next() {
+					var pointID int
+					var longitude float32
+					var latitude float32 //我在mysql中定义的是float类型变量，不知道获取的时候会不会自动转换
+					var pointName string
+					var pointDescription string
+					//rows.Scan(&pointID)
+					rows.Scan(&pointID, &longitude, &latitude, &pointName, &pointDescription)
+					pointIDstr := strconv.Itoa(pointID)
+					longitudestr := strconv.FormatFloat(float64(longitude), 'f', 6, 32)
+					latitudestr := strconv.FormatFloat(float64(latitude), 'f', 6, 32)
+					println(pointIDstr, longitudestr, latitudestr, pointName, pointDescription) //测试用,已经成功
+					result = result + ";" + longitudestr + ":" + latitudestr + ":" + pointName + ":" + pointDescription
+				}
+				c.String(http.StatusOK, result)
+			}
+		}
+	})
+	r.POST("/changeOrder", func(c *gin.Context) {
+		username, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取用户名失败")
+		} else {
+			println(username)
+		}
+		pointList, errflag2 := c.GetPostForm("pointslist")
+		if !errflag2 {
+			println("获取点位列表失败")
+		} else {
+			println(pointList)
+		}
+		pointnumstr, errflag3 := c.GetPostForm("pointnum") //应该发过来的是文本
+		if !errflag3 {
+			println("获取点位个数错误")
+		} else {
+			println(pointnumstr)
+		}
+		routeid, errflag4 := c.GetPostForm("routeid")
+		if !errflag4 {
+			println("获取路线id失败")
+		}
+		pointnum, errflag5 := strconv.Atoi(pointnumstr)
+		if errflag5 != nil {
+			println("传入的点位个数格式错误")
+		} else {
+			for i := 0; i < pointnum; i++ {
+				var errflag6 error
+				var errflag7 error
+				var pointID int
+				var longitude float64
+				var latitude float64
+				var pointName string
+				var pointDescription string
+				pointID = i + 1
+				longitude, errflag6 = strconv.ParseFloat(strings.Split(strings.Split(pointList, ";")[i], ":")[0], 32) //使用;分隔每个点,使用：分隔每个点的属性
+				if errflag6 != nil {
+					println("点位longitude格式错误")
+				}
+				latitude, errflag7 = strconv.ParseFloat(strings.Split(strings.Split(pointList, ";")[i], ":")[1], 32)
+				if errflag7 != nil {
+					println("点位latitude格式错误")
+				}
+				pointName = strings.Split(strings.Split(pointList, ";")[i], ":")[2]
+				pointDescription = strings.Split(strings.Split(pointList, ";")[i], ":")[3]
+				_, errflag8 := database.Exec("update route" + routeid + "of" + username + " set longitude = " + strconv.FormatFloat(longitude, 'f', 6, 32) + ",latitude = " + strconv.FormatFloat(latitude, 'f', 6, 32) + ",pointName = " + pointName + ",pointDescription = " + pointDescription + " where pointID = " + strconv.Itoa(pointID))
+				if errflag8 != nil {
+					println("更新单个点位失败")
+				}
+			}
+			println("更新所有点位成功")
+			c.String(http.StatusOK, "调整点位顺序成功")
 		}
 	})
 	r.Run(":8000")

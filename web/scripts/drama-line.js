@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gradeHeader.innerHTML = '<b>操作</b>';
 
         for (var i = 0; i < grades.length; i++) {
+            (function(i) {
             var row = table.insertRow();
             var orderCell = row.insertCell();
             orderCell.innerHTML = grades[i].order;
@@ -55,17 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     xhr.open("POST", url, true);
 
                     xhr.onreadystatechange = function () {
-                        var text = xhr.responseText;
-                        var num = text.split(";")[0];
-                        var states = text.split(";").slice(1);
-                        sessionStorage.setItem("points", []);
-                        var points = [];
-                        for (var i = 0; i < num; i++){
-                            var state = states.split(":");
-                            points.append(state);
+                        if (xhr.readyState === 4){
+                            var text = xhr.responseText;
+                            var num = text.split(";")[0];
+                            var states = text.split(";").slice(1);
+                            var points = [];
+                            for (var i = 0; i < num; i++){
+                                var state = states[i].split(":");
+                                points.push(state);
+                            }
+                            sessionStorage.setItem("points", JSON.stringify(points));
+                            window.parent.postMessage({ action: "pointStates", num: num}, "*");
                         }
-                        sessionStorage.setItem("points", JSON.stringify(points));
-                        parent.postMessage({ action: "pointStates", num: num}, "drama-line");
                     }
                     xhr.send(params);
                 }
@@ -75,11 +77,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             gradeCell.appendChild(gradeButton);
+        })(i);
         }
-        }
+    }
         
     for (var j = 0; j < parseInt(line[0]); j++)
         grades.push({order: j + 1, course: line[j + 1]});
     // 刷新表格
     displayGrades();
+
+
+    var states = ["nihao:dwada:123456", "chao:tnnd:234567", "hello:world:345678"];
+
+    var points = [];
+    for (var i = 0; i < 3; i++){
+        var state = states.split(":");
+        points.append(state);
+    }
+    sessionStorage.setItem("points", JSON.stringify(points));
+
     });

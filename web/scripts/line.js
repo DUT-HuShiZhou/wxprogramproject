@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let Plist = document.querySelector(".PList");
 
     let mainplace = document.querySelector("div.mainplace");
+    let test = document.querySelector("button.test-btn");
 
     let table = document.querySelector("table.gradesTable");
     let operate = document.querySelector("table.operateTable");
@@ -70,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             BNbtnDisplace();
+            clear();
         }
     })
     

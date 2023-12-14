@@ -179,12 +179,18 @@ hr {
 .down, .pointsList {
     height: 50vh;
     width: 100%;
-    overflow-y: auto;
     position: relative;
 }
 
 
+.plist {
+    height: 36vh;
+    overflow-y: auto;
+}
+
+
 .PList {
+    
     table-layout: fixed;
     width: 100%;
 }

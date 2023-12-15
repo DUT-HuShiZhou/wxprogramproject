@@ -1,4 +1,3 @@
-let test = document.querySelector("button.test-btn");
 const LoadedPointsEvent = new CustomEvent("PointsLoaded", {detail: {id:"loadNum"}});
 
 AMapLoader.load({
@@ -9,8 +8,9 @@ AMapLoader.load({
     .then((AMap) => {
         var longitudes = [38.878836, 38.879255, 38.881568, 38.884894, 38.886284];
         var latitudes = [121.60142, 121.601946, 121.602505, 121.605681, 121.604963];
-        sessionStorage.setItem("points",JSON.stringify([[0,0,"你好0",0],[0,0,"你好1",0],[0,0,"你好2",0],[0,0,"你好3",0],[0,0,"你好4",0]]));
-        
+        sessionStorage.setItem("points",JSON.stringify([[38.878836,121.60142,"你好0",0],[38.879255,121.601946,"你好1",0],[38.881568,121.602505,"你好2",0],[38.884894,121.605681,"你好3",0],[38.886284, 121.604963,"你好4",0]]));
+        var names = ["你好0", "你好1", "你好2", "你好3", "你好4"];
+
         const layer = new AMap.createDefaultLayer({
             zooms: [3, 20], //可见级别
             visible: true, //是否可见
@@ -33,139 +33,122 @@ AMapLoader.load({
 
         map.setCenter([latitudes[0], longitudes[0]]);
 
+        var markers = [];
+        var polylines = [];
+
         window.parent.addEventListener("message", function(event){
             if (event.data.action === "pointStates"){   // 验证是否为点位消息   
                 var points = JSON.parse(sessionStorage.getItem("points"));
-                var longitudes = []
-                var latitudes = []
-                var names = []
-                for (var i = 0; i < states.length; i++){
+                var longitudes = [];
+                var latitudes = [];
+                var names = [];
+                for (var i = 0; i < event.data.num; i++){
                     longitudes.push(points[i][0]);
                     latitudes.push(points[i][1]);
                     names.push(points[i][2]);
-                }
+                };
 
                 map.setCenter([latitudes[0], longitudes[0]]);
 
-                for(var i = 0; i < event.data.num; i++){                            
-                    const markerContent = '' +
-                    '<div class="custom-content-marker">' +
-                    '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
-                    '   <div class="num" point-name=' + names[i] + '>'+ (i + 1) +'</div>'
-                    '</div>'; // 打点图标
-
-                    const position = new AMap.LngLat(latitudes[i], longitudes[i]);
-                    const marker = new AMap.Marker({
-                        position: position,
-                        content: markerContent, // 将 html 传给 content
-                        offset: new AMap.Pixel(-13, -30) // 以 icon 的 [center bottom] 为原点
-                    });
-                
-                    map.add(marker); 
-                }
-                
-                let shwoName = document.querySelectorAll("div.num");
-                for(var i = 0; i < event.data.num; i++){
-                    shwoName[i].addEventListener("mouseover", function(){
-                        shwoName[i].setAttribute("point-name", states[i][2]);
-                    })
-                    shwoName[i].addEventListener("mouseout", function(){
-                        shwoName[i].setAttribute("point-name", "");
-                    })
-                }
-
-                AMap.plugin('AMap.Walking',function(){
-                    const walking = new AMap.Walking({
-                        map: map,
-                        panel: "panel"
-                    });
-        
-                    for (var i = 0; i < latitudes.length - 1; i++) {
-                        (function (index) {
-                            walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
-                                if (status === 'complete') {
-                                    // 绘制步行导航路线
-                                    var path = result.routes[0].steps.map(step => step.path);
-                                    var polyline = new AMap.Polyline({
-                                        path: [].concat.apply([], path),
-                                        isOutline: true,
-                                        outlineColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
-                                        borderWeight: 1,
-                                        strokeColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
-                                        strokeOpacity: 0.9,
-                                        strokeWeight: 2,
-                                        strokeStyle: "solid",
-                                        lineJoin: "round",
-                                        lineCap: "round",
-                                    });
-                                    map.add(polyline);
-                                } else {
-                                    alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
-                                }
-                            });
-                        })(i);
-                    }  
-                })
-                
-                document.dispatchEvent(LoadedPointsEvent);
+                freshMap(event.data.num, longitudes, latitudes, names);
             }
             return;
         }, false);
 
         document.addEventListener("resetPoints", function(event) {
+            if (sessionStorage.getItem("cachePoints")){
+                var points = JSON.parse(sessionStorage.getItem("cachePoints"));
+            }
+            else{
+                var points = JSON.parse(sessionStorage.getItem("points"));
+            }
+            var longitudes = [];
+            var latitudes = [];
+            var names = [];
+            for (var i = 0; i < points.length; i++){
+                longitudes.push(points[i][0]);
+                latitudes.push(points[i][1]);
+                names.push(points[i][2]);
+            };
+            map.setCenter([latitudes[0], longitudes[0]]);
+
+            freshMap(points.length, longitudes, latitudes, names);
+        })
+
+        freshMap(5, longitudes, latitudes, names)
+
+        function freshMap(num, longitudes, latitudes, names) {
+            map.clearMap();
+            markers = [];
+            polylines = [];
             
-        })
+            for(var i = 0; i < num; i++){       
+                (function(i){       
+                    var markerContent = '' +
+                    '<div class="custom-content-marker">' +
+                    '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
+                    '   <div class="num" point-name=' + names[i] + '>'+ String(i + 1) +'</div>'
+                    '</div>'; // 打点图标
 
-        for(var i = 0; i < 5; i++){
-            var markerContent = '' + // 打点元素添加
-            '<div class="custom-content-marker">' +
-            '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
-            '   <div class="num" point-name=' + i + '>'+ (i + 1) +'</div>'
-            '</div>'; // 打点图标
-            var position = new AMap.LngLat( latitudes[i], longitudes[i]);
-            var marker = new AMap.Marker({
-                position: position,
-                content: markerContent, // 将 html 传给 content
-                offset: new AMap.Pixel(-13, -30) // 以 icon 的 [center bottom] 为原点
-            });
-        
-            map.add(marker);
-        }
-
-        AMap.plugin('AMap.Walking',function(){
-            const walking = new AMap.Walking({
-                map: map,
-                panel: "panel"
-            });
-
-            for (var i = 0; i < latitudes.length - 1; i++) {
-                (function (index) {
-                    walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
-                        if (status === 'complete') {
-                            // 绘制步行导航路线
-                            var path = result.routes[0].steps.map(step => step.path);
-                            var polyline = new AMap.Polyline({
-                                path: [].concat.apply([], path),
-                                isOutline: true,
-                                outlineColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
-                                borderWeight: 1,
-                                strokeColor: "#" + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 255)).toString(16).padStart(2, '0'),
-                                strokeOpacity: 0.9,
-                                strokeWeight: 2,
-                                strokeStyle: "solid",
-                                lineJoin: "round",
-                                lineCap: "round",
-                            });
-                            map.add(polyline);
-                        } else {
-                            alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
-                        }
-                    });
+                    var position = new AMap.LngLat(latitudes[i], longitudes[i]);
+                    markers.push(new AMap.Marker({
+                        position: position,
+                        content: markerContent, // 将 html 传给 content
+                        offset: new AMap.Pixel(-13, -30) // 以 icon 的 [center bottom] 为原点
+                    }));
+                
+                    map.add(markers[i]); 
                 })(i);
-            }  
-        })
+            }
 
-        document.dispatchEvent(LoadedPointsEvent);
+            let shwoName = document.querySelectorAll("div.num");
+            for(var i = 0; i < num; i++){
+                shwoName[i].addEventListener("mouseover", function(){
+                    shwoName[i].setAttribute("point-name", names[i]);
+                })
+                shwoName[i].addEventListener("mouseout", function(){
+                    shwoName[i].setAttribute("point-name", "");
+                })
+            }
+            AMap.plugin('AMap.Walking', function () {
+                const walking = new AMap.Walking({
+                    map: map,
+                    panel: "panel"
+                });
+            
+                function drawPolyline(index, path) {
+                    polylines[index] = new AMap.Polyline({
+                        path: path,
+                        isOutline: true,
+                        outlineColor: "#" + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0'),
+                        borderWeight: 1,
+                        strokeColor: "#" + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0'),
+                        strokeOpacity: 0.9,
+                        strokeWeight: 2,
+                        strokeStyle: "solid",
+                        lineJoin: "round",
+                        lineCap: "round",
+                    });
+                    map.add(polylines[index]);
+                }
+            
+                for (var i = 0; i < latitudes.length - 1; i++) {
+                    (function (index) {
+                        walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
+                            if (status === 'complete') {
+                                // 绘制步行导航路线
+                                var path = result.routes[0].steps.map(step => step.path);
+                                drawPolyline(index, [].concat.apply([], path));
+                            } else {
+                                alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
+                            }
+                        });
+                    })(i);
+                }
+            });
+            
+            document.dispatchEvent(LoadedPointsEvent);
+        }
 
     })
     .catch((e) => {

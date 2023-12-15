@@ -190,9 +190,15 @@ hr {
 
 
 .PList {
-    
+    height: 11vh;
     table-layout: fixed;
     width: 100%;
+}
+
+
+.pbtn {
+    font-size: smaller;
+    height: 60%;
 }
 
 
@@ -279,5 +285,41 @@ hr {
     background-color: transparent;
     padding: 5px;
     border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.refreshPoints:hover::before {
+    content: "保存数据并修改点位顺序";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.reloadPoints:hover::before {
+    content: "重置点位数据";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.sendPointsMS:hover::before {
+    content: "保存数据并发送到服务器";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
     border-radius: 5px;
 }

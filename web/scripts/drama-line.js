@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 points.push(state);
                             }
                             sessionStorage.setItem("points", JSON.stringify(points));
+                            sessionStorage.setItem("pointsName", grades[i].course);
                             window.parent.postMessage({ action: "pointStates", num: num}, "*");
                         }
                     }
@@ -85,15 +86,5 @@ document.addEventListener('DOMContentLoaded', function() {
         grades.push({order: j + 1, course: line[j + 1]});
     // 刷新表格
     displayGrades();
-
-
-    var states = ["nihao:dwada:123456", "chao:tnnd:234567", "hello:world:345678"];
-
-    var points = [];
-    for (var i = 0; i < 3; i++){
-        var state = states.split(":");
-        points.append(state);
-    }
-    sessionStorage.setItem("points", JSON.stringify(points));
 
     });

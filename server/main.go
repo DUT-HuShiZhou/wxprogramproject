@@ -329,5 +329,23 @@ func main() {
 			c.String(http.StatusOK, "调整点位顺序成功")
 		}
 	})
+	r.POST("/wxgetmissionlist", func(c *gin.Context) {
+		var revdata struct {
+			dramascriptid string `json:"dramascriptid"`
+		}
+	})
+	r.POST("/wxgetquestiondata", func(c *gin.Context) {
+		var revdata struct {
+			dramascriptid string `json:"dramascriptid"`
+			missionname   string `json:"missionname"`
+		}
+		errflag1 := c.BindJSON(&revdata)
+		if errflag1 != nil {
+			println("获取剧本名称和任务名称失败")
+		} else {
+			
+		}
+
+	})
 	r.Run(":8000")
 }

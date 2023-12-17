@@ -1,0 +1,39 @@
+/* pages/missionpage/missionpage.wxss */
+@import "./iconfont.wxss";
+.pageofmissionpage{
+    width: 100vw;
+    height: 100vh;
+    background-color: #426FFE;
+}
+#missioncardgrid{
+    width: 90vw;
+    height: 75vh;
+    display: grid;
+    position: absolute;
+    left: 5vw;
+    top: 9vh;
+    grid-template-columns:repeat(auto-fill,20vh);/** 平铺宽度为100px的单元格 */
+    grid-template-rows: 20vh;/** 设置高度为100px */
+    grid-auto-rows: 20vh;/** 当容易高度不够时，多余的组件高度将怎么分配，默认的高度由单元格内容决定 */
+    justify-content: center;/** 水平居中  */
+    grid-gap: 15rpx;/** 水平和垂直间距为10rpx*/
+    padding: 15rpx;
+}
+.item {
+    background:linear-gradient(to bottom right,#5EFCE8,#736EFE);
+    font-size: 15px;
+    color: white;
+    display: flex;
+  }
+.navigatorbar{
+    width: 100vw;
+    height: 10vh;
+    background-color: blue;
+    position: absolute;
+    bottom: 0;
+}
+.e601{
+    font-size: 30px;
+    font-weight: bold;
+    color:white;
+}

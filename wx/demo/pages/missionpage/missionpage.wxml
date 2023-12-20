@@ -1,0 +1,32 @@
+<!--pages/missionpage/missionpage.wxml-->
+<view class="pageofmissionpage">
+    <view>
+        <van-icon name="revoke" color="white" size="25px" style="position: absolute;top: 0.1vh;left: 0.1vw;"/>
+        <text style="color: white;position: absolute;top: 0.1vh;left: 12vw;">时间显示测试</text>
+        <text style="color: yellow;font-size: 12px;font-weight: bold;position: absolute;top: 4vh;left: 30vw;">点击下方卡片，领取任务</text>
+    </view>
+    <view id="missioncardgrid">
+        <view class="item" wx:for="{{missionlist}}">
+            <view style="position: relative;top: 4vh;left: 11.5vw;display: flex;flex-direction: column;">
+               <text>{{item.name}}</text>
+               <view style="position: relative;left: 2vw;">
+                    <van-image round width="30rpx" height="30rpx" src="https://img.51miz.com/preview/element/00/01/07/87/E-1078798-43F5817D.jpg"/>
+                <text style="color: white;font-weight: bold;font-size: 13px;">{{item.score}}</text>
+                </view>
+            </view>
+            <view wx:if="{{item.status}}" style="background-color: green;border-radius: 5px;width: 60px;height: 20px;position: relative;top: 13vh;right: 3.5vw;text-align: center;font-weight: bold;">
+                <text style="color: white;font-size: 12px;">已经完成</text>
+            </view>
+        </view>
+    </view>
+    <view class="navigatorbar" style="display: flex;flex-direction: row;align-items: center;">
+        <view style="width: 15vw;height: 9vh;text-align: center;position: absolute;left: 15vw;display: flex;flex-direction: column;">
+            <van-icon name="comment" color="white" size="35px"/>
+            <text style="font-size: 12px;font-weight: bold;color: white;">现场求助</text>
+        </view>
+        <view style="width: 15vw;height: 9vh;text-align: center;position: absolute;right: 15vw;">
+            <view class="iconfont icon-wxprojbeibao1 e601"></view>
+            <text style="font-size: 12px;font-weight: bold;color: white;">我的背包</text>
+        </view>
+    </view>
+</view>

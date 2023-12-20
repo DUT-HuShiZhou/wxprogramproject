@@ -1,0 +1,15 @@
+<!--pages/questionpage/questionpage.wxml-->
+<scroll-view scroll-y="true" class="questionpage">
+    <view wx:if="{{mediadata.type == 'video'}}" class="videoquestion">
+        <video
+            id="testvideo"
+            src="{{mediadata.url}}"
+        ></video>
+    <text style="color: white;font-weight: bold;">{{questiondata.question}}</text>
+    </view>
+    <view wx:if="{{questiondata.type == 'selection'}}" class="selectiontemplate">
+        <view class="selectionItem" wx:for="{{questiondata.answerlist}}" style="text-align: center;">
+            <text style="color: white;font-weight: bold;position: relative;top: 3vh;left: 5vw;">{{item}}</text>
+        </view>
+    </view>
+</scroll-view>

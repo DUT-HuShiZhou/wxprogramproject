@@ -1,4 +1,5 @@
 const LoadedPointsEvent = new CustomEvent("PointsLoaded", {detail: {id:"loadNum"}});
+const SelectedPointEvent = new CustomEvent("PointSelected");
 
 AMapLoader.load({
     key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -86,7 +87,7 @@ AMapLoader.load({
                 (function(i){       
                     var markerContent = '' +
                     '<div class="custom-content-marker">' +
-                    '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
+                    '   <img class="pointImg-' + i + '"' + ' src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' + 
                     '   <div class="num" point-name=' + names[i] + '>'+ String(i + 1) +'</div>'
                     '</div>'; // 打点图标
 
@@ -97,7 +98,13 @@ AMapLoader.load({
                         offset: new AMap.Pixel(-13, -30) // 以 icon 的 [center bottom] 为原点
                     }));
                 
-                    map.add(markers[i]); 
+                    map.add(markers[i]);
+                    
+                    var img = document.querySelector("img.pointImg-" + i);
+                    img.addEventListener("click", function(){
+                        sessionStorage.setItem("SP", i);
+                        document.dispatchEvent(SelectedPointEvent);
+                    });
                 })(i);
             }
 

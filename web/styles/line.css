@@ -142,11 +142,104 @@ a:hover {
 
 .bottom {
     bottom: 0;
-    width: 90%;
-    height: 10%;
+    width: 90vw;
+    height: 10vh;
     display: flex;
     position: fixed;
     border: 1px solid black;
+}
+
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+
+.SelectedPoint-num {
+    width: 10%;
+}
+
+
+.SelectedPoint-name {
+    width: 15%;
+}
+
+
+.SelectedPoint-description {
+    width: 40%;
+}
+
+
+.SelectedPoint-longitude {
+    width: 15%;
+}
+
+
+.SelectedPoint-latitude {
+    width: 15%;
+}
+
+
+.SelectedPoint-options {
+    width: 5%;
+}
+
+
+.SP-input {
+    width: 8vw;
+}
+
+
+.SP-description {
+    width: 30vw;
+}
+
+
+.SP-options {
+    font-size: 7vh;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    right: 10vw;
+    position: fixed;
+}
+
+
+.SP-options:hover {
+    background: none;
+}
+
+
+.SP {
+    line-height: 10vh;
+}
+
+
+.OptionBlock {
+    position: fixed;
+    right: 10vw;
+    bottom: 10vh;
+    height: 5vh;
+    width: 13vw;
+}
+
+
+.SP-option {
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 2.7vh;
+}
+
+
+.SP-option:hover {
+    background: none;
+    color: red;
 }
 
 

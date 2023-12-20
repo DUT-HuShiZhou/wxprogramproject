@@ -35,6 +35,35 @@
                 </main>
                 <aside class="bottom sidebar">
                     <nav class="container">
+                        <div class="SelectedPoint-num SP">
+                            <span>序号:</span>
+                            <span class="SP-num"></span>
+                        </div>
+                        <div class="SelectedPoint-name SP">
+                            <span>名称:</span>
+                            <input class="SP-name SP-input">
+                        </div>
+                        <div class="SelectedPoint-description SP">
+                            <span>描述:</span>
+                            <input class="SP-description SP-input">
+                        </div>
+                        <div class="SelectedPoint-longitude SP">
+                            <span>纬度:</span>
+                            <input class="SP-longitude SP-input">
+                        </div>
+                        <div class="SelectedPoint-latitude SP">
+                            <span>经度:</span>
+                            <input class="SP-latitude SP-input">
+                        </div>
+                        <div class="SelectedPoint-options SP">
+                            <button class="SP-options">➧</button>
+                        </div>
+                        <div class="OptionBlock" style="display: none;">
+                            <button class="SP-Sure SP-option">确定</button>
+                            <button class="SP-Reget SP-option">重置</button>
+                            <button class="SP-Delete SP-option">删除</button>
+                            <button class="SP-Cancer SP-option">取消</button>
+                        </div>
                     </nav>
                 </aside>
             </div>
@@ -52,6 +81,9 @@
                         </div>
                         <div class="addpoint dbtn">
                             <button class="addpoint-btn bbtn">添加点位</button>
+                        </div>
+                        <div class="clearcache dbtn">
+                            <button class="clearcache-btn bbtn">清除缓存</button>
                         </div>
                     </div>
                     <hr />

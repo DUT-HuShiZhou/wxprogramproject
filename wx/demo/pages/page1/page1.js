@@ -8,7 +8,8 @@ Page({
     active:0,
     dramascriptid:null,
     numofpets:4,
-    username:"hushizhou",
+    username:null,
+    avatarurl:null,
     schoolname:"DUT"
   },
   onChange(event) {
@@ -19,7 +20,10 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.setData({
+        username: options.username,
+        avatarurl: options.avatarurl
+    });
   },
 
   /**
@@ -77,9 +81,18 @@ Page({
           success(res){
               console.log("扫码成功" + JSON.stringify(res));
               that.setData({
-                  dramascriptid:res.result
+                  dramascriptid:res.result.split(",")[0],
               });
+              if(that.data.dramascriptid != null){
+                  wx.navigateTo({
+                url: '/pages/gamepage/gamepage?dramascriptid='+that.data.dramascriptid+'&dramascriptcreator='+res.result.split(",")[1]+'&activityid='+res.result.split(",")[2]+'&username='+that.data.username,
+                success: function(res){
+        
+                }
+                });
+              }
+              
           }
       })
-  }
+  },
 })

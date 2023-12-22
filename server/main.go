@@ -330,20 +330,127 @@ func main() {
 		}
 	})
 	r.POST("/wxgetmissionlist", func(c *gin.Context) {
+		var queryres string
+		var missionlist []interface{}
 		var revdata struct {
-			dramascriptid string `json:"dramascriptid"`
+			Dramascriptid string `json:"dramascriptid"`
+			Missionname   string `json:"missionname"`
+			Username      string `json:"username"`
 		}
-	})
-	r.POST("/wxgetquestiondata", func(c *gin.Context) {
-		var revdata struct {
-			dramascriptid string `json:"dramascriptid"`
-			missionname   string `json:"missionname"`
+		var mission struct {
+			Missionid   int    `json:"missionid"`
+			Missionname string `json:"missionname"`
+			Status      string `json:"status"`
+			Score       int    `json:"score"`
+		}
+		var resultjson struct {
+			Data interface{} `json:"data"`
 		}
 		errflag1 := c.BindJSON(&revdata)
 		if errflag1 != nil {
 			println("获取剧本名称和任务名称失败")
 		} else {
-			
+			println(revdata.Dramascriptid)
+			println(revdata.Missionname)
+			println(revdata.Username)
+			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
+			println(queryres)
+			rows, errflag2 := database.Query("select missionid,missionname,status,score from dramascript" + queryres + "of" + revdata.Username)
+			if errflag2 != nil {
+				println("获取任务列表失败")
+			} else {
+				for rows.Next() {
+					rows.Scan(&mission.Missionid, &mission.Missionname, &mission.Status, &mission.Score)
+					missionlist = append(missionlist, mission)
+				}
+			}
+			print(mission.Missionname)
+			resultjson.Data = missionlist
+			c.JSON(http.StatusOK, resultjson)
+
+		}
+
+	})
+	r.POST("/wxgetquestiondata", func(c *gin.Context) {
+		var queryres string
+		var revdata struct {
+			Dramascriptid string `json:"dramascriptid"`
+			Missionname   string `json:"missionname"`
+			Username      string `json:"username"`
+		}
+		var questiondata struct {
+			Mediatype                string `json:"mediatype"`
+			Mediaaddress             string `json:"mediaaddress"`
+			Mediadescription         string `json:"mediadescription"`
+			Questiontype             string `json:"questiontype"`
+			Questiondescription      string `json:"questiondescription"`
+			Questioninfo             string `json:"questioninfo"`
+			Questionanswerdescrption string `json:"questionanswerdescription"`
+		}
+		var resultjson struct {
+			Data interface{} `json:"data"`
+		}
+		errflag1 := c.BindJSON(&revdata)
+		if errflag1 != nil {
+			println("获取剧本名称和任务名称失败")
+		} else {
+			println(revdata.Dramascriptid)
+			println(revdata.Missionname)
+			println(revdata.Username)
+			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
+			println(queryres)
+			database.QueryRow("select mediatype,mediaaddress,mediadescription,questiontype,questiondescription,questioninfo,questionanswerdescription from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Mediatype, &questiondata.Mediaaddress, &questiondata.Mediadescription, &questiondata.Questiontype, &questiondata.Questiondescription, &questiondata.Questioninfo, &questiondata.Questionanswerdescrption)
+			resultjson.Data = questiondata
+			c.JSON(http.StatusOK, resultjson)
+		}
+
+	})
+	r.POST("/wxuserparticipatedatainactivity", func(c *gin.Context) {
+		var resdata struct {
+			Username           string `json:"username"`
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Activityid         string `json:"activityid"`
+		}
+		var data2send struct {
+			TotalScore         int    `json:"totalscore"`
+			Scoreuserget       int    `json:"scoreuserget"`
+			Userfirstlogintime string `json:"userfirstlogintime"`
+			Tooluserget        string `json:"tooluserget"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("用户活动参与情况获取失败")
+		} else {
+			println(resdata.Activityid)
+			println(resdata.Dramascriptcreator)
+			println(resdata.Username)
+			database.QueryRow("select scoreuserneedtoget from activitylistof"+resdata.Dramascriptcreator+" where activityid= ?", resdata.Activityid).Scan(&data2send.TotalScore)
+			println(data2send.TotalScore)
+			database.QueryRow("select scoreuserget,tooluserget,userfirstlogintime from activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" where username= ?", resdata.Username).Scan(&data2send.Scoreuserget, &data2send.Tooluserget, &data2send.Userfirstlogintime)
+			println(data2send.Scoreuserget, data2send.Tooluserget, data2send.Userfirstlogintime)
+		}
+		c.JSON(http.StatusOK, data2send)
+	})
+	r.POST("/wxupdatescoreuserget", func(c *gin.Context) {
+		var resdata struct {
+			Scoreuserget       int    `json:"scoreuserget"` //这里打算后期写一下用户使用了道具之后，对道具的清除操作
+			Username           string `json:"username"`
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Activityid         string `json:"activityid"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("获取微信小程序反馈的更新用户分数失败")
+		} else {
+			println("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set scoreuserget=" + strconv.Itoa(resdata.Scoreuserget) + " where username= ?")
+			_, errflag2 := database.Exec("update activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" set scoreuserget="+strconv.Itoa(resdata.Scoreuserget)+" where username= ?", resdata.Username)
+			if errflag2 != nil {
+				println("更新用户分数失败")
+				println(errflag2)
+				c.String(http.StatusOK, "更新用户分数失败")
+			} else {
+				c.String(http.StatusOK, "成功更新用户分数")
+			}
 		}
 
 	})

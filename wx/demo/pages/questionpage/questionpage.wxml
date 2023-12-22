@@ -1,5 +1,9 @@
 <!--pages/questionpage/questionpage.wxml-->
 <scroll-view scroll-y="true" class="questionpage">
+    <view style="display: flex;flex-direction: row;">
+        <van-icon name="revoke" size="25px" color="white" style="position: absolute;top: 1.5vh;left: 2vw;" bind:tap="gobacktomissionpage"/>
+        <text style="color: white; position: absolute; top: 1.5vh; left: 12vw;">时间显示测试</text>
+    </view>
     <view wx:if="{{mediadata.type == 'video'}}" class="videoquestion">
         <video
             id="testvideo"
@@ -7,9 +11,33 @@
         ></video>
     <text style="color: white;font-weight: bold;">{{questiondata.question}}</text>
     </view>
+    <view wx:if="{{mediadata.type == 'image'}}" class="imagequestion">
+        <van-image width="90vw" height="30vh" src="{{mediadata.url}}"/>
+        <text style="color: white;font-weight: bold;">{{questiondata.question}}</text>
+    </view>
+    <view wx:if="{{mediadata.type == 'audio'}}" class="audioquestion" style="display: flex;flex-direction: column;">
+        <view style="width: 90vw;height: 10vh;">
+            <van-icon wx:if="{{isaudioplay}}" name="pause-circle-o" color="white" size="50px" bind:tap="audiopause"/>
+            <van-icon wx:if="{{!isaudioplay}}" name="play-circle-o" color="white" size="50px" bind:tap="audioplay"/>
+        </view>
+        <text style="color: white;font-weight: bold;">{{questiondata.question}}</text>
+    </view>
+    <view wx:if="{{hasuserchoosecurrectanswer}}">
+        <text style="color: white;font-weight: bold;position: absolute;top: 43.5vh;left: 32.5vw">恭喜你回答正确</text>
+    </view>
     <view wx:if="{{questiondata.type == 'selection'}}" class="selectiontemplate">
-        <view class="selectionItem" wx:for="{{questiondata.answerlist}}" style="text-align: center;">
-            <text style="color: white;font-weight: bold;position: relative;top: 3vh;left: 5vw;">{{item}}</text>
+        <view class="selectionItem" wx:for="{{questiondata.answerlist}}" style="text-align: center;" data-answername="{{item}}" data-status="" bind:tap="checkanswer">
+            <text class="{{(hasuserchoosecurrectanswer&&item==questiondata.currectanswer)?'activeanswer':'normalanswer'}}">{{item}}</text>
+        </view>
+    </view>
+    <view class="navigatorbar" style="display: flex;flex-direction: row;align-items: center;">
+        <view style="width: 15vw;height: 9vh;text-align: center;position: absolute;left: 15vw;display: flex;flex-direction: column;">
+            <van-icon name="comment" color="white" size="35px"/>
+            <text style="font-size: 12px;font-weight: bold;color: white;">现场求助</text>
+        </view>
+        <view style="width: 15vw;height: 9vh;text-align: center;position: absolute;right: 15vw;">
+            <view class="iconfont icon-wxprojbeibao1 e601"></view>
+            <text style="font-size: 12px;font-weight: bold;color: white;">我的背包</text>
         </view>
     </view>
 </scroll-view>

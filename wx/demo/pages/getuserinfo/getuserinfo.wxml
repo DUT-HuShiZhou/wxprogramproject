@@ -1,0 +1,12 @@
+<!--pages/getuserinfo/getuserinfo.wxml-->
+<view class="getuserinfopage" style="display: flex;flex-direction: column;">
+    <view style="display: flex;flex-direction: row;">
+        <text style="color: white;font-weight: bold;font-size: 20px;margin-bottom: 2vh;position: relative;left: 5vw;">填写用户信息</text>
+    </view>
+    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="getUserAvatar" style="background-color: #426FFE;">
+    <van-image round width="100px" height="100px" src="{{avatarUrl}}" fit="contain"/>
+    </button> 
+    <input type="nickname" class="weui-input" placeholder="请输入昵称" bindblur="getusername" style="width: 80vw;height: 2vh;background-color: white;position: relative;left: 10vw;border-radius: 5px;"/>
+    <van-button round type="default" style="position: absolute;left: 39.5vw;top: 40vh;" bind:tap="submitdata" >提交</van-button>
+</view>
+

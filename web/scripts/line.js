@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", function() {
     let sp = document.querySelector("button.sp-btn");
     let freshmapbtn = document.querySelector("button.freshmap-btn");
     let addp = document.querySelector("button.addpoint-btn");
+    let clearcache = document.querySelector("button.clearcache-btn");
+
+    let SP_option = document.querySelector("button.SP-options");
+    let SP_sure = document.querySelector("button.SP-Sure");
+    let SP_reget = document.querySelector("button.SP-Reget");
+    let SP_delete = document.querySelector("button.SP-Delete");
+    let SP_cancer = document.querySelector("button.SP-Cancer");
 
     let ifm = document.querySelector("iframe.line-ifm");
     let ls = document.querySelector("div.line-show");
@@ -98,6 +105,10 @@ document.addEventListener("DOMContentLoaded", function() {
             mainplace.style.display = "flex";
         }
     })
+
+    this.addEventListener("PointSelected", function(event){
+        SP_set();
+    })
     
     clear();
     mainplace.style.display = "flex";
@@ -144,9 +155,9 @@ document.addEventListener("DOMContentLoaded", function() {
             var pointnum = rowHeader.insertCell();
             pointnum.innerHTML = "<p>点位<p>";
             var Longitude = rowHeader.insertCell();
-            Longitude.innerHTML = "<p>经度<p>";
+            Longitude.innerHTML = "<p>纬度<p>";
             var Latitude = rowHeader.insertCell();
-            Latitude.innerHTML = "<p>纬度<p>";
+            Latitude.innerHTML = "<p>经度<p>";
             var Name = rowHeader.insertCell();
             Name.innerHTML = "<p>名称<p>";
             var Description = rowHeader.insertCell();
@@ -281,6 +292,91 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    clearcache.onclick = function() {
+        sessionStorage.removeItem("cachePoints");
+        sessionStorage.removeItem("SP");
+    }
+
+    SP_option.onclick = function() {
+        var computedColor = window.getComputedStyle(SP_option).color;
+    
+        if (computedColor === "rgb(0, 0, 0)" && sessionStorage.getItem("SP")) {
+            var optionBlock = document.querySelector("div.OptionBlock");
+            optionBlock.style.display = "block";
+            SP_option.style.color = "red";
+        } 
+        else if (sessionStorage.getItem("SP")) {
+            var optionBlock = document.querySelector("div.OptionBlock");
+            optionBlock.style.display = "none";
+            SP_option.style.color = "black";
+        } 
+        else {
+            alert("您没有选择具体的点位，无法进行此操作");
+        }
+    }
+
+    SP_sure.onclick = function() {
+        var newpoint = [];
+        var SPlongi = document.querySelector("input.SP-longitude");
+        newpoint.push(SPlongi.value);
+        var SPlati = document.querySelector("input.SP-latitude");
+        newpoint.push(SPlati.value);
+        var SPname = document.querySelector("input.SP-name");
+        newpoint.push(SPname.value);
+        var SPdescr = document.querySelector("input.SP-description");
+        newpoint.push(SPdescr.value);
+        var points = []
+        var i = sessionStorage.getItem("SP");
+        if (sessionStorage.getItem("cachePoints")){
+            points = JSON.parse(sessionStorage.getItem("cachePoints"));
+        }
+        else{
+            points = JSON.parse(sessionStorage.getItem("points"));
+        }
+        points[i] = newpoint;
+        sessionStorage.setItem("cachePoints", JSON.stringify(points));
+        alert("信息以进行临时缓存，如要上传至服务器，请点击保存按钮操作");
+        document.dispatchEvent(resetPointsEvent);
+    }
+
+    SP_reget.onclick = function() {
+        SP_set();
+    }
+
+    SP_delete.onclick = function() {
+        var result = confirm("此选项将暂时删除该点数据(点击“点位顺序切换”栏中的重置即可恢复)，如果要确认此行为，请点击保存上传至服务器，即可更新本地数据，再次确认是否删除？");
+        if (result){
+            var points = []
+            var i = sessionStorage.getItem("SP");
+            if (sessionStorage.getItem("cachePoints")){
+                points = JSON.parse(sessionStorage.getItem("cachePoints"));
+            }
+            else{
+                points = JSON.parse(sessionStorage.getItem("points"));
+            }
+            points.splice(i, 1);
+            sessionStorage.setItem("cachePoints", JSON.stringify(points));
+            document.dispatchEvent(resetPointsEvent);
+        }
+    }
+
+    SP_cancer.onclick = function() {
+        var SPnum = document.querySelector("span.SP-num");
+        SPnum.textContent = "";
+        var SPname = document.querySelector("input.SP-name");
+        SPname.value = "";
+        var SPdescr = document.querySelector("input.SP-description");
+        SPdescr.value = "";
+        var SPlongi = document.querySelector("input.SP-longitude");
+        SPlongi.value = "";
+        var SPlati = document.querySelector("input.SP-latitude");
+        SPlati.value = "";
+        sessionStorage.removeItem("SP");
+        var optionBlock = document.querySelector("div.OptionBlock");
+            optionBlock.style.display = "none";
+            SP_option.style.color = "black";
+    }
+
     function BNbtnDisplace () {
         var btns = document.querySelectorAll(".Before");
         btns[0].style.display = "none";
@@ -319,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     sendbtn.onclick = function() {
-        var result = confirm("此选项将改变服务器保存的数据，请再次确认是否更改");
+        var result = confirm("此选项将改变服务器保存的数据，请再次确认是否更改？");
         if (result){
             sessionStorage.setItem("points", sessionStorage.getItem("cachePoints"));
             sessionStorage.removeItem("cachePoints");
@@ -338,4 +434,27 @@ document.addEventListener("DOMContentLoaded", function() {
             xhr.send(params);
         }
     }
+
+    function SP_set() {
+        var points = [];
+        var i = sessionStorage.getItem("SP");
+        if (sessionStorage.getItem("cachePoints")){
+            points = JSON.parse(sessionStorage.getItem("cachePoints"));
+        }
+        else{
+            points = JSON.parse(sessionStorage.getItem("points"));
+        }
+        var Spoint = points[i];
+        var SPnum = document.querySelector("span.SP-num");
+        SPnum.textContent = i;
+        var SPname = document.querySelector("input.SP-name");
+        SPname.value = Spoint[2];
+        var SPdescr = document.querySelector("input.SP-description");
+        SPdescr.value = Spoint[3];
+        var SPlongi = document.querySelector("input.SP-longitude");
+        SPlongi.value = Spoint[0];
+        var SPlati = document.querySelector("input.SP-latitude");
+        SPlati.value = Spoint[1];
+    }
+
 })

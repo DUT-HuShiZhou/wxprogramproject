@@ -1,4 +1,5 @@
 /* pages/questionpage/questionpage.wxss */
+@import "./iconfont.wxss";
 .questionpage{
     width: 100vw;
     height: 100vh;
@@ -9,7 +10,7 @@
     height: 55vh;
     position: absolute;
     left: 10vw;
-    top: 42.5vh;
+    top: 48.5vh;
     display: grid;
     grid-template-columns:repeat(auto-fill,80vw);/** 平铺宽度为100px的单元格 */
     grid-template-rows: 10vh;/** 设置高度为100px */
@@ -28,10 +29,50 @@
     width: 90vw;
     height: 35vh;
     position: absolute;
-    top: 3vh;
+    top: 8vh;
     left: 3vh;
 }
 #testvideo{
     width: 90vw;
     height: 30vh;
+}
+.imagequestion{
+    width: 90vw;
+    height: 35vh;
+    position: absolute;
+    top: 8vh;
+    left: 3vh;
+}
+.audioquestion{
+    width: 90vw;
+    height: 35vh;
+    position: absolute;
+    top: 8vh;
+    left: 3vh;
+}
+.normalanswer{
+    color: white;
+    font-weight: bold;
+    position: relative;
+    top: 3vh;
+    left: 5vw;
+}
+.activeanswer{
+    color: greenyellow;
+    font-weight: bold;
+    position: relative;
+    top: 3vh;
+    left: 5vw;
+}
+.navigatorbar{
+    width: 100vw;
+    height: 10vh;
+    background-color: blue;
+    position: absolute;
+    bottom: 0;
+}
+.e601{
+    font-size: 30px;
+    font-weight: bold;
+    color:white;
 }

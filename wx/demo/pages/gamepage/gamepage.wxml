@@ -1,5 +1,8 @@
 <!--pages/gamepage.wxml-->
 <view class="pageofgameplay">
+    <view>
+        <text style="color: white;position: absolute;top: 3.5vh;left: 5vw;font-weight:bold;">活动开始{{days}}天{{hours}}小时{{minutes}}分钟{{seconds}}秒</text>
+    </view>
     <map id="gameplaymap" style="position: absolute;top: 10vh;"></map>
     <view style="position: absolute;top: 15vh;width: 100vw;">
         <text style="color: #736EFE;position: absolute;font-weight: bold;top: -5vh;">任务完成进度</text>
@@ -13,7 +16,7 @@
             <van-image round width="85px" height="85px" src="https://bpic.588ku.com/element_pic/20/07/01/50b3e9de64acca7b2b8e8ef56e498309.jpg" style="position: absolute;left: 5.5vw;top: 3.5vh;"/>
         </view>
         <view id="getmissionbutton">
-        <text style="color: #736EFE;font-weight: bold;position: absolute;left: 7.5vw;top: 0.5vh;">领取任务</text>
+        <text style="color: #736EFE;font-weight: bold;position: absolute;left: 7.5vw;top: 0.5vh;" bind:tap="getmission">领取任务</text>
         </view>
     </view>
     <van-popup show="{{show}}" overlay="{{overlay}}" bind:close="onClose" position="bottom"custom-style="height:31.5%">

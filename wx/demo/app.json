@@ -1,12 +1,13 @@
 {
   "pages": [
-    "pages/missionpage/missionpage",
-    "pages/questionpage/questionpage",  
-    "pages/gamepage/gamepage",
+    "pages/login/login",
+    "pages/getuserinfo/getuserinfo",
     "pages/page1/page1",
+    "pages/missionpage/missionpage",
+    "pages/gamepage/gamepage",
+    "pages/questionpage/questionpage",
     "pages/index/index",
     "pages/logs/logs"
-    
   ],
   "window": {
     "navigationBarTextStyle": "black",

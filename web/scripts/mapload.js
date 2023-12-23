@@ -1,5 +1,5 @@
-const LoadedPointsEvent = new CustomEvent("PointsLoaded", {detail: {id:"loadNum"}});
-const SelectedPointEvent = new CustomEvent("PointSelected");
+const LoadedPointsEvent = new CustomEvent("PointsLoaded", {detail: {id:"loadNum"}}); // 点位加载完毕事件
+const SelectedPointEvent = new CustomEvent("PointSelected"); // 点位选择事件
 
 AMapLoader.load({
     key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -7,11 +7,6 @@ AMapLoader.load({
     plugin: "AMap.Walking" 
     })
     .then((AMap) => {
-        var longitudes = [38.878836, 38.879255, 38.881568, 38.884894, 38.886284];
-        var latitudes = [121.60142, 121.601946, 121.602505, 121.605681, 121.604963];
-        sessionStorage.setItem("points",JSON.stringify([[38.878836,121.60142,"你好0",0],[38.879255,121.601946,"你好1",0],[38.881568,121.602505,"你好2",0],[38.884894,121.605681,"你好3",0],[38.886284, 121.604963,"你好4",0]]));
-        var names = ["你好0", "你好1", "你好2", "你好3", "你好4"];
-
         const layer = new AMap.createDefaultLayer({
             zooms: [3, 20], //可见级别
             visible: true, //是否可见
@@ -32,14 +27,13 @@ AMapLoader.load({
         });
         map.add(traffic);
 
-        map.setCenter([latitudes[0], longitudes[0]]);
+        var markers = []; // 点位存放数组
+        var polylines = []; // 路线存放数组
 
-        var markers = [];
-        var polylines = [];
-
+        // 路线选择事件监听相应函数
         window.parent.addEventListener("message", function(event){
             if (event.data.action === "pointStates"){   // 验证是否为点位消息   
-                var points = JSON.parse(sessionStorage.getItem("points"));
+                var points = JSON.parse(sessionStorage.getItem("points")); // 转化本地数据为数组形式
                 var longitudes = [];
                 var latitudes = [];
                 var names = [];
@@ -48,7 +42,8 @@ AMapLoader.load({
                     latitudes.push(points[i][1]);
                     names.push(points[i][2]);
                 };
-
+                
+                // 设置路线中心点
                 map.setCenter([latitudes[0], longitudes[0]]);
 
                 freshMap(event.data.num, longitudes, latitudes, names);
@@ -56,6 +51,7 @@ AMapLoader.load({
             return;
         }, false);
 
+        // 刷新点位事件监听函数
         document.addEventListener("resetPoints", function(event) {
             if (sessionStorage.getItem("cachePoints")){
                 var points = JSON.parse(sessionStorage.getItem("cachePoints"));
@@ -76,13 +72,15 @@ AMapLoader.load({
             freshMap(points.length, longitudes, latitudes, names);
         })
 
-        freshMap(5, longitudes, latitudes, names)
-
+        // 地图刷新函数主体
         function freshMap(num, longitudes, latitudes, names) {
+            // 清除地图点位数据
             map.clearMap();
+            // 清空数组数据
             markers = [];
             polylines = [];
             
+            // 点位HTML数据添加
             for(var i = 0; i < num; i++){       
                 (function(i){       
                     var markerContent = '' +
@@ -100,6 +98,7 @@ AMapLoader.load({
                 
                     map.add(markers[i]);
                     
+                    // 添加图片点击函数，触发点位选择事件
                     var img = document.querySelector("img.pointImg-" + i);
                     img.addEventListener("click", function(){
                         sessionStorage.setItem("SP", i);
@@ -108,6 +107,7 @@ AMapLoader.load({
                 })(i);
             }
 
+            // 设置鼠标选中显示名称
             let shwoName = document.querySelectorAll("div.num");
             for(var i = 0; i < num; i++){
                 shwoName[i].addEventListener("mouseover", function(){
@@ -117,6 +117,8 @@ AMapLoader.load({
                     shwoName[i].setAttribute("point-name", "");
                 })
             }
+
+            // 进行步行路线搜索
             AMap.plugin('AMap.Walking', function () {
                 const walking = new AMap.Walking({
                     map: map,
@@ -139,6 +141,7 @@ AMapLoader.load({
                     map.add(polylines[index]);
                 }
             
+                // 绘制路线图形
                 for (var i = 0; i < latitudes.length - 1; i++) {
                     (function (index) {
                         walking.search([latitudes[index], longitudes[index]], [latitudes[index + 1], longitudes[index + 1]], function (status, result) {
@@ -154,6 +157,7 @@ AMapLoader.load({
                 }
             });
             
+            // 触发点位加载完毕事件
             document.dispatchEvent(LoadedPointsEvent);
         }
 

@@ -1,32 +1,33 @@
 document.addEventListener("DOMContentLoaded", function() {
-    let sl = document.querySelector("button.sl-btn");
-    let sp = document.querySelector("button.sp-btn");
-    let freshmapbtn = document.querySelector("button.freshmap-btn");
-    let addp = document.querySelector("button.addpoint-btn");
-    let clearcache = document.querySelector("button.clearcache-btn");
+    let sl = document.querySelector("button.sl-btn"); // 路线选择按钮
+    let sp = document.querySelector("button.sp-btn"); // 路线创建按钮
+    let freshmapbtn = document.querySelector("button.freshmap-btn"); // 刷新地图按钮    
+    let addp = document.querySelector("button.addpoint-btn"); // 点位添加按钮
+    let clearcache = document.querySelector("button.clearcache-btn"); // 清楚缓存按钮
 
-    let SP_option = document.querySelector("button.SP-options");
-    let SP_sure = document.querySelector("button.SP-Sure");
-    let SP_reget = document.querySelector("button.SP-Reget");
-    let SP_delete = document.querySelector("button.SP-Delete");
-    let SP_cancer = document.querySelector("button.SP-Cancer");
+    let SP_option = document.querySelector("button.SP-options"); // 点位选择按钮
+    let SP_sure = document.querySelector("button.SP-Sure"); // 点位确定按钮
+    let SP_reget = document.querySelector("button.SP-Reget"); // 点位重置按钮
+    let SP_delete = document.querySelector("button.SP-Delete"); // 点位删除按钮
+    let SP_cancer = document.querySelector("button.SP-Cancer"); // 取消操作按钮
 
-    let ifm = document.querySelector("iframe.line-ifm");
-    let ls = document.querySelector("div.line-show");
-    let Plist = document.querySelector(".PList");
+    let ifm = document.querySelector("iframe.line-ifm"); // 嵌入框架iframe
+    let ls = document.querySelector("div.line-show"); // 路线选择块
+    let Plist = document.querySelector(".PList"); // 点位顺序表格
 
-    let mainplace = document.querySelector("div.mainplace");
+    let mainplace = document.querySelector("div.mainplace"); // 地图块
 
-    let refreshbtn = document.querySelector("button.refreshPoints");
-    let reloadbtn = document.querySelector("button.reloadPoints");
-    let sendbtn = document.querySelector("button.sendPointsMS");
+    let refreshbtn = document.querySelector("button.refreshPoints"); // 确定点位顺序操作按钮
+    let reloadbtn = document.querySelector("button.reloadPoints"); // 重置点位顺序操作按钮
+    let sendbtn = document.querySelector("button.sendPointsMS"); // 发送点位顺序操作按钮
 
-    let table = document.querySelector("table.gradesTable");
-    let operate = document.querySelector("table.operateTable");
+    let table = document.querySelector("table.gradesTable"); // 路线创建表格 
+    let operate = document.querySelector("table.operateTable"); // 路线创建操作表格
     
-    const resetPointsEvent = new CustomEvent("resetPoints", {detail: {id: "resetPoints"}});
+    const resetPointsEvent = new CustomEvent("resetPoints", {detail: {id: "resetPoints"}}); // 重新设置点位事件
 
-    function clear () {
+    // 清除工作区显示函数
+    function clear () { 
         ifm.style.display = "none";
         mainplace.style.display = "none";
         table.style.display = "none";
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
         operate.innerHTML = "";
     }
 
+    // 路线加载完毕响应函数
     this.addEventListener("PointsLoaded", function(event){
         if(event.detail.id === "loadNum"){
             if (sessionStorage.getItem("cachePoints")){
@@ -106,17 +108,21 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     })
 
+    // 点位选择响应函数
     this.addEventListener("PointSelected", function(event){
         SP_set();
     })
     
+    // 默认显示地图块
     clear();
     mainplace.style.display = "flex";
 
     var xhr = new XMLHttpRequest();
     var url = "/searchRoute";
 
+    // 路线选择按钮触发函数
     sl.onclick = function() {
+        // 切换显示检测
         if (ifm.src != "about:blank") {
             clear();
             mainplace.style.display = "flex";
@@ -125,12 +131,14 @@ document.addEventListener("DOMContentLoaded", function() {
             clear()
             ifm.style.display = "block";
 
+            //向服务端发送POST请求
             xhr.open("POST", url, true);
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
             params.append("type", "lines");
 
             xhr.onreadystatechange =  function() {
+                // 处理返回数据，发送给drama-line嵌入页面加载数据
                 var data = xhr.responseText;
                 ifm.src = "drama-line.html?revise=" + data;
                 ifm.style.backgroundColor = "white";
@@ -141,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
+    // 路线创建按钮触发函数
     sp.onclick = function() {
         if (table.hasChildNodes()) { // 检查是否存在子元素
             clear();
@@ -151,6 +160,8 @@ document.addEventListener("DOMContentLoaded", function() {
             clear();
             table.style.display = "table";
             operate.style.display = "table";
+
+            // 表格头
             var rowHeader = table.insertRow();
             var pointnum = rowHeader.insertCell();
             pointnum.innerHTML = "<p>点位<p>";
@@ -165,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var Deletebtn = rowHeader.insertCell();
             Deletebtn.innerHTML = "<p>操作<p>";
 
+            // 操作表格
             var rowBottom = operate.insertRow();
             var Cancel = rowBottom.insertCell();
             Cancel.className = "operate";

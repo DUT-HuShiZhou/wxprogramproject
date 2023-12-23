@@ -39,6 +39,32 @@ document.addEventListener('DOMContentLoaded', function() {
             if (line[line.length - 1] === "choose"){
                 var button = document.createElement("button");
                 button.textContent = "选择";
+
+                button.onclick = function() {
+                    var params = new FormData();
+                    params.append("un", sessionStorage.getItem("un"));
+                    params.append("RouteId", i + 1);
+                    params.append("type", "drama");
+
+                    url = "";
+                    xhr.open("POST", url, true);
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4){
+                            var text = xhr.responseText;
+                            var num = text.split(";")[0];
+                            var states = text.split(";").slice(1);
+                            var pages = [];
+                            for (var i = 0; i < num; i++){
+                                pages.push(states[i].split(":"));
+                            }
+                            window.parent.postMessage({ action: "drama-line-loaded", num: num, states: pages}, "*");
+                        }
+                    }
+
+                    xhr.send(params);
+                }
+
                 gradeButton.appendChild(button);
             }
             else if (line[line.length - 1] === "revise"){

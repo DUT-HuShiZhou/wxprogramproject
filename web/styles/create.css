@@ -103,3 +103,8 @@ main {
     border-radius: 5px;
     margin: 5%;
 }
+
+
+.bbtn:hover {
+    background-color: #8a8383; /* 设置悬停时的背景颜色 */
+}

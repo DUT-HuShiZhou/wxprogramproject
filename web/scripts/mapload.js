@@ -1,5 +1,6 @@
 const LoadedPointsEvent = new CustomEvent("PointsLoaded", {detail: {id:"loadNum"}}); // 点位加载完毕事件
 const SelectedPointEvent = new CustomEvent("PointSelected"); // 点位选择事件
+const resetPointsEvent = new CustomEvent("resetPoints", {detail: {id: "resetPoints"}}); // 重新设置点位事件
 
 AMapLoader.load({
     key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -159,6 +160,11 @@ AMapLoader.load({
             
             // 触发点位加载完毕事件
             document.dispatchEvent(LoadedPointsEvent);
+        }
+
+        // 加载本地缓存数据
+        if (sessionStorage.getItem("points") || sessionStorage.getItem("cachePoints")){
+            document.dispatchEvent(resetPointsEvent);
         }
 
     })

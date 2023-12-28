@@ -1,5 +1,6 @@
 // pages/questionpage/questionpage.js
 const testaudio = wx.createInnerAudioContext();
+const test2audio = wx.createInnerAudioContext();
 Page({
 
   /**
@@ -16,7 +17,12 @@ Page({
     second:null,
     activityid:null,
     username:null,
-    dramascriptcreator:null
+    dramascriptcreator:null,
+    hasoverlay:0,
+    overlayvisible:true,
+    hasuserchoosecurrectanswer:false,
+    overlayimageurl:null,
+    overlayinfo:null
   },
 
   /**
@@ -36,7 +42,6 @@ Page({
             dramascriptid: options.dramascriptid,
             missionname:options.missionname,
             username:options.dramascriptcreator,
-            hasuserchoosecurrectanswer:false,
         },
         header: {
             'content-type': 'application/json'
@@ -53,7 +58,10 @@ Page({
             that.setData({
                 mediadata: {"type": resdata.mediatype,"url": resdata.mediaaddress},
                 questiondata: {"type": resdata.questiontype,"answerlist": answerlist,"question": resdata.questiondescription,"currectanswer": resdata.questionanswerdescription},
-                missionscore:parseInt(options.missionscore)
+                missionscore:parseInt(options.missionscore),
+                hasoverlay:resdata.hasoverlay,
+                overlayinfo:resdata.overlayinfo,
+                overlayimageurl:resdata.overlayimageurl
             });
         },
         fail(){
@@ -168,5 +176,11 @@ Page({
               
       }
       );
+  },
+  handleclick(){
+      console.log("已经按压");
+      this.setData({
+        overlayvisible: false,
+      });
   }
 })

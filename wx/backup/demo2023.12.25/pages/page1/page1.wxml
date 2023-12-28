@@ -1,0 +1,93 @@
+<!--pages/page1/page1.wxml-->
+<swiper disable-touch="{{true}}" current="{{active}}" class="width100" style="height: 90vh;">
+    <swiper-item catchtouchmove="catchtouchmove">
+    <view class="mystickyheader">
+        <text style="color: white;position: absolute;top: 60rpx;left: 40rpx;font-weight:bold;font-family: serif">宠物商城</text>
+    </view>
+    <scroll-view scroll-y="true" class="pageofpetstore">
+        <view style="background-color: #426FFE; height: calc(700rpx * {{numofpets}}); ">
+            <view style="width: 100%; height:70rpx;">
+                <van-notice-bar left-icon="volume-o" text="选择合适的宠物能够帮助你闯关" />
+            </view>
+            <view class="card">
+                <view class="cardtitle">
+                    <text style="color: white;position: absolute;left: 18rpx;bottom: 12rpx;font-weight:bold;">
+                        宠物一   
+                    </text>
+                    <view class="imageloader" style="background-image: url(https://ts1.cn.mm.bing.net/th/id/R-C.1025bca2aa613ceca4c7131522cc0317?rik=Ab1ktWr1KEi4ew&riu=http%3a%2f%2fwww.baobeita.com%2fupload%2fimage%2fproduct%2f201903%2f10402900%2f55a75239-ae22-4c43-ba0f-156578844332-large.jpg&ehk=iL1IpuBj6egVvIBwdjs2k7qM6cguOFoShUdhaY%2bhhh0%3d&risl=&pid=ImgRaw&r=0);background-size: contain;">
+                    </view> 
+                </view>
+            </view>
+            <view class="card">
+                <view class="cardtitle">
+                    <text style="color: white;position: absolute;left: 9px;bottom: 6px;font-weight:bold;">
+                        宠物二
+                    </text>
+                    <view class="imageloader" style="background-image: url(https://img.zcool.cn/community/01dcd059117b12a801216a3e9c4fd5.jpg@1280w_1l_2o_100sh.jpg);background-size: contain;">
+                    </view> 
+                </view>
+            </view>
+            <view class="card">
+                <view class="cardtitle">
+                    <text style="color: white;position: absolute;left: 9px;bottom: 6px;font-weight:bold;">
+                        宠物三
+                    </text>
+                    <view class="imageloader" style="background-image: url(https://img.zcool.cn/community/01dcd059117b12a801216a3e9c4fd5.jpg@1280w_1l_2o_100sh.jpg);background-size: contain;">
+                    </view> 
+                </view>   
+            </view>
+            <view class="card">
+                <view class="cardtitle">
+                    <text style="color: white;position: absolute;left: 9px;bottom: 6px;font-weight:bold;">
+                        宠物四
+                    </text>
+                    <view class="imageloader" style="background-image: url(https://img.zcool.cn/community/01dcd059117b12a801216a3e9c4fd5.jpg@1280w_1l_2o_100sh.jpg);background-size: contain;">
+                    </view> 
+                </view>   
+            </view>
+        </view>
+    </scroll-view>
+    
+    </swiper-item>
+    <swiper-item catchtouchmove="catchtouchmove">
+     <view style="background-color: #426FFE; height: 90vh;">
+        <view class="pageofactivity" style="display: flex; width:100%;flex-direction: column;">
+            <view style="background-image: url(https://bpic.588ku.com/element_water_img/19/06/07/75dd04282ed2d6da61b64cd305a873d6.jpg); background-size: contain; height: 400rpx;width: 400rpx;position: absolute; top: 30%; left: 175rpx;" bind:tap="scanCodeEvent"></view>
+            <text style="color:white ;position: absolute; top: 70%;font-weight:bold; left: 38.5% ">扫码参与活动</text>
+            <button style="width: 200rpx;height: 60rpx;background-color: white;position: absolute; top: 80%; left: 275rpx;">
+                <text style="color: black;font-weight:bold;position: absolute; top: -30%;left: 14%">活动列表</text>
+            </button>
+        </view>
+     </view>
+    </swiper-item>
+    <swiper-item catchtouchmove="catchtouchmove">
+     <view style="background-color: #426FFE;display: flex;height: 90vh;">
+        <view style="position: absolute; top: 15%; left: 285rpx;">
+            <van-image round width="180rpx" height="180rpx"src="{{avatarurl}}"/>
+        </view>
+        <view style="display: flex;flex-direction: column;width:600rpx;position: absolute;left: 75rpx;top: 35%;height:100%;">
+                <view style="display: flex;width:600rpx;flex-direction: row;justify-content: center;">
+                    <text style="color: white; ">昵称:</text>
+                    <text style="color: white; text-decoration: underline;">{{username}}</text>
+                    <van-icon name="edit" color="white" />
+                </view>
+                <view style="display: flex;width:600rpx;flex-direction: row;justify-content: center;">
+                    <text style="color: white;">学校:</text>
+                    <text style="color: white; text-decoration: underline;">{{schoolname}}</text>
+                    <van-icon name="edit" color="white" />
+                </view>
+                <view class="personaldatashower" style="margin-top: 200rpx;width: 600rpx; ">
+                    <view style="width: 120rpx;height: 25px;background-color: white;">
+                    <text style="color: black; position:absolute; left: 6%;">测试</text>
+                    </view>
+                    <text space="ensp" style="color: white;">  个人信息展示测试</text>
+                </view>  
+        </view>
+     </view>
+    </swiper-item>
+</swiper>
+<van-tabbar active="{{ active }}" bind:change="onChange">
+  <van-tabbar-item icon="home-o">小帮手</van-tabbar-item>
+  <van-tabbar-item icon="search">活动</van-tabbar-item>
+  <van-tabbar-item icon="user-o">我的</van-tabbar-item>
+</van-tabbar>

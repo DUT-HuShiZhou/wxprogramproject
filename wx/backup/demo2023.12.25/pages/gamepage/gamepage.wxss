@@ -1,0 +1,36 @@
+/* pages/gamepage.wxss */
+.pageofgameplay{
+    width: 100vw;
+    height: 100vh;
+    background-color: #426FFE;
+}
+#gameplaymap{
+    width: 100vw;
+    height: 400px;
+}
+#gameplaytoolbar{
+    width: 100vw;
+    height: 110px;
+    position: absolute;
+    bottom: 0;
+    background:linear-gradient(to bottom right,#5EFCE8,#736EFE);
+    border-radius: 5px;
+}
+#compassbutton{
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background-color: #5EFCE8;
+    position: absolute;
+    left: 60vw;
+    bottom: 10vh;
+}
+#getmissionbutton{
+    width: 35vw;
+    height: 5vh;
+    border-radius: 5px;
+    background-color: white;
+    position: absolute;
+    left: 32.5vw;
+    bottom: 5vh;
+}

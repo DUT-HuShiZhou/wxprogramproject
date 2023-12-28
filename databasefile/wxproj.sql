@@ -16,6 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `activity1of2513677`
+--
+
+DROP TABLE IF EXISTS `activity1of2513677`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `activity1of2513677` (
+  `userid` int DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `scoreuserget` int DEFAULT NULL,
+  `tooluserget` varchar(200) DEFAULT NULL,
+  `userfirstlogintime` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `activity1of2513677`
+--
+
+LOCK TABLES `activity1of2513677` WRITE;
+/*!40000 ALTER TABLE `activity1of2513677` DISABLE KEYS */;
+INSERT INTO `activity1of2513677` VALUES (1,'Eagle',55,'test','Fri Dec 22 2023 18:06:05 GMT+0800 (中国标准时间)');
+/*!40000 ALTER TABLE `activity1of2513677` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `activitylistof2513677`
 --
 
@@ -23,11 +49,14 @@ DROP TABLE IF EXISTS `activitylistof2513677`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `activitylistof2513677` (
+  `activityid` int DEFAULT NULL,
   `activityname` varchar(100) DEFAULT NULL,
   `testQRCodeurl` varchar(100) DEFAULT NULL,
   `formalQRCodeurl` varchar(100) DEFAULT NULL,
   `totalParticipateNum` int DEFAULT NULL,
-  `avarageParticipateTime` int DEFAULT NULL
+  `avarageParticipateTime` int DEFAULT NULL,
+  `dramascriptnamebindto` varchar(100) DEFAULT NULL,
+  `scoreuserneedtoget` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -37,7 +66,43 @@ CREATE TABLE `activitylistof2513677` (
 
 LOCK TABLES `activitylistof2513677` WRITE;
 /*!40000 ALTER TABLE `activitylistof2513677` DISABLE KEYS */;
+INSERT INTO `activitylistof2513677` VALUES (1,'testactivity',NULL,NULL,NULL,NULL,NULL,45);
 /*!40000 ALTER TABLE `activitylistof2513677` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dramascript1of2513677`
+--
+
+DROP TABLE IF EXISTS `dramascript1of2513677`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dramascript1of2513677` (
+  `missionid` int unsigned DEFAULT NULL,
+  `missionname` varchar(100) DEFAULT NULL,
+  `mediatype` varchar(50) DEFAULT NULL,
+  `mediaaddress` varchar(200) DEFAULT NULL,
+  `mediadescription` varchar(200) DEFAULT NULL,
+  `questiontype` varchar(50) DEFAULT NULL,
+  `questiondescription` varchar(200) DEFAULT NULL,
+  `questioninfo` varchar(300) DEFAULT NULL,
+  `questionanswerdescription` varchar(100) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '0',
+  `score` int DEFAULT NULL,
+  `hasoverlay` tinyint(1) DEFAULT '0',
+  `overlayinfo` varchar(200) DEFAULT NULL,
+  `overlayimageurl` varchar(200) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dramascript1of2513677`
+--
+
+LOCK TABLES `dramascript1of2513677` WRITE;
+/*!40000 ALTER TABLE `dramascript1of2513677` DISABLE KEYS */;
+INSERT INTO `dramascript1of2513677` VALUES (1,'任务一','video','http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4','测试','selection','这是一个演示视频','A.测试;B.测试;C.测试;D.测试','A.测试',0,15,1,NULL,NULL),(2,'任务二','image','https://youimg1.c-ctrip.com/target/100e190000015nd637840.jpg','测试2','selection','这是一个演示图片','A.测试;B.测试;C.测试;D.测试','C.测试',0,10,0,NULL,NULL),(3,'任务三','audio','http://downsc.chinaz.net/Files/DownLoad/sound1/201906/11582.mp3','测试3','selection','这是一个演示音频','A.测试;B.测试;C.测试;D.测试','B.测试',0,20,0,NULL,NULL);
+/*!40000 ALTER TABLE `dramascript1of2513677` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -59,6 +124,7 @@ CREATE TABLE `dramascriptlistof2513677` (
 
 LOCK TABLES `dramascriptlistof2513677` WRITE;
 /*!40000 ALTER TABLE `dramascriptlistof2513677` DISABLE KEYS */;
+INSERT INTO `dramascriptlistof2513677` VALUES (1,'这是一段测试');
 /*!40000 ALTER TABLE `dramascriptlistof2513677` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +163,9 @@ DROP TABLE IF EXISTS `route1of2513677`;
 CREATE TABLE `route1of2513677` (
   `pointID` int DEFAULT NULL,
   `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
+  `latitude` float DEFAULT NULL,
+  `pointName` varchar(100) DEFAULT NULL,
+  `pointDescription` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,7 +175,7 @@ CREATE TABLE `route1of2513677` (
 
 LOCK TABLES `route1of2513677` WRITE;
 /*!40000 ALTER TABLE `route1of2513677` DISABLE KEYS */;
-INSERT INTO `route1of2513677` VALUES (1,12.12,12.13),(2,123.12,123.11);
+INSERT INTO `route1of2513677` VALUES (1,38.8788,121.601,'point1','i\'m lazzy'),(2,38.8793,121.602,'point2','i\'m lazzy'),(3,38.8816,121.603,'point3','i\'m lazzy'),(4,38.8849,121.606,'point4','i\'m lazzy'),(5,38.8863,121.605,'point5','i\'m lazzy'),(6,38.9,121.65,'point6','i\'m lazzy');
 /*!40000 ALTER TABLE `route1of2513677` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,128 +199,8 @@ CREATE TABLE `route2of2513677` (
 
 LOCK TABLES `route2of2513677` WRITE;
 /*!40000 ALTER TABLE `route2of2513677` DISABLE KEYS */;
-INSERT INTO `route2of2513677` VALUES (1,13.12,12.25),(2,123.22,124.11);
+INSERT INTO `route2of2513677` VALUES (1,38.879,121.601),(2,38.8793,121.602),(3,38.8816,121.603),(4,38.8849,121.606),(5,38.8863,121.605),(6,38.9,121.65);
 /*!40000 ALTER TABLE `route2of2513677` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route3of2513677`
---
-
-DROP TABLE IF EXISTS `route3of2513677`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route3of2513677` (
-  `pointID` int DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route3of2513677`
---
-
-LOCK TABLES `route3of2513677` WRITE;
-/*!40000 ALTER TABLE `route3of2513677` DISABLE KEYS */;
-INSERT INTO `route3of2513677` VALUES (1,13.12,12.25),(2,123.22,124.11),(3,25.11,36.05);
-/*!40000 ALTER TABLE `route3of2513677` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route4of2513677`
---
-
-DROP TABLE IF EXISTS `route4of2513677`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route4of2513677` (
-  `pointID` int DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route4of2513677`
---
-
-LOCK TABLES `route4of2513677` WRITE;
-/*!40000 ALTER TABLE `route4of2513677` DISABLE KEYS */;
-INSERT INTO `route4of2513677` VALUES (1,13.12,12.25),(2,123.22,124.11),(3,25.11,36.05);
-/*!40000 ALTER TABLE `route4of2513677` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route5of2513677`
---
-
-DROP TABLE IF EXISTS `route5of2513677`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route5of2513677` (
-  `pointID` int DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route5of2513677`
---
-
-LOCK TABLES `route5of2513677` WRITE;
-/*!40000 ALTER TABLE `route5of2513677` DISABLE KEYS */;
-INSERT INTO `route5of2513677` VALUES (1,13.12,12.25),(2,123.22,124.11);
-/*!40000 ALTER TABLE `route5of2513677` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route6of2513677`
---
-
-DROP TABLE IF EXISTS `route6of2513677`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route6of2513677` (
-  `pointID` int DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route6of2513677`
---
-
-LOCK TABLES `route6of2513677` WRITE;
-/*!40000 ALTER TABLE `route6of2513677` DISABLE KEYS */;
-INSERT INTO `route6of2513677` VALUES (1,13.12,12.25),(2,123.22,124.11);
-/*!40000 ALTER TABLE `route6of2513677` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route7of2513677`
---
-
-DROP TABLE IF EXISTS `route7of2513677`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route7of2513677` (
-  `pointID` int DEFAULT NULL,
-  `longitude` float DEFAULT NULL,
-  `latitude` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route7of2513677`
---
-
-LOCK TABLES `route7of2513677` WRITE;
-/*!40000 ALTER TABLE `route7of2513677` DISABLE KEYS */;
-INSERT INTO `route7of2513677` VALUES (1,12.123,12.123),(2,12.123,12.123);
-/*!40000 ALTER TABLE `route7of2513677` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -274,7 +222,7 @@ CREATE TABLE `routelistof2513677` (
 
 LOCK TABLES `routelistof2513677` WRITE;
 /*!40000 ALTER TABLE `routelistof2513677` DISABLE KEYS */;
-INSERT INTO `routelistof2513677` VALUES (1,'测试路线1'),(2,'测试路线2'),(3,'测试路线3'),(4,'测试路线4'),(5,'测试路线5'),(6,'测试路线6'),(7,'test');
+INSERT INTO `routelistof2513677` VALUES (1,'测试路线1'),(2,'null');
 /*!40000 ALTER TABLE `routelistof2513677` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-30 18:40:34
+-- Dump completed on 2023-12-28 10:31:39

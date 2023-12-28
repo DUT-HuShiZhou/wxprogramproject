@@ -1,0 +1,20 @@
+/* pages/getuserinfo/getuserinfo.wxss */
+.getuserinfopage{
+    width: 100vw;
+    height: 100vh;
+    background-color: #426FFE;
+}
+button {
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+  position: static;
+}
+
+button:after {
+  content: none;
+}
+
+button::after {
+  border: none;
+}

@@ -386,6 +386,9 @@ func main() {
 			Questiondescription      string `json:"questiondescription"`
 			Questioninfo             string `json:"questioninfo"`
 			Questionanswerdescrption string `json:"questionanswerdescription"`
+			Hasoverlay string `json:"hasoverlay"`
+			Overlayinfo string `json:"overlayinfo"`
+			Overlayimageurl string `json:"overlayimageurl"`
 		}
 		var resultjson struct {
 			Data interface{} `json:"data"`
@@ -399,7 +402,7 @@ func main() {
 			println(revdata.Username)
 			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
 			println(queryres)
-			database.QueryRow("select mediatype,mediaaddress,mediadescription,questiontype,questiondescription,questioninfo,questionanswerdescription from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Mediatype, &questiondata.Mediaaddress, &questiondata.Mediadescription, &questiondata.Questiontype, &questiondata.Questiondescription, &questiondata.Questioninfo, &questiondata.Questionanswerdescrption)
+			database.QueryRow("select mediatype,mediaaddress,mediadescription,questiontype,questiondescription,questioninfo,questionanswerdescription,hasoverlay,overlayinfo,overlayimageurl from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Mediatype, &questiondata.Mediaaddress, &questiondata.Mediadescription, &questiondata.Questiontype, &questiondata.Questiondescription, &questiondata.Questioninfo, &questiondata.Questionanswerdescrption,&questiondata.Hasoverlay,&questiondata.Overlayinfo,&questiondata.Overlayimageurl)
 			resultjson.Data = questiondata
 			c.JSON(http.StatusOK, resultjson)
 		}

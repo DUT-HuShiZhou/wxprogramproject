@@ -59,9 +59,9 @@ Page({
             var Missionlist = [];
             console.log("success");
             resdata = JSON.parse(res.data).data;
-            for (element of resdata){
+            resdata.forEach(element => {
                 Missionlist.push(element);
-            }
+            });
             console.log(Missionlist);
             that.setData({
                 missionlist: Missionlist

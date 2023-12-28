@@ -1,5 +1,18 @@
 <!--pages/questionpage/questionpage.wxml-->
 <scroll-view scroll-y="true" class="questionpage">
+    <t-overlay wx:if="{{hasoverlay == 1}}" visible="{{overlayvisible}}">
+        <view style="width: 70vw;height: 25vh;background-color: #426FFE;position: absolute;top: 30vh;left: 10vw;">
+            <t-icon name="close-circle" color="white" style="position: absolute;left: 1vw;top: 1vh;" bind:tap="handleclick"></t-icon>
+            <view style="width: 50vw;height: 15vh;position: absolute;top: 5vh;">
+                <text style="color: white;font-weight: bold;">这是一个测试</text>
+            </view>
+            <t-icon name="caret-up" size="30" color="white" style="position: absolute;top: 0;left: 10vw;"></t-icon>
+            <t-icon name="caret-down" size="30" color="white" style="position: absolute;bottom: 0;left: 40vw;"></t-icon>
+            <image src="./peter-griffin-139724.png" style="position: absolute;left: 20vw;top: 0vh;"></image>
+            <!--这里暂时不写那个后端传过来的图片数据，因为文件服务器还没有搭好-->
+        </view>
+        
+    </t-overlay>
     <view style="display: flex;flex-direction: row;">
         <van-icon name="revoke" size="25px" color="white" style="position: absolute;top: 1.5vh;left: 2vw;" bind:tap="gobacktomissionpage"/>
         <text style="color: white; position: absolute; top: 1.5vh; left: 12vw;">时间显示测试</text>

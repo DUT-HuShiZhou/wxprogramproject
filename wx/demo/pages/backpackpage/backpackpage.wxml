@@ -3,7 +3,7 @@
     <t-overlay visible="true">
         <view style="width: 70vw;height: 25vh;background-color: #426FFE;position: absolute;top: 30vh;left: 10vw;">
             <view style="width: 50vw;height: 15vh;position: absolute;top: 5vh;">
-                <text style="color: white;font-weight: bold;">这是一个测试</text>
+                <text style="color: white;font-weight: bold;">{{dialoglist[0]}}</text>
             </view>
             <t-icon name="caret-up" size="30" color="white" style="position: absolute;top: 0;left: 5vw;"></t-icon>
             <t-icon name="caret-down" size="30" color="white" style="position: absolute;bottom: 0;left: 35vw;"></t-icon>

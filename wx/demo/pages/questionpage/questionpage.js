@@ -22,7 +22,8 @@ Page({
     overlayvisible:true,
     hasuserchoosecurrectanswer:false,
     overlayimageurl:null,
-    overlayinfo:null
+    overlayinfo:null,
+    dialogindex:0
   },
 
   /**
@@ -50,17 +51,19 @@ Page({
         success(res){
             var resdata;
             var answerlist = []; 
+            var dialoglist = [];
             console.log("success");
             resdata = JSON.parse(res.data).data;
             console.log(resdata);
             answerlist=resdata.questioninfo.split(";");
+            dialoglist=resdata.overlayinfo.split(";");
             console.log(answerlist);
             that.setData({
                 mediadata: {"type": resdata.mediatype,"url": resdata.mediaaddress},
                 questiondata: {"type": resdata.questiontype,"answerlist": answerlist,"question": resdata.questiondescription,"currectanswer": resdata.questionanswerdescription},
                 missionscore:parseInt(options.missionscore),
                 hasoverlay:resdata.hasoverlay,
-                overlayinfo:resdata.overlayinfo,
+                overlayinfo:dialoglist,
                 overlayimageurl:resdata.overlayimageurl
             });
         },
@@ -182,5 +185,31 @@ Page({
       this.setData({
         overlayvisible: false,
       });
+  },
+  gotopreviousdialog(){
+      var dialogindex = this.data.dialogindex;
+      dialogindex = dialogindex - 1;
+      if(dialogindex < 0){
+         wx.showToast({
+           title: '已经是第一条对话',
+           icon: 'none',
+           duration: 1000
+         });
+      }else{
+        this.setData({dialogindex : dialogindex});
+      }
+  },
+  gotonextdialog(){
+      var dialogindex = this.data.dialogindex;
+      dialogindex = dialogindex + 1;
+      if(dialogindex > this.data.overlayinfo.length-1){
+        wx.showToast({
+            title: '已经是最后一条对话',
+            icon: 'none',
+            duration: 1000
+          });
+      }else{
+        this.setData({dialogindex : dialogindex});
+      }
   }
 })

@@ -1,0 +1,31 @@
+<!--pages/gamepage.wxml-->
+<view class="pageofgameplay">
+    <view>
+        <text style="color: white;position: absolute;top: 5%;left: 5vw;font-weight:bold;">活动开始{{days}}天{{hours}}小时{{minutes}}分钟{{seconds}}秒</text>
+    </view>
+    <map id="gameplaymap" style="position: absolute;top: 10vh;"></map>
+    <view style="position: absolute;top: 15vh;width: 100vw;">
+        <text style="color: #736EFE;position: absolute;font-weight: bold;top: -5vh;">任务完成进度</text>
+        <van-progress percentage="{{progress}}"/>
+    </view>
+    <view id="gameplaytoolbar">
+        <view id="compassbutton">
+            <view style="width: 45px;height: 20px;border-radius: 5px;background-color: white;position: absolute;left: 11.5vw;top: -1.5vh;" bind:tap="showPopup">
+                <text style="color: #736EFE;font-weight: bold;position: absolute;left: 2vw;bottom: 0.2vh;">罗盘</text>
+            </view>
+            <van-image round width="85px" height="85px" src="https://bpic.588ku.com/element_pic/20/07/01/50b3e9de64acca7b2b8e8ef56e498309.jpg" style="position: absolute;left: 5.5vw;top: 3.5vh;"/>
+        </view>
+        <view id="getmissionbutton">
+        <text style="color: #736EFE;font-weight: bold;position: absolute;left: 7.5vw;top: 0.5vh;" bind:tap="getmission">领取任务</text>
+        </view>
+    </view>
+    <van-popup show="{{show}}" overlay="{{overlay}}" bind:close="onClose" position="bottom"custom-style="height:31.5%">
+        <view style="width: 100vw; height: 32vh; background-color: #736EFE;position: absolute;bottom: 0;">
+                <view style="width: 150px;height: 150px;border-radius: 75px;background-color: white;position: absolute;left: 30vw;top: 3.5vh;">
+                    <van-image round width="150px" height="150px" src="https://tse4-mm.cn.bing.net/th/id/OIP-C.Gf98xTlcdT_WE48vAgQwaAHaHO?rs=1&pid=ImgDetMain"/>
+                    <van-image round width="100px" height="100px" src="https://bpic.588ku.com/element_origin_min_pic/20/03/31/6a3b83ed54a448b66aff224843905e90.jpg" style="position: absolute;left: 8.5vw;top: 4.5vh; transform: rotate({{resCompass.direction}}deg);"/>
+                </view>
+                <van-icon name="close" color="white" bind:tap="onClose" style="position: absolute; right:1vw;top: 1vh;"/>
+        </view>
+    </van-popup>
+</view>

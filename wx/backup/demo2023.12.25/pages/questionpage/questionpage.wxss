@@ -1,0 +1,78 @@
+/* pages/questionpage/questionpage.wxss */
+@import "./iconfont.wxss";
+.questionpage{
+    width: 100vw;
+    height: 100vh;
+    background-color: #426FFE;
+}
+.selectiontemplate{
+    width: 80vw;
+    height: 55vh;
+    position: absolute;
+    left: 10vw;
+    top: 48.5vh;
+    display: grid;
+    grid-template-columns:repeat(auto-fill,80vw);/** 平铺宽度为100px的单元格 */
+    grid-template-rows: 10vh;/** 设置高度为100px */
+    grid-auto-rows: 10vh;/** 当容易高度不够时，多余的组件高度将怎么分配，默认的高度由单元格内容决定 */
+    justify-content: center;/** 水平居中  */
+    grid-gap: 15rpx;/** 水平和垂直间距为10rpx*/
+    padding: 15rpx;
+}
+.selectionItem{
+    background:linear-gradient(to bottom right,#5EFCE8,#736EFE);
+    font-size: 15px;
+    color: white;
+    display: flex;
+}
+.videoquestion{
+    width: 90vw;
+    height: 35vh;
+    position: absolute;
+    top: 8vh;
+    left: 3vh;
+}
+#testvideo{
+    width: 90vw;
+    height: 30vh;
+}
+.imagequestion{
+    width: 90vw;
+    height: 35vh;
+    position: absolute;
+    top: 8vh;
+    left: 3vh;
+}
+.audioquestion{
+    width: 90vw;
+    height: 35vh;
+    position: absolute;
+    top: 8vh;
+    left: 3vh;
+}
+.normalanswer{
+    color: white;
+    font-weight: bold;
+    position: relative;
+    top: 3vh;
+    left: 5vw;
+}
+.activeanswer{
+    color: greenyellow;
+    font-weight: bold;
+    position: relative;
+    top: 3vh;
+    left: 5vw;
+}
+.navigatorbar{
+    width: 100vw;
+    height: 10vh;
+    background-color: blue;
+    position: absolute;
+    bottom: 0;
+}
+.e601{
+    font-size: 30px;
+    font-weight: bold;
+    color:white;
+}

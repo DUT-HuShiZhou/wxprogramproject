@@ -36,6 +36,8 @@
     "van-notice-bar": "@vant/weapp/notice-bar/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-progress": "@vant/weapp/progress/index",
-    "van-popup": "@vant/weapp/popup/index"
+    "van-popup": "@vant/weapp/popup/index",
+    "t-overlay": "tdesign-miniprogram/overlay/overlay",
+    "t-icon": "tdesign-miniprogram/icon/icon"
   }
 }

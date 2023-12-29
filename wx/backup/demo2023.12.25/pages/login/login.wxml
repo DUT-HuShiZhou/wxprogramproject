@@ -1,0 +1,6 @@
+<!--pages/login/login.wxml-->
+<view class="loginpage">
+    <view style="width: 300rpx;height: 300rpx;border-radius: 150rpx; background: linear-gradient(#00289e,#0040ff) ; position: absolute; top: 20vh; left: 30vw;box-shadow: 0 0 0 10px  #032079;display: flex;justify-content: center;align-items: center;" bind:tap="login">
+        <text style="color: white; font-weight: bold;font-size: 30px;">登录</text>
+    </view>
+</view>

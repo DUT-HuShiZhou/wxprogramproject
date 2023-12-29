@@ -1,3 +1,30 @@
+body {
+    margin: 0;
+    height: 100%;
+    text-align: center;
+}
+
+
+.context-Line {
+    display: flex;
+    flex-direction: column; /* 子元素垂直排列 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    height: 100vh;
+}
+
+
+.page-contain {
+    display: flex;
+    width: 100vw;
+    height: 90vh;
+    flex-direction: column; /* 子元素垂直排列 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    overflow: auto; /* 显示滚动条，仅当内容溢出时 */
+    max-height: 100%;
+}
+
 
 .dropdown-content {
     display: none;

@@ -39,14 +39,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (line[line.length - 1] === "choose"){
                 var button = document.createElement("button");
                 button.textContent = "选择";
-
                 button.onclick = function() {
                     var params = new FormData();
                     params.append("un", sessionStorage.getItem("un"));
                     params.append("RouteId", i + 1);
                     params.append("type", "drama");
 
-                    url = "";
+                    url = "/getDramas";
                     xhr.open("POST", url, true);
 
                     xhr.onreadystatechange = function() {
@@ -58,7 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             for (var i = 0; i < num; i++){
                                 pages.push(states[i].split(":"));
                             }
-                            window.parent.postMessage({ action: "drama-line-loaded", num: num, states: pages}, "*");
+                            sessionStorage.setItem("drama-contained", JSON.stringify(pages));
+                            sessionStorage.setItem("drama-id", i + 1);
+                            window.parent.postMessage({ action: "drama-line-loaded", states: pages}, "*");
                         }
                     }
 

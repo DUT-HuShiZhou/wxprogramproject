@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     sessionStorage.setItem("un", un);
 
     const links = document.querySelectorAll(".page");
-    let iframe = document.getElementById('ifm');
+    let iframe = document.querySelector("iframe.main-ifm");
     let btn = document.getElementById("out-button");
 
     if (sessionStorage.getItem("present-page") != null) {
@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
     else{
         iframe.src = "first.html";
     }
+
+    document.addEventListener("keydown", function(event){
+        if(event.key === "Escape") {
+            var i;
+        }
+    })
 
     links.forEach(link => {
         link.onclick = function () {

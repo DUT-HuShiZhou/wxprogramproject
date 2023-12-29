@@ -5,6 +5,10 @@
         <meta name="create", content="剧本创作" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        <!-- LayUI引入 -->
+        <link rel="stylesheet" href="../layui/css/layui.css">
+        <script src="../layui/layui.js"></script>
+
         <link rel="stylesheet" href="../styles/create.css" />
         <script src="../scripts/page-load.js" defer></script>
         <script src="../scripts/create.js" defer></script>
@@ -25,8 +29,10 @@
                             <div class="infplace">
                             </div>
                         </div>
+                        <div class="hr">
+                            <hr class="divid" />
+                        </div>
                         <div class="context">
-                            <hr id="divid" />
                             <iframe class="context-ifm" loading="lazy" height="100%"
                             src="context.html"></iframe>
                         </div>
@@ -34,6 +40,8 @@
                 </main>
                 <aside class="bottom sidebar">
                     <nav class="container">
+                        <div class="fwbtn-container">
+                        </div>
                     </nav>
                 </aside>
             </div>
@@ -44,9 +52,6 @@
                     </div>
                     <div class="formwork dbtn">
                         <button class="fw-btn bbtn">框架选择</button>
-                    </div>
-                    <div class="conponent dbtn">
-                        <button class="cpt-btn bbtn">组件选择</button>
                     </div>
                     <div class="finish dbtn">
                         <button class="fs-btn bbtn">完成设置</button>

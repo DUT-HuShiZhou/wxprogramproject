@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="author" content="大连理工大学ELAB" />
-        <!-- 不需要前缀的数据，单行多数据之间用':' 多行之间用';', 需要前缀的数据，前缀部分用':'区分 -->
+        <!-- 不需要前缀的数据，单行多数据之间用':' 第一级分隔符用';', 第二级分隔符用':', 第三级分隔符用'|' -->
         <meta name="description" content="小程序后台管理" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -33,7 +33,7 @@
                             <!--选择侧栏-->
                             <div class="sidebar-body">
                                     <p>
-                                        <a class="page no-copy" id="first-page" href="first.html" onclick="return false;">首页</a>
+                                        <a class="page no-copy" id="first-page" href="first.html">首页</a>
                                     </p>
                                     <hr>
                                     <p>
@@ -60,7 +60,7 @@
                 <hr>
                 <!--主要内容-->
                 <main id="content" class="main-content" style="display: inline-block;">
-                    <iframe id="ifm" allowfullscreen loading="lazy"
+                    <iframe class="main-ifm" allowfullscreen loading="lazy"
                     width="100%" height="100%" ></iframe>
                 </main>
             </div>

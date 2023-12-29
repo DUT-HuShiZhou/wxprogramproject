@@ -58,18 +58,34 @@ main {
 
 
 .context {
-    width: 30%;
+    width: 27%;
     height: 100%;
     display: flex;
 }
 
 
-#divid {
+.hr {
+    width: 3%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+
+.divid {
+    height: 90%;
+    width: 5%;
+    color: black;
+    margin:0 auto;
+    border: 0;
+    background: #333;
+    background-image: linear-gradient(to bottom, #cca6ee, #fbc2d1, #d7a6ee);
 }
 
 
 .context-ifm {
     border: 0;
+    width: 100%;
 }
 
 
@@ -80,6 +96,20 @@ main {
     display: flex;
     position: fixed;
     border: 1px solid black;
+}
+
+
+nav.container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+
+.fwbtn-container {
+    position: absolute;
+    width: 90%;
+    left: 5%;
 }
 
 

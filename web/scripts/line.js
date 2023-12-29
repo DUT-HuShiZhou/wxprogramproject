@@ -398,52 +398,69 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     refreshbtn.onclick = function() {
-        PO2s = document.querySelectorAll(".PO2");
-        var names = [];
-        for(var i = 1; i < PO2s.length; i++){
-            names.push(PO2s[i].textContent);
+        if(sessionStorage.getItem("points")){
+            PO2s = document.querySelectorAll(".PO2");
+            var names = [];
+            for(var i = 1; i < PO2s.length; i++){
+                names.push(PO2s[i].textContent);
+            }
+
+            var states = JSON.parse(sessionStorage.getItem("points"));
+
+            var orderMap = {};
+            names.forEach((value, index) => {
+            orderMap[value] = index;            
+            });
+
+            var sortstates = states.sort((a, b) => {
+                return orderMap[a[2]] - orderMap[b[2]];
+            });
+        
+            sessionStorage.setItem("cachePoints", JSON.stringify(sortstates));
+
+            document.dispatchEvent(resetPointsEvent);
         }
-
-        var states = JSON.parse(sessionStorage.getItem("points"));
-
-        var orderMap = {};
-        names.forEach((value, index) => {
-        orderMap[value] = index;            
-        });
-
-        var sortstates = states.sort((a, b) => {
-            return orderMap[a[2]] - orderMap[b[2]];
-        });
-       
-        sessionStorage.setItem("cachePoints", JSON.stringify(sortstates));
-
-        document.dispatchEvent(resetPointsEvent);
+        else{
+            alert("未检测到点位数据，无法更新点位");
+        }
     }
     
     reloadbtn.onclick = function() {
-        sessionStorage.removeItem("cachePoints");
+        if(sessionStorage.getItem("points")){
+            sessionStorage.removeItem("cachePoints");
 
-        document.dispatchEvent(resetPointsEvent);
+            document.dispatchEvent(resetPointsEvent);
+        }
+        else{
+            alert("未检测到点位数据，无法重置数据");
+        }
     }
 
     sendbtn.onclick = function() {
-        var result = confirm("此选项将改变服务器保存的数据，请再次确认是否更改？");
-        if (result){
-            sessionStorage.setItem("points", sessionStorage.getItem("cachePoints"));
-            sessionStorage.removeItem("cachePoints");
+        if(sessionStorage.getItem("points")){
+            var result = confirm("此选项将改变服务器保存的数据，请再次确认是否更改？");
+            if (result){
+                if(sessionStorage.getItem("cachePoints")){
+                    sessionStorage.setItem("points", sessionStorage.getItem("cachePoints"));
+                }
+                sessionStorage.removeItem("cachePoints");
 
-            var points = JSON.parse(sessionStorage.getItem("points"));
+                var points = JSON.parse(sessionStorage.getItem("points"));
 
-            var params = new FormData();
-            params.append("un", sessionStorage.getItem("un"));
-            params.append("routename", sessionStorage.getItem("pointsName"));
-            params.append("pointNum", points.length);
-            for(var i = 0; i < points.length; i++){
-                params.append(i + 1, points[i][0] + "|" + points[i][1] + "|" + points[i][2] + "|" + points[i][3]);
+                var params = new FormData();
+                params.append("un", sessionStorage.getItem("un"));
+                params.append("routename", sessionStorage.getItem("pointsName"));
+                params.append("pointNum", points.length);
+                for(var i = 0; i < points.length; i++){
+                    params.append(i + 1, points[i][0] + "|" + points[i][1] + "|" + points[i][2] + "|" + points[i][3]);
+                }
+
+                xhr.open("POST", "/createNewRoute", true);
+                xhr.send(params);
             }
-
-            xhr.open("POST", "/createNewRoute", true);
-            xhr.send(params);
+        }
+        else{
+            alert("未检测到点位数据，无法向服务端发送数据");
         }
     }
 

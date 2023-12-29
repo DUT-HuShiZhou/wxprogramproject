@@ -33,7 +33,7 @@ AMapLoader.load({
 
         // 路线选择事件监听相应函数
         window.parent.addEventListener("message", function(event){
-            if (event.data.action === "pointStates"){   // 验证是否为点位消息   
+            if (event.data.action === "pointStates") {   // 验证是否为点位消息   
                 var points = JSON.parse(sessionStorage.getItem("points")); // 转化本地数据为数组形式
                 var longitudes = [];
                 var latitudes = [];

@@ -47,13 +47,22 @@ main {
 }
 
 
-.dragplace {
-    height: 100%;
-    width: 50%;
-    background-image: url(../images/screen.png);
-    background-repeat: no-repeat;
-    background-position-y: 50%;
-    background-size: cover;
+.showitem-panel {
+    width: 27%;
+    height: 80%;
+    position: absolute;
+    left: 5%;
+    top: 10%;
+}
+
+
+.infplace {
+    width: 30%;
+    height: 80%;
+    position: absolute;
+    left: 37%;
+    top: 10%;
+    overflow: auto;
 }
 
 

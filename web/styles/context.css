@@ -26,6 +26,19 @@ body {
 }
 
 
+.page-head {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+}
+
+
+.a-page {
+    width: 80%;
+}
+
+
 .dropdown-content {
     display: none;
     position: absolute;

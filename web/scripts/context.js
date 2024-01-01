@@ -94,7 +94,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 page.textContent = data[0];
                 page.href = "none";
                 page.onclick = function() {
-                    window.parent.postMessage({action: "page-load", datafrom: data[2]}, "*");
+                    // window.parent.postMessage({action: "page-load", datafrom: data[2]}, "*");
+
+                    //test 
+                    window.parent.postMessage({action: "page-load"}, "*");
+
                     return false;
                 }
                 div.appendChild(page);
@@ -114,28 +118,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     event.preventDefault();
 
                     if (event.button === 2) {
-                        var pages = document.querySelectorAll("a.a-page");
-                        for (var i = 0; i < pages.length; i++){
-                            pages[i].style.display = "none";
+                        if (div_contain.style.display === "none") {
+                            var pages = document.querySelectorAll("a.a-page");
+                            for (var i = 0; i < pages.length; i++){
+                                pages[i].style.display = "none";
+                            }
+                            page.style.display = "block";
+                            page.style.position = "fixed";
+                            page.style.top = "0";
+                            page.style.left ="calc(50% - " + (page.offsetWidth / 2) + "px)"; // 计算位置中间值
+                            div_contain.style.display = "flex";
                         }
-                        page.style.display = "block";
-                        page.style.position = "fixed";
-                        page.style.top = "0";
-                        page.style.left ="calc(50% - " + (page.offsetWidth / 2) + "px)"; // 计算位置中间值
-                        div_contain.style.display = "flex";
+                        else {
+                            var pages = document.querySelectorAll("a.a-page");
+                            for (var i = 0; i < pages.length; i++){
+                                pages[i].style.display = "block";
+                            }
+                            page.style.removeProperty("position");
+                            page.style.removeProperty("top");
+                            page.style.removeProperty("left");
+                            div_contain.style.display = "none";
+                        }
                     }
                 })
-                
-                div.onmouseleave = function() {
-                    var pages = document.querySelectorAll("a.a-page");
-                    for (var i = 0; i < pages.length; i++){
-                        pages[i].style.display = "block";
-                    }
-                    page.style.removeProperty("position");
-                    page.style.removeProperty("top");
-                    page.style.removeProperty("left");
-                    div_contain.style.display = "none";
-                }
                 
                 MainLine.appendChild(div);
 

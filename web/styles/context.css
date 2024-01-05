@@ -1,7 +1,6 @@
 body {
     margin: 0;
-    height: 100%;
-    text-align: center;
+    height: 100vh;
 }
 
 
@@ -14,39 +13,27 @@ body {
 }
 
 
-.page-contain {
+.container {
+    height: 90%;
+    width: 90%;
+    border: 0;
+    overflow: auto;
     display: flex;
-    width: 100vw;
-    height: 90vh;
-    flex-direction: column; /* 子元素垂直排列 */
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    overflow: auto; /* 显示滚动条，仅当内容溢出时 */
-    max-height: 100%;
+    flex-direction: column; /* 设置子元素纵向排列 */
+    justify-content: center; /* 在垂直方向上居中显示子元素 */
 }
 
 
-.page-head {
+.item {
     width: 100%;
-    display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
 }
 
 
-.a-page {
-    width: 80%;
-}
+/* .head {
+    background-image: linear-gradient(to right, rgb(220, 234, 131), rgb(208, 122, 196), rgb(20, 202, 71));
+} */
 
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
+.body {
+    background-color: blanchedalmond;
 }

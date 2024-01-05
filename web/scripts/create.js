@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var xhr = new XMLHttpRequest();
     var url = "/searchRoute";
 
+    const uploadItemEvent = new CustomEvent("UploadAllItem");
+
     window.addEventListener("message", function(event) {
         if (event.data.action === "drama-line-loaded") {
             ifm.src = "about:blank";
@@ -28,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
             context.postMessage({action: "load_context", states: event.data.states}, "*");
         }
         else if (event.data.action === "page-load") {
+            shwoitemplace.innerHTML = "";
+            infplace.innerHTML = "";
             var url = "/getpage"
             xhr.open("POST", url, true);
 
@@ -58,33 +62,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
+    /**添加hr函数 */
+    function hr_add() {
+        var hr = document.createElement("hr");
+        hr.style.margin = "10px 0";
+        hr.style.border = "1px solid #5a5a5a";
+        infplace.appendChild(hr);
+    }
+
     /**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url*/
     function page_load() {
         if (sessionStorage.getItem("page-datas")){
             var datas = JSON.parse(sessionStorage.getItem("page-datas"));
             if (datas != ["none"]){
-                shwoitemplace.innerHTML = "";
+                itemsClear();
                 for (var i = 0; i < datas.length; i++) {
                     (function(i){
                         switch(datas[i][0]) {
                             case "photo":
-                                photo(datas[i]);
+                                photo(datas[i], i);
                                 break;
                             case "question":
-                                question(datas[i]);
+                                question(datas[i], i);
                                 break;
                             case "vedio":
-                                vedio(datas[i])
+                                vedio(datas[i], i);
                                 break;
                             default:
                                 break;
                         }
+                        hr_add();
                 })(i);}
+
+                var box =document.createElement("div");
+                box.className = "item";
+                var upload_button = document.createElement("button");
+                upload_button.classList = "layui-btn layui-btn-fluid";
+                upload_button.textContent = "上传更新";
+                upload_button.style.height = "30px";
+                upload_button.style.fontSize = "16px";
+                upload_button.style.lineHeight = "20px";
+                upload_button.onclick = function() {
+                    window.dispatchEvent(uploadItemEvent, "*");
+                }
+                box.appendChild(upload_button);
+                infplace.appendChild(box);
                 
-                layui.use('form', function(){
-                    var form = layui.form;
-                    form.render();
-                });
+                fresh_form();
             }
         }
         else {
@@ -143,8 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 (function(i){
                                 var button = document.createElement("button");
                                 button.type = "button";
-                                button.classList.add("layui-btn");
-                                button.classList.add("layui-btn-sm");
+                                button.classList = "layui-btn layui-btn-sm";
                                 button.textContent = data[i].split(":")[0];
                                 button.onclick = function() {
                                     var url = "/getFormwork";

@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const pageloadEvent = new CustomEvent("pageload")
-
-    let MainLine = document.querySelector("div.context-Line");
+    
+    let MainLine = document.querySelector("div.container");
 
     // 更新数据接收
     this.addEventListener("message", function(event) {
@@ -24,125 +23,92 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 剧本加载主函数
+    /**
+     * 剧本数据大纲加载显示函数
+     * @param {Array<Array>} data  数据列表，每个列表中包含了页面名称，页面数据，以及页面数据获取地址
+     */
     function drama_load(data) {
         for(var i = 0; i < data.length; i++){
             (function(i){
                 var div = document.createElement("div");
-                div.className = "page-head";
+                div.classList = "layui-colla-item item";
 
-                var page = document.createElement("a");
-                page.className = "a-page";
-                page.textContent = data[i][0];
-                page.href = "none";
-                page.onclick = function() {
-                    window.parent.postMessage({action: "page-load", datafrom: data[i][2]}, "*");
-                    return false;
-                }
-                div.appendChild(page);
+                // var page = document.createElement("a");
+                // page.className = "a-page";
+                // page.textContent = data[i][0];
+                // page.href = "none";
+                // page.onclick = function() {
+                //     window.parent.postMessage({action: "page-load", datafrom: data[i][2]}, "*");
+                //     return false;
+                // }
+                // div.appendChild(page);
+                var div_title = document.createElement("div");
+                div_title.classList = "layui-colla-title head";
+                div_title.innerHTML = data[i][0];
+                div.appendChild(div_title);
 
                 var div_contain = document.createElement("div");
-                div_contain.className = "page-contain";
+                div_contain.classList = "layui-colla-content body";
                 var contains = data[i][1].split("|");
-                for (var a = 0; a < contains.length; a++){
+                contains.forEach(data => {
                     var b = document.createElement("div");
-                    b.innerHTML = contains[a];
+                    b.innerHTML = data;
                     div_contain.appendChild(b);
+                });
+                var div_button = document.createElement("button");
+                div_button.className = "choose";
+                div_button.innerHTML = "查看修改";
+                div_button.onclick = function() {
+                    window.parent.postMessage({action: "page-load", datafrom: data[i][2]}, "*");
                 }
-                div_contain.style.display = "none";
+                div_contain.appendChild(div_button);
                 div.appendChild(div_contain);
-
-                div.addEventListener("contextmenu", function(event) {
-                    event.preventDefault();
-
-                    if (event.button === 2) {
-                        var pages = document.querySelectorAll("a.a-page");
-                    for (var i = 0; i < pages.length; i++){
-                        pages[i].style.display = "none";
-                    }
-                    page.style.display = "block";
-                    page.style.position = "fixed";
-                    page.style.top = "0";
-                    page.style.left ="calc(50% - " + (page.offsetWidth / 2) + "px)"; // 计算位置中间值
-                    div_contain.style.display = "flex";
-                    }
-                })
-
-                div.onmouseleave = function() {
-                    var pages = document.querySelectorAll("a.a-page");
-                    for (var i = 0; i < pages.length; i++){
-                        pages[i].style.display = "block";
-                    }
-                    page.style.removeProperty("position");
-                    page.style.removeProperty("top");
-                    page.style.removeProperty("left");
-                    div_contain.style.display = "none";
-                }
                 
                 MainLine.appendChild(div);
-            })(i);
-        }
+            })(i);}
+
+        layui.use('element', function(){
+            var element = layui.element;
+            element.init();
+        });
     }
-
-    data = ["你好", "1|2|3|4|5", "none"];
-
-    var div = document.createElement("div");
-                div.className = "page-head";
-
-                var page = document.createElement("a");
-                page.className = "a-page";
-                page.textContent = data[0];
-                page.href = "none";
-                page.onclick = function() {
-                    // window.parent.postMessage({action: "page-load", datafrom: data[2]}, "*");
-
-                    //test 
-                    window.parent.postMessage({action: "page-load"}, "*");
-
-                    return false;
-                }
-                div.appendChild(page);
-
-                var div_contain = document.createElement("div");
-                div_contain.className = "page-contain";
-                var contains = data[1].split("|");
-                for (var a = 0; a < contains.length; a++){
-                    var b = document.createElement("div");
-                    b.innerHTML = contains[a];
-                    div_contain.appendChild(b);
-                }
-                div_contain.style.display = "none";
-                div.appendChild(div_contain);
-
-                div.addEventListener("contextmenu", function(event) {
-                    event.preventDefault();
-
-                    if (event.button === 2) {
-                        if (div_contain.style.display === "none") {
-                            var pages = document.querySelectorAll("a.a-page");
-                            for (var i = 0; i < pages.length; i++){
-                                pages[i].style.display = "none";
-                            }
-                            page.style.display = "block";
-                            page.style.position = "fixed";
-                            page.style.top = "0";
-                            page.style.left ="calc(50% - " + (page.offsetWidth / 2) + "px)"; // 计算位置中间值
-                            div_contain.style.display = "flex";
-                        }
-                        else {
-                            var pages = document.querySelectorAll("a.a-page");
-                            for (var i = 0; i < pages.length; i++){
-                                pages[i].style.display = "block";
-                            }
-                            page.style.removeProperty("position");
-                            page.style.removeProperty("top");
-                            page.style.removeProperty("left");
-                            div_contain.style.display = "none";
-                        }
-                    }
-                })
-                
-                MainLine.appendChild(div);
-
+    
     load_storage();
+
+    var data = [["你好", "1|2|3|4|5", "none"], ["你好", "1|2|3|4|5", "none"], ["你好", "1|2|3|4|5", "none"]];
+
+    for(var i = 0; i < data.length; i++){
+        (function(i){
+            var div = document.createElement("div");
+            div.classList = "layui-colla-item item";
+            var div_title = document.createElement("div");
+            div_title.classList = "layui-colla-title head";
+            div_title.innerHTML = data[i][0];
+            div.appendChild(div_title);
+
+            var div_contain = document.createElement("div");
+            div_contain.classList = "layui-colla-content body";
+            var contains = data[i][1].split("|");
+            contains.forEach(data => {
+                var b = document.createElement("div");
+                b.innerHTML = data;
+                div_contain.appendChild(b);
+            });
+            var div_button = document.createElement("button");
+            div_button.className = "choose";
+            div_button.innerHTML = "查看修改";
+            div_button.onclick = function() {
+                window.parent.postMessage({action: "page-load", datafrom: data[i][2]}, "*");
+            }
+            div_contain.appendChild(div_button);
+            div.appendChild(div_contain);
+            
+            MainLine.appendChild(div);
+        })(i);}
+
+    layui.use('element', function(){
+        var element = layui.element;
+        element.init();
+    });
+
 })

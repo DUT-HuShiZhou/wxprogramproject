@@ -1,4 +1,4 @@
-let place = document.querySelector("div.showitem-panel");
+let place = document.querySelector("div.main-item");
 let infplace = document.querySelector("div.infplace");
 
 let items = [];
@@ -238,10 +238,10 @@ function question(datas, id) {
     
     // 编辑栏加载
     var root = document.createElement("div");
-    root.classList = "photo_option item";
+    root.classList = "question_option item";
 
     var title = document.createElement("input");
-    title.className = "layui-input input";
+    title.classList = "layui-input input";
     title.type = "text";
     title.name = "问题名称";
     title.placeholder = "问题测试";
@@ -311,3 +311,86 @@ function question(datas, id) {
     infplace.appendChild(root);
 }
 
+/**
+ * 视频加载函数
+ * @param {Array} datas
+ * @param {Number} id 序号
+ */
+function video(datas, id) {
+    // 预览加载
+    var root_div = SP_load(datas[1], datas[2]);
+    root_div.className = "video_item";
+    root_div.title = "视频测试"
+
+    var video_div = document.createElement("video");
+    video_div.className = "video";
+    video_div.setAttribute("controls", "true");
+    video_div.style.width = "100%";
+    video_div.style.height = "100%";
+
+    var video_source = document.createElement("source");
+    video_source.className = "video-source";
+    video_source.src = "../video/video_test.mp4";
+    video_source.type = "video/mp4";
+    video_div.appendChild(video_source);
+
+    var textNode = document.createTextNode("视频加载失败")
+    video_div.appendChild(textNode);
+
+    root_div.appendChild(video_div);
+    place.appendChild(root_div);
+
+    // 编辑栏加载
+    var root = document.createElement("div");
+    root.classList = "video_option item";
+
+    var title = document.createElement("input");
+    title.classList = "layui-input input";
+    title.type = "text";
+    title.name = "视频名称";
+    title.placeholder = "视频测试";
+    title.style.border = "none";
+    root.appendChild(title);
+
+    var update_button = document.createElement("button");
+    update_button.type = "button";
+    update_button.classList = "ayui-btn video-accept";
+    update_button.setAttribute("lay-options", "{accept: 'video'}");
+
+    var i = document.createElement("i");
+    i.classList = "layui-icon layui-icon-upload";
+    update_button.appendChild(i);
+
+    var textNode = document.createTextNode("上传视频")
+    update_button.appendChild(textNode);
+    
+    root.appendChild(update_button);
+    infplace.appendChild(root);
+
+    layui.use(function(){
+        var upload = layui.upload;
+        var layer = layui.layer;
+        // 渲染
+        upload.render({
+          elem: '.video-accept', // 绑定多个元素
+          url: '', // 此处配置你自己的上传接口即可
+          accept: 'file', // 普通文件
+          before: function(obj){
+            alert(666);
+          },
+          done: function(res){
+            layer.msg('上传成功');
+            console.log(res);
+          }
+        });
+      });
+}
+
+/**
+ * 音频加载函数
+ * @param {Array} datas
+ * @param {Number} id 序号
+ */
+function audio(datas, id) {
+
+}

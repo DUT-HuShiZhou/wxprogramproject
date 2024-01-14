@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let ifm = document.querySelector("iframe.line-ifm");
     let ls = document.querySelector("div.line-show");
     let context = document.querySelector("iframe.context-ifm");
+    let workplace = document.querySelector("div.showitem-panel");
 
-    let shwoitemplace = document.querySelector("div.showitem-panel");
+    let shwoitemplace = document.querySelector("div.main-item");
     /**组件详细操作展示区 */
     let infplace = document.querySelector("div.infplace");
 
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ifm.src = "about:blank";
             ifm.style.backgroundColor = null;
             ls.style.display = "none";
+            workplace.style.display = "block";
             context.postMessage({action: "load_context", states: event.data.states}, "*");
         }
         else if (event.data.action === "page-load") {
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             xhr.send(params);
 
             // test
-            sessionStorage.setItem("page-datas", JSON.stringify([["photo", "100x30", "0x10",""],["question", "100x30", "0x50",""]]));
+            sessionStorage.setItem("page-datas", JSON.stringify([["photo", "100x30", "0x10",""],["video", "100x30", "0x50",""]]));
             page_load();
             // test
         }
@@ -85,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             case "question":
                                 question(datas[i], i);
                                 break;
-                            case "vedio":
-                                vedio(datas[i], i);
+                            case "video":
+                                video(datas[i], i);
                                 break;
                             default:
                                 break;
@@ -132,8 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
             ifm.src = "about:blank";
             ifm.style.backgroundColor = null;
             ls.style.display = "none";
+            workplace.style.display = "block";
         }
         else {
+            workplace.style.display = "none";
             ifm.src = "drama-line.html?choose=1;test";
             xhr.open("POST", url, true);
             var params = new FormData();
@@ -141,10 +145,12 @@ document.addEventListener('DOMContentLoaded', function() {
             params.append("un", sessionStorage.getItem("un"));
 
             xhr.onreadystatechange =  function() {
-                var data = xhr.responseText;
-                // ifm.src = "drama-line.html?choose=" + data;
-                ifm.style.backgroundColor = "white";
-                ls.style.display = "block";
+                if(xhr.readyState === 4){
+                    var data = xhr.responseText;
+                    // ifm.src = "drama-line.html?choose=" + data;
+                    ifm.style.backgroundColor = "white";
+                    ls.style.display = "block";
+                }
             };
 
             xhr.send(params);

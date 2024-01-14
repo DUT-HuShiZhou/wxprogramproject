@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     load_storage();
 
-    var data = [["你好", "1|2|3|4|5", "none"], ["你好", "1|2|3|4|5", "none"], ["你好", "1|2|3|4|5", "none"]];
+    var data = [["视频测试", "1|2|3|4|5", "none"], ["图片测试", "1|2|3|4|5", "none"], ["音频测试", "1|2|3|4|5", "none"]];
 
     for(var i = 0; i < data.length; i++){
         (function(i){

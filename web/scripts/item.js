@@ -21,7 +21,7 @@ window.addEventListener("UploadAllItem", function(event) {
  */
 function SP_load(size, position) {
     var obj = document.createElement("div");
-    obj.style.position = "absolute";
+    obj.style.position = "relative";
     obj.style.overflow = "hidden";
 
     var size = size.split("x");
@@ -68,7 +68,7 @@ function update_items(id, item, upload) {
 function photo(datas, id) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
-    root_div.className = "photo_item";
+    root_div.className = "photo-item";
     root_div.title = "测试名称";
 
     var photo_img = document.createElement("img");
@@ -199,35 +199,42 @@ function photo(datas, id) {
 function question(datas, id) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
-    root_div.className = "question_item";
+    root_div.className = "question-item";
     root_div.title = "问题测试";
 
     var question_div = document.createElement("div");
-    question_div.classList = "layui-panel question";
+    question_div.classList = "question";
     question_div.style.width = "100%";
     question_div.style.height = "100%";
-    question_div.style.backgroundColor = "rgb(240, 240, 240)"
+    question_div.style.backgroundColor = "rgb(240, 240, 240, 0)"
 
     var text_div = document.createElement("div");
     text_div.className = "text";
-    text_div.style.padding = "10%";
     text_div.textContent = "问题测试";
+    text_div.style.color = "black";
+    text_div.style.width = "100%";
+    text_div.style.height = "25%";
     question_div.appendChild(text_div);
 
     var choose_div = document.createElement("div");
-    choose_div.className = "layui-form";
+    choose_div.className = "form";
     choose_div.style.display = "flex";
+    choose_div.style.flexDirection = "column";
+    choose_div.style.alignItems = "center";
+    choose_div.style.width = "100%";
+    choose_div.style.height = "75%";
+
 
     // test 3可修改,选项也可修改
-    var options = ["选项1", "选项2", "选项3"]
-    for (var i = 0; i < 3; i++) {
-        var choose_input = document.createElement("input");
-        choose_input.className = "choice";
-        choose_input.type = "radio";
-        choose_input.name = "选项";
-        choose_input.value = i;
-        choose_input.title = options[i];
-        choose_div.appendChild(choose_input);
+    var options = ["测试", "测试", "测试", "测试"];
+    for (var i = 0; i < options.length; i++) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.classList = "layui-btn choice-button";
+        button.style.margin = "0.5%";
+        button.value = i;
+        button.textContent = String.fromCharCode(65 + i) + "." + options[i];
+        choose_div.appendChild(button);
     }
 
     question_div.appendChild(choose_div);
@@ -317,16 +324,29 @@ function question(datas, id) {
  * @param {Number} id 序号
  */
 function video(datas, id) {
+    sessionStorage.setItem("video", "0");
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
-    root_div.className = "video_item";
-    root_div.title = "视频测试"
+    root_div.className = "video-item";
+    root_div.title = "视频测试";
 
     var video_div = document.createElement("video");
     video_div.className = "video";
     video_div.setAttribute("controls", "true");
+    video_div.setAttribute("autoplay", "false");
     video_div.style.width = "100%";
     video_div.style.height = "100%";
+    video_div.addEventListener("canplay", function() {
+        if (!video_div.paused) {
+            video_div.play();
+        }
+        else{
+            video_div.pause();
+        }
+    });
+    video_div.addEventListener('loadeddata', function(e) {
+        video_div.pause();
+    });
 
     var video_source = document.createElement("source");
     video_source.className = "video-source";
@@ -392,5 +412,19 @@ function video(datas, id) {
  * @param {Number} id 序号
  */
 function audio(datas, id) {
+    // 预览加载
+    var root_div = SP_load(datas[1], datas[2]);
+    root_div.className = "audio-item";
+    root_div.title = "音频测试";
+
+    var audio_div = document.createElement("audio");
+    audio_div.className = "audio";
+    audio_div.src = "../audio/test.mp3";
+    audio_div.setAttribute("controls", "true");
+    audio_div.style.width = "100%";
+    audio_div.style.height = "30%";
+
+    root_div.appendChild(audio_div);
+    place.appendChild(root_div);
 
 }

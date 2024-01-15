@@ -32,16 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
             (function(i){
                 var div = document.createElement("div");
                 div.classList = "layui-colla-item item";
-
-                // var page = document.createElement("a");
-                // page.className = "a-page";
-                // page.textContent = data[i][0];
-                // page.href = "none";
-                // page.onclick = function() {
-                //     window.parent.postMessage({action: "page-load", datafrom: data[i][2]}, "*");
-                //     return false;
-                // }
-                // div.appendChild(page);
                 var div_title = document.createElement("div");
                 div_title.classList = "layui-colla-title head";
                 div_title.innerHTML = data[i][0];
@@ -75,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     load_storage();
 
-    var data = [["视频测试", "1|2|3|4|5", "none"], ["图片测试", "1|2|3|4|5", "none"], ["音频测试", "1|2|3|4|5", "none"]];
+    var data = [["视频测试", "视频测试|问题测试", "video|question"], ["图片测试", "图片测试|问题测试", "photo|question"], ["音频测试", "音频测试|问题测试", "audio|question"]];
 
     for(var i = 0; i < data.length; i++){
         (function(i){

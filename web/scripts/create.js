@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             xhr.send(params);
 
             // test
-            sessionStorage.setItem("page-datas", JSON.stringify([["photo", "100x30", "0x10",""],["video", "100x30", "0x50",""]]));
+            sessionStorage.setItem("page-datas", JSON.stringify([[event.data.datafrom.split("|")[0], "90x40", "5x0",""],[event.data.datafrom.split("|")[1], "94x60", "3x0",""]]));
             page_load();
             // test
         }
@@ -90,13 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             case "video":
                                 video(datas[i], i);
                                 break;
+                            case "audio":
+                                audio(datas[i], i);
+                                break;
                             default:
                                 break;
                         }
                         hr_add();
                 })(i);}
 
-                var box =document.createElement("div");
+                var box = document.createElement("div");
                 box.className = "item";
                 var upload_button = document.createElement("button");
                 upload_button.classList = "layui-btn layui-btn-fluid";

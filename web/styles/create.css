@@ -48,7 +48,7 @@ main {
 
 
 .showitem-panel {
-    width: 27%;
+    width: 25%;
     height: 80%;
     position: absolute;
     left: 5%;
@@ -56,10 +56,32 @@ main {
 }
 
 
+.head-item {
+    width: 100%;
+    height: 7%;
+    background-color: #426ffe;
+}
+
+
 .main-item {
     width: 100%;
-    height: 90%;
+    height: 83%;
     background-color: #426ffe;
+}
+
+
+.form {
+    overflow-y: scroll;
+}
+.form::-webkit-scrollbar {
+    display: none;
+}
+
+
+.choice-button {
+    width: 90%;
+    text-align: left;
+    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
 }
 
 
@@ -86,7 +108,7 @@ main {
     position: absolute;
     left: 37%;
     top: 10%;
-    overflow: auto;
+    overflow-y: auto;
 }
 
 
@@ -108,7 +130,6 @@ main {
 
 .video-accept {
     margin-top: 10px;
-    
 }
 
 

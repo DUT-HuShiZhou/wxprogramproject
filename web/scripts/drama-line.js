@@ -50,16 +50,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4){
+                            // 单元为  点位名称:点位描述:纬度:经度:ID
                             var text = xhr.responseText;
-                            var num = text.split(";")[0];
-                            var states = text.split(";").slice(1);
-                            var pages = [];
-                            for (var i = 0; i < num; i++){
-                                pages.push(states[i].split(":"));
+                            var url = text.split(";")[0];
+                            var state = text.split(";").slice(1);
+                            var states = [];
+                            for (var i = 0; i < state.length; i++) {
+                                states.push(state[i].split(":"));
                             }
-                            sessionStorage.setItem("drama-contained", JSON.stringify(pages));
-                            sessionStorage.setItem("drama-id", i + 1);
-                            window.parent.postMessage({ action: "drama-line-loaded", states: pages}, "*");
+                            sessionStorage.setItem("LineID", i + 1);
+                            sessionStorage.setItem("URL", url);
+                            sessionStorage.setItem("line_points", JSON.stringify(states));
+                            window.parent.postMessage({ action: "drama-line-loaded"}, "*");
                         }
                     }
 

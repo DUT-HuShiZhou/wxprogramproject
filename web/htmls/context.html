@@ -2,7 +2,7 @@
 <html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
-        <meta name="create", content="剧本创作" />
+        <meta name="create", content="路线操作" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <!-- LayUI引入 -->
@@ -11,12 +11,53 @@
 
         <link rel="stylesheet" href="../styles/context.css" />
         <script src="../scripts/context.js" defer></script>
-        <title>测试目录</title>
     </head>
-    <body>
-        <div class="context-Line">
-            <div class="layui-collapse container" lay-accordion>
+    <body style="display: flex; overflow: hidden;">
+        <div class="column1" style="height: 100vh; width: 20vw;">
+            <div class="preview-panel root">
+                <div class="layui-card" style="width: 100%; height: 98%; display: flex; align-items: center; justify-content: center;">
+                    <div class="layui-card showitem-panel">
+                        <div class="head-item">
+                            <img src="../images/return_item.png" alt="Image" class="return-img img-item" />
+                            <i style="color: black; font-size: 80%">时间显示测试</i>
+                        </div>
+                        <div class="main-item"></div>
+                        <div class="bottom-item">
+                            <img src="../images/help_item.png" alt="Image" class="help-img img-item" />
+                            <img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="points-list root">
+                <div class="layui-card" style="width: 100%; height: 98%;">
+                    <ul class="layui-menu point-menu" id="point-menu">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="column2" style="height: 100vh; width: 60vw;">
+            <div class="map-display root">
+                <div class="layui-card" id="map-div" style="width: 98%; height: 99%;">
+                </div>
+            </div>
+            <div class="tasks-list root">
+                <div class="layui-card" id="tasks-div" style="width: 98%; height: 90%; display: flex; overflow-x: auto;">
+                </div>
+            </div>
+        </div>
+        <div class="column3" style="height: 100vh; width: 20vw;">
+            <div class="operate-panel root">
+                <div class="layui-card" id="operate-div" style="width: 100%; height: 99%;">
+                    <div>任务操作部分</div>
+                </div>
             </div>
         </div>
     </body>
+    <script type="text/javascript" defer>
+        window._AMapSecurityConfig = {
+            securityJsCode: "683da8ec0832cd253f614d7fe69c678d",
+        };
+    </script>
+    <script src="https://webapi.amap.com/loader.js" defer></script>
 </html>

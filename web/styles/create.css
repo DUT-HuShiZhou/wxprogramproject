@@ -1,5 +1,8 @@
 body {
     margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
 
@@ -7,36 +10,7 @@ body {
     display: flex;
 	flex-direction: column;
     height: 100%;
-}
-
-
-main {
-    width: 90%;
-    height: 90%;
-    display: flex;
-    position: fixed;
-    background-color: rgb(240, 240, 240);
-    border: 1px solid black;
-}
-
-
-.line-show,
-.line-ifm {
     width: 100%;
-    height: 100%;
-}
-
-
-.line-show {
-    position: absolute;
-    display: none;
-}
-
-
-.workplace {
-    width: 100%;
-    height: 100%;
-    display: flex;
 }
 
 
@@ -44,61 +18,6 @@ main {
     width: 70%;
     height: 100%;
     display: flex;
-}
-
-
-.showitem-panel {
-    width: 25%;
-    height: 80%;
-    position: absolute;
-    left: 5%;
-    top: 10%;
-}
-
-
-.head-item {
-    width: 100%;
-    height: 7%;
-    background-color: #426ffe;
-}
-
-
-.main-item {
-    width: 100%;
-    height: 83%;
-    background-color: #426ffe;
-}
-
-
-.form {
-    overflow-y: scroll;
-}
-.form::-webkit-scrollbar {
-    display: none;
-}
-
-
-.choice-button {
-    width: 90%;
-    text-align: left;
-    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
-}
-
-
-.bottom-item {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 10%;
-    background-color: #0000ff;
-    overflow: hidden;
-}
-
-
-.img-item {
-    object-fit: cover;
-    height: 100%;
-    width: auto;
 }
 
 
@@ -133,128 +52,7 @@ main {
 }
 
 
-.rightgrade {
-    margin: 5px 0;
-    display: flex;
-}
-
-
-.textContent {
-    font-size: 13px;
-    padding-right: 5px;
-}
-
-
-.gradeinput,
-.optionbox {
-    width: 60px;
-    height: 20px;
-    max-width: 60px;
-}
-
-
-.push-button {
-    width: 100%;
-    height: 30px;
-    line-height: 22px;
-}
-
-
-.upload-list {
-    margin: 0;
-}
-
-
-.upload-img {
-    margin: 5%;
-    width: 90%;
-    height: auto;
-}
-
-
-.progress {
-    background-color: #e5e5e5;
-}
-
-
-.context {
-    width: 27%;
-    height: 100%;
-    display: flex;
-}
-
-
-.hr {
-    width: 3%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-
-.divid {
-    height: 90%;
-    width: 5%;
-    color: black;
-    margin:0 auto;
-    border: 0;
-    background: #333;
-    background-image: linear-gradient(to bottom, #cca6ee, #fbc2d1, #d7a6ee);
-}
-
-
-.context-ifm {
-    border: 0;
-    width: 100%;
-}
-
-
-.bottom {
-    bottom: 0;
-    width: 90%;
-    height: 10%;
-    display: flex;
-    position: fixed;
-    border: 1px solid black;
-}
-
-
-nav.container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-
-.fwbtn-container {
-    position: absolute;
-    width: 90%;
-    left: 5%;
-}
-
-
-.right {
-    right: 0;
-    width: 10%;
-    height: 100%;
-    position: fixed;
-    border: 1px solid black;
-}
-
-
-.dbtn {
-    text-align: center;
-}
-
-
-.bbtn {
-    position: relative;
-    top: 5px;
-    border-radius: 5px;
-    margin: 5%;
-}
-
-
-.bbtn:hover {
-    background-color: #8a8383; /* 设置悬停时的背景颜色 */
+/* 操作面板*/
+.layui-layer-iframe {
+    background-color: rgb(255, 255, 255, 0);
 }

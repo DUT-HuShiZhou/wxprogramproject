@@ -32,7 +32,7 @@ body {
 
 
 .web-top {
-    height: 50px;
+    height: 35px;
     display: flex;
     justify-content: space-between;
     align-items: center;  
@@ -41,6 +41,7 @@ body {
 
 
 .main-section {
+    height: calc(100vh - 55px);
     display: flex;
 }
 
@@ -89,13 +90,13 @@ hr {
 
 .sidebar,
 .main-content {
-    height: calc(100vh - 70px);
+    height: 100%;
 }
 
 
 .sidebar {
     font-size: larger;
-    width: 10%;
+    width: 7%;
 }
 
 

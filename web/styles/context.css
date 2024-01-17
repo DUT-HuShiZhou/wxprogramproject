@@ -1,39 +1,120 @@
 body {
-    margin: 0;
-    height: 100vh;
+    background-color: rgb(255, 255, 255, 0);
+    -webkit-user-select: none;
 }
 
 
-.context-Line {
-    display: flex;
-    flex-direction: column; /* 子元素垂直排列 */
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    height: 100vh;
+.preview-panel {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    height: 50%;
 }
 
-
-.container {
-    height: 90%;
-    width: 90%;
-    border: 0;
-    overflow: auto;
-    display: flex;
-    flex-direction: column; /* 设置子元素纵向排列 */
-    justify-content: center; /* 在垂直方向上居中显示子元素 */
+.showitem-panel {
+    width: 75%;
+    height: 95%;
+    position: relative;
 }
 
-
-.item {
+.head-item {
     width: 100%;
+    height: 7%;
+    background-color: #426ffe;
+}
+
+.main-item {
+    width: 100%;
+    height: 83%;
+    background-color: #426ffe;
+}
+
+.form {
+    overflow-y: scroll;
+}
+.form::-webkit-scrollbar {
+    display: none;
+}
+
+.choice-button {
+    width: 90%;
+    text-align: left;
+    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
+}
+
+.bottom-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 10%;
+    background-color: #0000ff;
+    overflow: hidden;
+}         
+
+.img-item {
+    object-fit: cover;
+    height: 100%;
+    width: auto;
 }
 
 
-/* .head {
-    background-image: linear-gradient(to right, rgb(220, 234, 131), rgb(208, 122, 196), rgb(20, 202, 71));
-} */
+.points-list {
+    display: flex;
+    height: 50%;
+    overflow-y: scroll;
+}
+.points-list::-webkit-scrollbar {
+    display: none;
+}
 
 
-.body {
-    background-color: blanchedalmond;
+.map-display {
+    height: 80%;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* 鼠标悬停时的样式，显示元素内容 */
+.custom-content-marker:hover::after {
+    content: attr(point-name); /* 使用属性值作为内容 */
+    display: block;
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: transparent;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+.tasks-list {
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 滑动条 */
+#tasks-div::-webkit-scrollbar {
+    height: 6px;
+}
+/* 轨道条 */
+#tasks-div::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255);
+    border-radius: 2px;
+}
+/* 滑块 */
+#tasks-div::-webkit-scrollbar-thumb {
+    background: #9b9b9b;
+    border-radius: 10px;
+}
+
+
+.operate-panel {
+    height: 100%;
 }

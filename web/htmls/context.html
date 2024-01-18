@@ -14,7 +14,7 @@
     </head>
     <body style="display: flex; overflow: hidden;">
         <div class="column1" style="height: 100vh; width: 20vw;">
-            <div class="preview-panel root">
+            <div class="preview-panel root" title="组件预览">
                 <div class="layui-card" style="width: 100%; height: 98%; display: flex; align-items: center; justify-content: center;">
                     <div class="layui-card showitem-panel">
                         <div class="head-item">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="points-list root">
+            <div class="points-list root" title="点位列表">
                 <div class="layui-card" style="width: 100%; height: 98%;">
                     <ul class="layui-menu point-menu" id="point-menu">
                     </ul>
@@ -37,19 +37,119 @@
             </div>
         </div>
         <div class="column2" style="height: 100vh; width: 60vw;">
-            <div class="map-display root">
+            <div class="map-display root" title="地图展示">
                 <div class="layui-card" id="map-div" style="width: 98%; height: 99%;">
                 </div>
             </div>
-            <div class="tasks-list root">
-                <div class="layui-card" id="tasks-div" style="width: 98%; height: 90%; display: flex; overflow-x: auto;">
+            <div class="tasks-list root" title="任务列表">
+                <div class="layui-card" id="tasks-div" style="width: 98%; height: 90%; display: flex; overflow-x: auto; overflow-y: hidden;">
                 </div>
             </div>
         </div>
         <div class="column3" style="height: 100vh; width: 20vw;">
-            <div class="operate-panel root">
+            <div class="operate-panel root" title="操作面板">
                 <div class="layui-card" id="operate-div" style="width: 100%; height: 99%;">
-                    <div>任务操作部分</div>
+                    <div class="operate-root" style="width: 100%; height: 100%; overflow-y: hidden; display: none;">
+                        <div class="type-part" style="width: 100%; height: 10%;">
+                            <span class="title-span" style="margin-top: 5px;">任务类型</span>
+                            <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%;">
+                                <div class="option1 opt" style="margin: 0 10px">
+                                    <input type="radio" name="type" value="1" title="普通任务">
+                                </div>
+                                <div class="option2 opt" style="display: flex; align-items: center;">
+                                    <input type="radio" name="type" value="0" title="结束任务">
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="option-part" style="width: 100%; height: 30%;">
+                            <div class="state-option" style="display: flex; width: 100% ; margin-top: 20px;">
+                                <span class="title-span">有效状态</span>
+                                <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; margin-left: 18%">
+                                    <div class="option1 opt" style="height: 100%;">
+                                        <input type="radio" name="state" value="1" title="开启">
+                                    </div>
+                                    <div class="option2 opt">
+                                        <input type="radio" name="state" value="0" title="关闭">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="next-point" style="display: flex; width: 100% ; margin-top: 10px;">
+                                <span class="title-span">下一个点位</span>
+                                <div class="layui-col-md6 option-select">
+                                    <select style="width: 100%;">
+                                        <option value="">点击选择</option>
+                                    </select>
+                                </div>
+                                <i class="layui-icon layui-icon-unlink" title="清除"></i>
+                                <script>
+                                    var next = document.querySelector("div.next-point");
+                                    var _i = next.querySelector("i");
+                                    var selector = next.querySelector("select");
+                                    _i.addEventListener("mousedown", function (e) {
+                                        if (e.button === 0) {
+                                            selector.selectedIndex = 0;
+                                        }
+                                    })
+                                </script>
+                            </div>
+                            <div class="next-task" style="display: flex; width: 100% ; margin-top: 20px;">
+                                <span class="title-span">下一个任务</span>
+                                <div class="layui-col-md6 option-select">
+                                    <select style="width: 100%;">
+                                        <option value="">点击选择</option>
+                                    </select>
+                                </div>
+                                <i class="layui-icon layui-icon-unlink" title="清除"></i>
+                                <script>
+                                    var next = document.querySelector("div.next-point");
+                                    var _i = next.querySelector("i");
+                                    var selector = next.querySelector("select");
+                                    _i.addEventListener("mousedown", function (e) {
+                                        if (e.button === 0) {
+                                            selector.selectedIndex = 0;
+                                        }
+                                    })
+                                </script>
+                            </div>
+                            <div class="bank-show" style="display: flex; width: 100% ; margin-top: 20px;">
+                                <i class="layui-icon layui-icon-about" title="小提示"></i>
+                                <div class="layui-col-md6 option-select">
+                                    <select style="width: 100%;">
+                                        <option value="">点击选择题库</option>
+                                    </select>
+                                </div>
+                                <a onclick="" style="margin: 0 5px;">预览</a>
+                                <a onclick="">加载</a>
+                                <script>
+                                    var _as = document.querySelectorAll("a");
+                                    _as.forEach(_a => {
+                                        _a.addEventListener("click", function () {
+                                            _a.classList.toggle("clicked");
+                                            setTimeout(function(){_a.classList.toggle("clicked")}, 100);
+                                        })
+                                    });
+
+                                    var bank_show = document.querySelector("div.bank-show");
+                                    var _i = bank_show.querySelector("i");
+                                    _i.addEventListener("mousedown", function (e) {
+                                        if (e.button === 0) {
+                                            // 打开新弹出层，里面写有部分操作解释 可以添加点击反馈
+                                        }
+                                    })
+                                </script>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="operate-part" style="width: 100%; height: 60%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
+                            <div class="task-inform">
+                                
+                            </div>
+                            <div class="module"></div>
+                            <div class="AR-add"></div>
+                            <div class="act-sure"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

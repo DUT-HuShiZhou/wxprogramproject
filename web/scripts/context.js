@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     let point_menu = document.querySelector("ul.point-menu");
+    let operate_panel = document.querySelector("div.operate-root");
 
     AMapLoader.load({
         key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -166,38 +167,219 @@ document.addEventListener('DOMContentLoaded', function() {
                 var tasks = [];
                 for (var i = 0; i < task_line.length; i++) {
                     tasks.push(task_line[i].split(":"));
-                }
+                };
                 //task_panel_load(tasks);
             };
         };
 
         xhr.send(params);
 
-        task_panel_load([["666","测试"], ["777", "测试"]]);
+        if (elemnet.getAttribute("ID") === "测试"){
+            task_panel_load([["666", "1", "测试"], ["777", "0", "测试"]], elemnet.getAttribute("ID"));
+        }
+        else {
+            task_panel_load([],);
+        }
     }
 
     /**
-     * 
+     * 任务列表加载主函数
      * @param {Array<Array>} tasks 任务名称,任务类型,任务ID
+     * @param {Number} pointID 点位ID
      */
-    function task_panel_load (tasks) {
-        var task_panel = document.querySelector("div#tasks-div");
-        task_panel.innerHTML = "";
+    function task_panel_load (tasks, pointID) {
+        var task_card = document.querySelector("div#tasks-div");
+        task_card.innerHTML = "";
 
         for (var i = 0; i < tasks.length; i++){
-            var task_div = document.createElement("div");
-            task_div.className = "layui-panel";
-            task_div.style.width = "75px"
-            task_div.style.height = "90%"
+            (function(i) {
+                var task_div = document.createElement("div");
+                task_div.classList = "layui-panel task-panel";
+                task_div.setAttribute("ID", tasks[i][2]);
 
-            var name = document.createElement("span");
-            name.textContent = tasks[i][0];
-            task_div.appendChild(name);
+                var name = document.createElement("span");
+                name.textContent = tasks[i][0];
+                task_div.appendChild(name);
 
-            var hr = document.createElement("hr");
-            task_div.appendChild(hr);
+                var hr = document.createElement("hr");
+                task_div.appendChild(hr);
 
-            task_panel.appendChild(task_div);
+                var name = document.createElement("span");
+                name.textContent = tasks[i][1] === "1"? "普通任务": "结束任务";
+                task_div.appendChild(name);
+
+                var button = document.createElement("button");
+                button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                button.textContent = "选择";
+                button.onclick = function() {
+                    var params = new FormData();
+                    params.append("un", sessionStorage.getItem("un"));
+                    params.append("LineID", sessionStorage.getItem("LineID"));
+                    params.append("PointID", pointID);
+                    params.append("ID", tasks[i][2]);
+
+                    var xhr = new XMLHttpRequest();
+                    var url = "/getTask";
+
+                    xhr.open("POST", url, true);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            // 任务状态;下一个点位;下一个任务;任务描述;题库内容;ar功能
+                            var data = xhr.responseText;
+
+                            var source = data.split(";");
+
+                            // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                        };
+                    }
+
+                    xhr.send(params);
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], []);
+                };
+                task_div.appendChild(button);
+
+                var button = document.createElement("button");
+                button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                button.textContent = "复制";
+                task_div.appendChild(button);
+
+                var button = document.createElement("button");
+                button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                button.textContent = "删除";
+                button.onclick = function () {
+                    layui.use(function () {
+                        var layer = layui.layer;
+                        layer.confirm("此操作将从服务器上删除此选项，且无法撤销，请再一次确认是否进行？", {
+                            title: "询问",
+                            icon: 3,
+                        }, function (index) {
+                            var params = new FormData();
+                            params.append("un", sessionStorage.getItem("un"));
+                            params.append("LineID", sessionStorage.getItem("LineID"));
+                            params.append("PointID", pointID);
+                            params.append("ID", tasks[i][1]);
+
+                            var xhr = new XMLHttpRequest();
+                            var url = "/getTask";
+
+                            xhr.open("POST", url, true);
+                            xhr.onreadystatechange = function () {
+                                if (xhr.readyState === 4) {
+                                    var data = xhr.responseText;
+                                };
+                            }
+
+                            xhr.send(params);
+
+                            task_div.remove();
+                            layer.close(index);
+                        }, );
+                    });
+                }
+                task_div.appendChild(button);
+
+                task_card.appendChild(task_div);
+            })(i);
         }
+
+        var add_div = document.createElement("div");
+        add_div.classList = "layui-panel add-panel";
+
+        var _i = document.createElement("i");
+        _i.classList = "layui-icon layui-icon-add-circle";
+        _i.style.fontSize = "60px";
+        _i.addEventListener("mousedown", function(e) {
+            if (e.button === 0){
+                var add_div = document.querySelector("div.add-panel");
+                task_card.removeChild(add_div);
+
+                var task_div = document.createElement("div");
+                task_div.classList = "layui-panel task-panel new";
+    
+                var name = document.createElement("span");
+                name.textContent = "新建任务";
+                task_div.appendChild(name);
+    
+                var hr = document.createElement("hr");
+                task_div.appendChild(hr);
+
+                var button = document.createElement("button");
+                button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                button.textContent = "选择";
+                button.onclick = function() {
+                    task_load(1, 0, "新建任务", []);
+                };
+                task_div.appendChild(button);
+
+                // 删除 保留为挪用
+                // var button = document.createElement("button");
+                // button.classList = "layui-btn layui-btn-primary layui-btn-radius save-button task-btn";
+                // button.textContent = "保存";
+                // button.onclick = function() {
+                //     var params = new FormData();
+                //     params.append("un", sessionStorage("un"));
+                //     params.append("LineID", sessionStorage.getItem("LineID"));
+                //     params.append("PointID", elemnet.getAttribute("ID"));
+
+                //     var xhr = new XMLHttpRequest();
+                //     var url = "/saveNewTask";
+
+                //     xhr.open("POST", url, true);
+                //     xhr.onreadystatechange = function () {
+                //         if (xhr.readyState === 4) {
+                //             task_div.classList = "layui-panel task-panel";
+                //             task_div.setAttribute("ID", xhr.responseText);
+
+                //         }
+                //     };
+
+                //     xhr.send(params);
+                // };
+                // task_div.appendChild(button);
+
+                var button = document.createElement("button");
+                button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                button.textContent = "删除";
+                button.onclick = function () {
+                    task_div.remove();
+                    operate_panel.style.display = "none";
+                }
+                task_div.appendChild(button);
+
+                task_card.appendChild(task_div);
+                task_card.appendChild(add_div);
+            }
+        })
+        add_div.appendChild(_i);
+
+        var hr = document.createElement("hr");
+        add_div.appendChild(hr);
+
+        var text = document.createElement("span");
+        text.textContent = "创建新任务";
+        add_div.appendChild(text);
+
+        task_card.appendChild(add_div);
+    }
+
+    /**
+     * 任务信息加载主函数 
+     * @param {Number} type 任务类型
+     * @param {Number} state 任务启动状态
+     * @param {String} name 任务名称
+     * @param {Array} objs 任务组件
+     */
+    function task_load (type, state, name, objs) {
+        operate_panel.style.display = "block";
+
+        layui.use("form", function () {
+            var form = layui.form;
+            form.val('operate-input-form', {
+                "type": type,
+                "state": state
+            });
+        })
+
+        
     }
 })

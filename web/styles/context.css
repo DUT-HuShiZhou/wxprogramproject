@@ -114,7 +114,91 @@ body {
     border-radius: 10px;
 }
 
+.task-panel,
+.add-panel {
+    width: 75px;
+    height: 95%;
+    margin: 2px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.task-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.task-btn {
+    margin-left: 0 !important;
+    margin-top: 5px;
+    font-size: 11px;
+    width: 60px;
+    line-height: 0;
+}
+
 
 .operate-panel {
     height: 100%;
+}
+
+.type-part,
+.option-part,
+.operate-part {
+    display: flex;
+    flex-direction: column;
+}
+
+.opt {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.title-span {
+    margin-left: 2%;
+    font-size: smaller; 
+    font-weight: bold;
+}
+
+.option-select {
+    width: 50%; 
+    margin-left: 5%; 
+    margin-right: 3%;
+}
+
+.operate-part::-webkit-scrollbar {
+    display: none;
+}
+
+
+span {
+    white-space: nowrap;
+    font-size: small;
+}
+
+
+hr {
+    margin: 0;
+    width: 100%;
+}
+
+/* layui组件属性修改 */
+div.layui-unselect {
+    margin-left: 10px;
+    margin-right: 0;
+    margin-top: 0;
+    padding-right: 0;
+    display: flex;
+}
+i.layui-icon-circle {
+    font-size: small;
+}
+div {
+    font-size: small !important;
+    white-space: nowrap;
+}
+
+a.clicked {
+    color: rgb(0, 255, 213);
 }

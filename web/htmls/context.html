@@ -54,7 +54,7 @@
                             <span class="title-span" style="margin-top: 5px;">任务类型</span>
                             <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%;">
                                 <div class="option1 opt" style="margin: 0 10px">
-                                    <input type="radio" name="type" value="1" title="普通任务">
+                                    <input type="radio" name="type" value="1" title="普通任务" checked>
                                 </div>
                                 <div class="option2 opt" style="display: flex; align-items: center;">
                                     <input type="radio" name="type" value="0" title="结束任务">
@@ -70,14 +70,14 @@
                                         <input type="radio" name="state" value="1" title="开启">
                                     </div>
                                     <div class="option2 opt">
-                                        <input type="radio" name="state" value="0" title="关闭">
+                                        <input type="radio" name="state" value="0" title="关闭" checked>
                                     </div>
                                 </div>
                             </div>
                             <div class="next-point" style="display: flex; width: 100% ; margin-top: 10px;">
                                 <span class="title-span">下一个点位</span>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;">
+                                    <select style="width: 100%;" lay-filter="nextpoint-selector" class="nextpoint">
                                         <option value="">点击选择</option>
                                     </select>
                                 </div>
@@ -96,7 +96,7 @@
                             <div class="next-task" style="display: flex; width: 100% ; margin-top: 20px;">
                                 <span class="title-span">下一个任务</span>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;">
+                                    <select style="width: 100%;" lay-filter="nexttask-selector" class="nexttask">
                                         <option value="">点击选择</option>
                                     </select>
                                 </div>
@@ -115,27 +115,75 @@
                             <div class="bank-show" style="display: flex; width: 100% ; margin-top: 20px;">
                                 <i class="layui-icon layui-icon-about" title="小提示"></i>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;">
+                                    <select style="width: 100%;" lay-filter="question-selector" class="question-selector">
                                         <option value="">点击选择题库</option>
                                     </select>
                                 </div>
                                 <a onclick="" style="margin: 0 5px;">预览</a>
                                 <a onclick="">加载</a>
                                 <script>
-                                    var _as = document.querySelectorAll("a");
-                                    _as.forEach(_a => {
-                                        _a.addEventListener("click", function () {
-                                            _a.classList.toggle("clicked");
-                                            setTimeout(function(){_a.classList.toggle("clicked")}, 100);
-                                        })
-                                    });
-
                                     var bank_show = document.querySelector("div.bank-show");
                                     var _i = bank_show.querySelector("i");
                                     _i.addEventListener("mousedown", function (e) {
                                         if (e.button === 0) {
                                             // 打开新弹出层，里面写有部分操作解释 可以添加点击反馈
-                                        }
+                                            layui.use(function(){                                           
+                                                fetch("../text/context.txt").then(response => {
+                                                    if (!response.ok) {
+                                                    throw new Error('Network response was not ok');
+                                                    }
+                                                    return response.text();
+                                                }).then(content => {
+                                                    var root = document.createElement("div");
+                                                    root.classList = "layui-tab layui-tab-brief";
+    
+                                                    var ul = document.createElement("ul");
+                                                    ul.classList = "layui-tab-title";
+
+                                                    var context = content.split("\n!!").splice(1);
+
+                                                    var list = context[0].split("**");
+                                                    for (var i = 0; i < list.length; i++) {
+                                                        var li = document.createElement("li");
+                                                        if (i === 0) {li.className = "layui-this"};
+
+                                                        li.textContent = list[i];
+                                                        ul.appendChild(li);
+                                                    }
+                                                    root.appendChild(ul);
+
+                                                    var div = document.createElement("div");
+                                                    div.className = "layui-tab-content";
+
+                                                    for (var i = 1; i <= list.length; i++) {
+                                                        var page = document.createElement("div");
+                                                        if (i === 1) {page.classList = "layui-tab-item layui-show"}
+                                                        else {page.className = "layui-tab-item"};
+
+                                                        page.style.flexDirection = "column";
+                                                        page.style.alignItems = "center";
+
+                                                        page.innerHTML = context[i];
+                                                        div.appendChild(page);
+                                                    }
+                                                    root.appendChild(div);
+
+                                                    var layer = layui.layer;
+
+                                                    layer.open({
+                                                        type: 1,
+                                                        title: false,
+                                                        offset: 't',
+                                                        anim: 'slideDown', // 从上往下
+                                                        area: ['100%', '40%'],
+                                                        shade: 0.2,
+                                                        shadeClose: true,
+                                                        id: 'ID-demo-layer-direction-t',
+                                                        content: root.outerHTML
+                                                    });
+                                                }).catch(error => console.error('Fetch error:', error));
+                                            });
+                                        };
                                     })
                                 </script>
                             </div>
@@ -143,11 +191,79 @@
                         <hr/>
                         <div class="operate-part" style="width: 100%; height: 60%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
                             <div class="task-inform">
-                                
+                                <div class="task-name" style="display: flex; height: 25px; width: 100%; align-items: center; margin-top: 10px;">
+                                    <span class="title-span">任务名称</span>
+                                    <input type="text" name="task-name" placeholder="新建任务" class="layui-input task-name" style="height: 100%; width: 120px; margin-left: 30px;">
+                                </div>
+                                <div class="task-name" style="display: flex; height: 80px; width: 100%; align-items: center; margin-top: 10px;">
+                                    <span class="title-span">任务备注</span>
+                                    <textarea name="task-remark" placeholder="空" class="layui-textarea task-remark" style="height: 100%; min-height: 0; width: 120px; margin-left: 30px; font-size: smaller; resize: none;"></textarea>
+                                </div>
                             </div>
-                            <div class="module"></div>
-                            <div class="AR-add"></div>
-                            <div class="act-sure"></div>
+                            <div class="module">
+                            </div>
+                            <div class="AR-add">
+                                <div class="AR-state" style="display: flex; width: 100% ; margin-top: 20px; align-items: center;">
+                                    <span class="title-span">添加AR功能</span>
+                                    <div class="layui-form AR-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; margin-left: 8%;">
+                                        <div class="option1 opt" style="height: 100%;">
+                                            <input type="radio" lay-filter="AR-option" name="AR" value="1" title="开启">
+                                        </div>
+                                        <div class="option2 opt">
+                                            <input type="radio" lay-filter="AR-option" name="AR" value="0" title="关闭" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="AR-operate" style="width: 100%; flex-direction: column; display: none;">
+                                    <div class="AR-type" style="width: 100%;">
+                                        <div class="layui-form option-select" style="width: 95%; margin-left: 0;">
+                                            <select style="width: 100%;" lay-filter="AR-selector" class="AR-selector">
+                                                <option value="">请选择AR类型</option>
+                                                <option value="1">2DMarker</option>
+                                                <option value="2">3DMarker</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="AR-file-update" style="width: 100%; margin-top: 5px; display: none;">
+                                        <span class="title-span" style="margin-left: 5%;">状态:</span>
+                                        <span class="title-span">未达标</span>
+                                        <a onclick=""style="margin-left: 10%; margin-right: 5%;">清空</a>
+                                        <a onclick="">上传文件</a>
+                                    </div>
+                                </div>
+                                <script>
+                                    layui.use(function() {
+                                        var form = layui.form;
+
+                                        form.on('radio(AR-option)', function (data) {
+                                            var div = document.querySelector("div.AR-operate");
+
+                                            if (data.value === "1") {
+                                                div.style.display = "flex";
+                                            }
+                                            else {
+                                                div.style.display = "none";
+                                            };
+                                        });
+
+                                        var form0 = layui.form;
+
+                                        form0.on("select(AR-selector)", function (data) {
+                                            var div = document.querySelector("div.AR-file-update");
+                                            
+                                            if (data.value === "1" || data.value === "2") {
+                                                div.style.display = "flex";
+                                            }
+                                            else {
+                                                div.style.display = "none";
+                                            };
+                                        })
+                                    });
+                                </script>
+                            </div>
+                            <div class="act-sure" style="margin-top: 15px; display: flex; justify-content: center;">
+                                <button type="button" class="layui-btn layui-btn-sm update-btn">保存|更新</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -155,6 +271,14 @@
         </div>
     </body>
     <script type="text/javascript" defer>
+        var _as = document.querySelectorAll("a");
+        _as.forEach(_a => {
+            _a.addEventListener("click", function () {
+                _a.classList.toggle("clicked");
+                setTimeout(function(){_a.classList.toggle("clicked")}, 100);
+            })
+        });
+
         window._AMapSecurityConfig = {
             securityJsCode: "683da8ec0832cd253f614d7fe69c678d",
         };

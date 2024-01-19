@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         plugin: "AMap.Walking" 
         })
         .then((AMap) => {
-            /**点位名称|点位描述|纬度|经度|url */
+            /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points"));
             
             point_datas = [["你好", "不好", 111, 25, "测试"],["再见", "再也不见", 111.001, 25.001, "空目标"]];
@@ -71,6 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     point_menu.append(li);
 
+                    var nextpoint_selector = document.querySelector("select.nextpoint");
+
+                    var option = document.createElement("option");
+                    option.value = point_datas[i][4];
+                    option.textContent = point_datas[i][0];
+                    nextpoint_selector.add(option);
                 })(i);
             }
 
@@ -83,6 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             shwoName[i].setAttribute("point-name", point_datas[i][1]);
                         }
                         else if (e.button === 0) {
+                            var points = document.querySelectorAll("li.point");
+                            points.forEach(point => {
+                                if (point.id === shwoName[i].id) {
+                                    point.classList.add("layui-menu-item-checked");
+                                }
+                                else {
+                                    point.classList.remove("layui-menu-item-checked");
+                                };
+                            });
+
                             point_choose_action(shwoName[i]);
                         }
                     });
@@ -91,45 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 })(i);
             }
-
-            // 进行步行路线搜索
-            AMap.plugin('AMap.Walking', function () {
-                const walking = new AMap.Walking({
-                    map: map,
-                    panel: "panel"
-                });
-            
-                function drawPolyline(index, path) {
-                    var polyline = new AMap.Polyline({
-                        path: path,
-                        isOutline: true,
-                        outlineColor: "#" + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0'),
-                        borderWeight: 1,
-                        strokeColor: "#" + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0') + (Math.floor(Math.random() * 200) + 55).toString(16).padStart(2, '0'),
-                        strokeOpacity: 0.9,
-                        strokeWeight: 2,
-                        strokeStyle: "solid",
-                        lineJoin: "round",
-                        lineCap: "round",
-                    });
-                    map.add(polyline);
-                }
-            
-                // 绘制路线图形
-                for (var i = 0; i < point_datas.length - 1; i++) {
-                    (function (index) {
-                        walking.search([point_datas[i][2], point_datas[i][3]], [point_datas[i + 1][2], point_datas[i + 1][3]], function (status, result) {
-                            if (status === 'complete') {
-                                // 绘制步行导航路线
-                                var path = result.routes[0].steps.map(step => step.path);
-                                drawPolyline(index, [].concat.apply([], path));
-                            } else {
-                                alert("第" + (index + 1) + "条路线" + "步行导航失败：" + status);
-                            }
-                        });
-                    })(i);
-                }
-            });
             
             layui.use(function(){
                 var dropdown = layui.dropdown;
@@ -150,6 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Element} elemnet 元素 
      */
     function point_choose_action (elemnet) {
+        operate_panel.style.display = "none";
+
         var params = new FormData();
         params.append("un", sessionStorage.getItem("un"));
         params.append("LineID", sessionStorage.getItem("LineID"));
@@ -188,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Number} pointID 点位ID
      */
     function task_panel_load (tasks, pointID) {
+        init_panel();
         var task_card = document.querySelector("div#tasks-div");
         task_card.innerHTML = "";
 
@@ -212,6 +192,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "选择";
                 button.onclick = function() {
+                    init_panel();
+
                     var params = new FormData();
                     params.append("un", sessionStorage.getItem("un"));
                     params.append("LineID", sessionStorage.getItem("LineID"));
@@ -224,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     xhr.open("POST", url, true);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) {
-                            // 任务状态;下一个点位;下一个任务;任务描述;题库内容;ar功能
+                            // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
                             var data = xhr.responseText;
 
                             var source = data.split(";");
@@ -234,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     xhr.send(params);
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], []);
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["测试", 0, "你好", "", "1:2"]);
                 };
                 task_div.appendChild(button);
 
@@ -307,6 +289,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "选择";
                 button.onclick = function() {
+                    init_panel();
+
                     task_load(1, 0, "新建任务", []);
                 };
                 task_div.appendChild(button);
@@ -367,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Number} type 任务类型
      * @param {Number} state 任务启动状态
      * @param {String} name 任务名称
-     * @param {Array} objs 任务组件
+     * @param {Array} objs 任务组件  下一个点位|下一个任务|任务备注|题库内容|ar功能
      */
     function task_load (type, state, name, objs) {
         operate_panel.style.display = "block";
@@ -380,6 +364,109 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
 
+        var name_input = document.querySelector("input.task-name");
+        name_input.placeholder = name;
+
+        if (objs.length != 0) {
+            var nextpoint_selector = document.querySelector("select.nextpoint");
+            nextpoint_selector.value = objs[0];
+
+            var nexttask_selector = document.querySelector("select.nexttask");
+            nexttask_selector.value = objs[1];
+
+            var remark = document.querySelector("textarea.task-remark");
+            remark.placeholder = objs[2];
+
+
+
+            if (objs[4].split(":").length > 1) {
+                // 1|AR类型|获取数据URL
+                var ar_set = objs[4].split(":")
+                layui.use("form", function () {
+                    var form = layui.form;
+                    form.val('operate-input-form', {
+                        "AR": 1
+                    });
+
+                    var form0 = layui.form;
+                    var AR_selector = document.querySelector("select.AR-selector");
+                    var optionToSelect = AR_selector.querySelector('option[value="' + ar_set[1] + '"]');
+                    optionToSelect.selected = true;
+
+                    form0.render('select');
+
+                    var div1 = document.querySelector("div.AR-operate");
+                    var div2 = document.querySelector("div.AR-file-update");
+                    div1.style.display = "flex";
+                    div2.style.display = "flex";
+                });
+            }
+            else {
+                layui.use("form", function () {
+                    var form = layui.form;
+                    form.val('operate-input-form', {
+                        "AR": 0
+                    });
+
+                    var form0 = layui.form;
+                    var AR_selector = document.querySelector("select.AR-selector");
+                    var optionToSelect = AR_selector.querySelector('option[value=""]');
+                    optionToSelect.selected = true;
         
+                    form0.render('select');
+        
+                    var div1 = document.querySelector("div.AR-operate");
+                    var div2 = document.querySelector("div.AR-file-update");
+                    div1.style.display = "none";
+                    div2.style.display = "none";
+                });
+            };
+        }
+        else {
+            var nextpoint_selector = document.querySelector("select.nextpoint");
+            nextpoint_selector.selectedIndex = 0;
+
+            var nexttask_selector = document.querySelector("select.nexttask");
+            nexttask_selector.selectedIndex = 0;
+        }
+    }
+
+    /**初始化任务编辑栏基础组件 */
+    function init_panel () {
+        layui.use("form", function () {
+            var form = layui.form;
+            form.val('operate-input-form', {
+                "type": 1,
+                "state": 0,
+                "AR": 0
+            });
+
+            var nextpoint_selector = document.querySelector("select.nextpoint");
+            nextpoint_selector.selectedIndex = 0;
+
+            var nexttask_selector = document.querySelector("select.nexttask");
+            nexttask_selector.selectedIndex = 0;
+
+            var question_selector = document.querySelector("select.question-selector");
+            question_selector.selectedIndex = 0;
+
+            var name_input = document.querySelector("input.task-name");
+            name_input.placeholder = "新建任务";
+    
+            var remark = document.querySelector("textarea.task-remark");
+            remark.placeholder = "空";
+
+            var form0 = layui.form;
+            var AR_selector = document.querySelector("select.AR-selector");
+            var optionToSelect = AR_selector.querySelector('option[value=""]');
+            optionToSelect.selected = true;
+
+            form0.render('select');
+
+            var div1 = document.querySelector("div.AR-operate");
+            var div2 = document.querySelector("div.AR-file-update");
+            div1.style.display = "none";
+            div2.style.display = "none";
+        })
     }
 })

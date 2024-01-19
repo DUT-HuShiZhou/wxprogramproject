@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send(params);
 
         if (elemnet.getAttribute("ID") === "测试"){
-            task_panel_load([["666", "1", "测试"], ["777", "0", "测试"]], elemnet.getAttribute("ID"));
+            task_panel_load([["视频模板", "1", "视频"], ["图片模板", "0", "图片"], ["音频模板", "1", "音频"]], elemnet.getAttribute("ID"));
         }
         else {
             task_panel_load([],);
@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         init_panel();
         var task_card = document.querySelector("div#tasks-div");
         task_card.innerHTML = "";
+        sessionStorage.setItem("PointID", pointID);
 
         for (var i = 0; i < tasks.length; i++){
             (function(i) {
@@ -192,6 +193,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "选择";
                 button.onclick = function() {
+                    sessionStorage.setItem("TaskID", tasks[i][2]);
+
                     init_panel();
 
                     var params = new FormData();
@@ -216,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     xhr.send(params);
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["测试", 0, "你好", "", "1:2"]);
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], "", "1:2"]);
                 };
                 task_div.appendChild(button);
 
@@ -294,32 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     task_load(1, 0, "新建任务", []);
                 };
                 task_div.appendChild(button);
-
-                // 删除 保留为挪用
-                // var button = document.createElement("button");
-                // button.classList = "layui-btn layui-btn-primary layui-btn-radius save-button task-btn";
-                // button.textContent = "保存";
-                // button.onclick = function() {
-                //     var params = new FormData();
-                //     params.append("un", sessionStorage("un"));
-                //     params.append("LineID", sessionStorage.getItem("LineID"));
-                //     params.append("PointID", elemnet.getAttribute("ID"));
-
-                //     var xhr = new XMLHttpRequest();
-                //     var url = "/saveNewTask";
-
-                //     xhr.open("POST", url, true);
-                //     xhr.onreadystatechange = function () {
-                //         if (xhr.readyState === 4) {
-                //             task_div.classList = "layui-panel task-panel";
-                //             task_div.setAttribute("ID", xhr.responseText);
-
-                //         }
-                //     };
-
-                //     xhr.send(params);
-                // };
-                // task_div.appendChild(button);
 
                 var button = document.createElement("button");
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
@@ -468,5 +445,13 @@ document.addEventListener('DOMContentLoaded', function() {
             div1.style.display = "none";
             div2.style.display = "none";
         })
+    }
+
+    /**
+     * 组件加载
+     * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url
+     */
+    function items_load (items) {
+
     }
 })

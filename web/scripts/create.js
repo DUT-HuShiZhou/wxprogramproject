@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     content: '../htmls/context.html',
                     fixed: false, // 不固定
                     maxmin: false,
-                    shadeClose: true,
+                    shadeClose: false,
                 });
             });
         }
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr.send(params);
 
     // 页面加载函数（可挪用）
-    /**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url*/
     function page_load() {
         if (sessionStorage.getItem("page-datas")){
             var datas = JSON.parse(sessionStorage.getItem("page-datas"));

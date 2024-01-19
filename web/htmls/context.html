@@ -77,18 +77,18 @@
                             <div class="next-point" style="display: flex; width: 100% ; margin-top: 10px;">
                                 <span class="title-span">下一个点位</span>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;" lay-filter="nextpoint-selector" class="nextpoint">
+                                    <select style="width: 100%;" class="nextpoint">
                                         <option value="">点击选择</option>
                                     </select>
                                 </div>
                                 <i class="layui-icon layui-icon-unlink" title="清除"></i>
                                 <script>
-                                    var next = document.querySelector("div.next-point");
-                                    var _i = next.querySelector("i");
-                                    var selector = next.querySelector("select");
+                                    var next_point = document.querySelector("div.next-point");
+                                    var _i = next_point.querySelector("i");
+                                    var selector0 = next_point.querySelector("select.nextpoint");
                                     _i.addEventListener("mousedown", function (e) {
                                         if (e.button === 0) {
-                                            selector.selectedIndex = 0;
+                                            selector0.selectedIndex = 0;
                                         }
                                     })
                                 </script>
@@ -96,18 +96,18 @@
                             <div class="next-task" style="display: flex; width: 100% ; margin-top: 20px;">
                                 <span class="title-span">下一个任务</span>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;" lay-filter="nexttask-selector" class="nexttask">
+                                    <select style="width: 100%;" class="nexttask">
                                         <option value="">点击选择</option>
                                     </select>
                                 </div>
                                 <i class="layui-icon layui-icon-unlink" title="清除"></i>
                                 <script>
-                                    var next = document.querySelector("div.next-point");
-                                    var _i = next.querySelector("i");
-                                    var selector = next.querySelector("select");
-                                    _i.addEventListener("mousedown", function (e) {
+                                    var next_task = document.querySelector("div.next-task");
+                                    var __i = next_task.querySelector("i");
+                                    var selector1 = next_task.querySelector("select.nexttask");
+                                    __i.addEventListener("mousedown", function (e) {
                                         if (e.button === 0) {
-                                            selector.selectedIndex = 0;
+                                            selector1.selectedIndex = 0;
                                         }
                                     })
                                 </script>
@@ -115,9 +115,115 @@
                             <div class="bank-show" style="display: flex; width: 100% ; margin-top: 20px;">
                                 <i class="layui-icon layui-icon-about" title="小提示"></i>
                                 <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;" lay-filter="question-selector" class="question-selector">
+                                    <select style="width: 100%;" class="question-selector">
                                         <option value="">点击选择题库</option>
+                                        <option value="-1">点击使用模板</option>
                                     </select>
+                                    <script>
+                                        layui.use(function(){                   
+                                            var layer = layui.layer;
+                                            var selector = document.querySelector("select.question-selector");
+                                            // select 事件
+                                            selector.addEventListener("change", function () {
+                                                if (selector.value === "-1") {
+                                                    selector.selectedIndex = 0;
+                                                    fetch("../text/frametype.txt").then(response => {
+                                                        if (!response.ok) {
+                                                        throw new Error('Network response was not ok');
+                                                        }
+                                                        return response.text();
+                                                    }).then(content => {
+                                                        var page_window = document.createElement("div");
+                                                        page_window.classList = "layui-tab layui-tab-brief";
+                                                        page_window.style.height = "460px";
+
+                                                        var ul0 = document.createElement("ul");
+                                                        ul0.classList = "layui-tab-title";
+
+                                                        var context0 = content.split("\n!!").splice(1);
+
+                                                        var list0 = context0[0].split("**");
+                                                        for (var i = 0; i < list0.length; i++) {
+                                                            var li = document.createElement("li");
+                                                            if (i === 0) {li.className = "layui-this"};
+
+                                                            li.textContent = list0[i];
+                                                            ul0.appendChild(li);
+                                                        }
+                                                        page_window.appendChild(ul0);
+
+                                                        var div0 = document.createElement("div");
+                                                        div0.className = "layui-tab-content";
+                                                        div0.style.height = "390px"
+
+                                                        for (var i = 1; i <= list0.length; i++) {
+                                                            (function(i) {
+                                                                var page = document.createElement("div");
+                                                                if (i === 1) {page.classList = "layui-tab-item layui-show"}
+                                                                else {page.className = "layui-tab-item"};
+
+                                                                page.style.flexDirection = "column";
+                                                                page.style.alignItems = "center";
+                                                                page.style.height = "100%"
+                                                                
+                                                                page.innerHTML = '<div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">' +
+                                                                '<div class="layui-card showitem-panel">' +
+                                                                '<div class="head-item">' +
+                                                                '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
+                                                                '<i style="color: black; font-size: 18px">时间显示测试</i>' +
+                                                                '</div>' +
+                                                                '<div class="main-item"></div>' +
+                                                                '<div class="bottom-item">' +
+                                                                '<img src="../images/help_item.png" alt="Image" class="help-img img-item" />' +
+                                                                '<img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />' +
+                                                                '</div></div></div>'
+
+                                                                var main_div = page.querySelector("div.main-item");
+                                                                var items = context0[i].split("||"); 
+
+                                                                for (var j = 0; j < items.length; j++) {
+                                                                    /*宽|高|左间距|上间距|内容文本*/
+                                                                    var item = items[j].split("|");
+
+                                                                    var _div_ = document.createElement("div");
+                                                                    _div_.style.position = "relative";
+                                                                    _div_.style.display = "flex";
+                                                                    _div_.style.alignItems = "center";
+                                                                    _div_.style.justifyContent = "center";
+
+                                                                    _div_.style.width = item[0] + "%";
+                                                                    _div_.style.height = item[1] + "%";
+                                                                    _div_.style.left = item[2] + "%";
+                                                                    _div_.style.top = item[3] + "%";
+                                                                    _div_.textContent = item[4];
+                                                                    _div_.style.backgroundColor = item[5];
+
+                                                                    main_div.appendChild(_div_);
+                                                                }
+                                                                
+                                                                var select_button =document.createElement("button");
+                                                                select_button.classList = "layui-btn layui-btn-radius";
+                                                                select_button.textContent = "——选择——";
+                                                                page.appendChild(select_button);
+
+                                                                div0.appendChild(page);
+                                                            })(i);
+                                                        }
+                                                        page_window.appendChild(div0);
+
+                                                        layer.open({
+                                                            type: 1,
+                                                            title: false,
+                                                            area: ['420px', '480px'],
+                                                            maxmin: false,
+                                                            shadeClose: false,
+                                                            content: page_window.outerHTML
+                                                        });
+                                                    }).catch(error => console.error('Fetch error:', error));
+                                                }
+                                            });
+                                        });
+                                    </script>
                                 </div>
                                 <a onclick="" style="margin: 0 5px;">预览</a>
                                 <a onclick="">加载</a>

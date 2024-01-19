@@ -46,10 +46,13 @@ function fresh_form() {
     });
 }
 
+/**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url*/
+
 /**
  * 数据更新
  * @param {Number} id 
  * @param {*} item upload.rende的相关配置数据
+ * @param {function} upload 组件上传相关显示更新函数
  */
 function update_items(id, item, upload) {
     if (items.length > id) {

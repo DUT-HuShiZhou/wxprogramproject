@@ -20,12 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         }
-        else if (event.data.action === "page-load") {
-            // test
-            sessionStorage.setItem("page-datas", JSON.stringify([[event.data.datafrom.split("|")[0], "90x40", "5x0",""],[event.data.datafrom.split("|")[1], "94x60", "3x0",""]]));
-            page_load();
-            // test
-        }
     }, false);
 
     ifm_fram.src = "drama-line.html?choose=1;test";

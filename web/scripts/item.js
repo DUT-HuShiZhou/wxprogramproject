@@ -1,17 +1,17 @@
 let place = document.querySelector("div.main-item");
-let infplace = document.querySelector("div.infplace");
+let infplace = document.querySelector("div.module-frame");
 
 let items = [];
 let updata = false;
 
-window.addEventListener("UploadAllItem", function(event) {
+function Update_All () {
     updata = true;
     items.forEach(item => {
         item[2]();
         item[1].upload();
     });
     updata = false;
-});
+};
 
 /**
  * size position preload 
@@ -63,12 +63,21 @@ function update_items(id, item, upload) {
     }
 }
 
+/**添加分隔符 */
+function hr_add() {
+    var hr = document.createElement("hr");
+    hr.style.margin = "10px 0";
+    hr.style.border = "1px solid #5a5a5a";
+    infplace.appendChild(hr);
+}
+
 /** 
  * 图片加载函数 
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {Boolean} mode 是否启用模板模式
  */
-function photo(datas, id) {
+function photo(datas, id, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "photo-item";
@@ -88,37 +97,83 @@ function photo(datas, id) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "photo_option item";
+    root.style.width = "100%";
+    
+    var name_div = document.createElement("div");
+    name_div.className = "item-name";
+    name_div.style.display = "flex";
+    name_div.style.alignItems = "center";
+    name_div.style.marginTop = "15px";
+    name_div.style.width = "100";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "图片名称";
+    name_div.appendChild(title_span);
 
     var title = document.createElement("input");
-    title.className = "layui-input input";
+    title.classList = "layui-input input";
     title.type = "text";
     title.name = "图片名称";
-    title.placeholder = "测试名称";
+    title.value = "图片测试"
+    title.placeholder = "图片测试";
     title.style.border = "none";
-    root.appendChild(title);
+    title.style.marginLeft = "15px";
+    title.style.width = "65%";
+    name_div.appendChild(title);
+    root.appendChild(name_div);
+
+    var remark_div = document.createElement("div");
+    remark_div.style.display = "flex";
+    remark_div.style.alignItems = "center";
+    remark_div.style.marginTop = "5%";
+    remark_div.style.width = "100";
+
+    var photo_span = document.createElement("span");
+    photo_span.className = "title-span";
+    photo_span.textContent = "图片备注";
+    remark_div.appendChild(photo_span);
+
+    var textarea = document.createElement("textarea");
+    textarea.classList = "layui-textarea photo-remark";
+    textarea.style.resize = "none";
+    textarea.style.height = "75px"
+    textarea.style.marginLeft = "15px";
+    textarea.style.width = "65%";
+    textarea.value = "空";
+    textarea.placeholder = "空";
+    remark_div.appendChild(textarea);
+    root.appendChild(remark_div);
 
     var push_div = document.createElement("div");
     push_div.className = "push-photo";
-
-    var button = document.createElement("button");
-    button.type = "button";
-    button.classList = "layui-btn push-button";
-    button.id = "ID-upload-img-btn";
-    button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 图片上传';
-    push_div.appendChild(button)
+    push_div.style.marginTop = "5px";
+    push_div.style.width = "100%";
 
     var box = document.createElement("div");
     box.className = "box";
+    box.style.width = "90%";
+    box.style.margin = "0 5%";
+    box.style.border = "1px dashed black";
 
     var div_load = document.createElement("div");
     div_load.classList = "layui-upload-list upload-list";
+    div_load.style.width = "100%";
+    div_load.style.display = "flex";
+    div_load.style.flexDirection = "column";
+    div_load.style.alignItems = "center";
+
     var img = document.createElement("img");
     img.classList = "layui-upload-img upload-img";
     img.id = "ID-upload-img-img";
     img.src = "../images/test.jpg";
+    img.style.width = "90%";
+    img.style.height = "auto";
     div_load.appendChild(img);
+
     var div_text = document.createElement("div");
     div_text.id = "ID-upload-img-text";
+    div_text.style.width = "90%";
     div_load.appendChild(div_text);
     box.appendChild(div_load);
 
@@ -126,14 +181,24 @@ function photo(datas, id) {
     lay_filter.classList = "layui-progress layui-progress-big progress";
     lay_filter.setAttribute("lay-showPercent", "yes");
     lay_filter.setAttribute("lay-filter", "filter-demo");
+    lay_filter.style.width = "100%";
+
     var demo_bar = document.createElement("div");
     demo_bar.className = "layui-progress-bar";
     demo_bar.setAttribute("lay-percent", "");
     lay_filter.appendChild(demo_bar);
     box.appendChild(lay_filter);
-
     push_div.appendChild(box);
-;
+
+    var button = document.createElement("button");
+    button.type = "button";
+    button.classList = "layui-btn push-button";
+    button.id = "ID-upload-img-btn";
+    button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 图片上传';
+    button.style.width = "50%";
+    button.style.margin = "5% 25%";
+    push_div.appendChild(button)
+
     root.appendChild(push_div);
     infplace.appendChild(root);
 
@@ -145,7 +210,7 @@ function photo(datas, id) {
         // 单图片上传
         var uploadInst = upload.render({
             elem: '#ID-upload-img-btn',
-            url: '', // 实际使用时改成您自己的上传接口即可。
+            url: '../images', // 实际使用时改成您自己的上传接口即可。
             before: function (obj) {
                 var demoText = $('#ID-upload-img-text');
                 demoText.html('');
@@ -154,6 +219,7 @@ function photo(datas, id) {
                 // 预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
                     $('#ID-upload-img-img').attr('src', result); // 图片链接（base64）
+                    photo_img.src = result;
                 });
     
                 function upload() {
@@ -198,8 +264,9 @@ function photo(datas, id) {
  * 问题加载函数 
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {Boolean} mode 是否启用模板模式
  */
-function question(datas, id) {
+function question(datas, id, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "question-item";
@@ -217,6 +284,7 @@ function question(datas, id) {
     text_div.style.color = "black";
     text_div.style.width = "100%";
     text_div.style.height = "25%";
+    text_div.style.setProperty("font-size", "10px", "important");
     question_div.appendChild(text_div);
 
     var choose_div = document.createElement("div");
@@ -229,12 +297,15 @@ function question(datas, id) {
 
 
     // test 3可修改,选项也可修改
-    var options = ["测试", "测试", "测试", "测试"];
+    var options = ["测试1", "测试2", "测试3", "测试4"];
     for (var i = 0; i < options.length; i++) {
         var button = document.createElement("button");
         button.type = "button";
         button.classList = "layui-btn choice-button";
         button.style.margin = "0.5%";
+        button.style.height = "23%";
+        button.style.lineHeight = "0";
+        button.style.fontSize = "8px";
         button.value = i;
         button.textContent = String.fromCharCode(65 + i) + "." + options[i];
         choose_div.appendChild(button);
@@ -249,50 +320,97 @@ function question(datas, id) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "question_option item";
+    root.style.width = "100%";
+
+    var name_div = document.createElement("div");
+    name_div.className = "item-name";
+    name_div.style.display = "flex";
+    name_div.style.alignItems = "center";
+    name_div.style.marginTop = "15px";
+    name_div.style.width = "100";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "问题名称";
+    name_div.appendChild(title_span);
 
     var title = document.createElement("input");
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "问题名称";
+    title.value = "问题测试";
     title.placeholder = "问题测试";
     title.style.border = "none";
-    root.appendChild(title);
+    title.style.marginLeft = "15px";
+    title.style.width = "65%";
+    name_div.appendChild(title);
+    root.appendChild(name_div);
 
     var div = document.createElement("div");
     div.className = "Qbox";
-    div.style.padding = "5%";
-    for (var i = 0; i < 3; i++) {
+    div.style.marginTop = "5px";
+    div.style.width = "100%";
+    for (var i = 0; i < options.length; i++) {
         (function(i){
+            var option_div = document.createElement("div");
+            option_div.className = "option-div";
+            option_div.style.display = "flex";
+            option_div.style.alignItems = "center";
+            option_div.style.width = "100%";
+
+            var option_span = document.createElement("span");
+            option_span.className = "title-span";
+            option_span.textContent = String.fromCharCode(65 + i) + "选项";
+            option_div.appendChild(option_span);
+
             var input = document.createElement("input");
             input.className = "layui-input input Qname-input";
             input.type = "text";
             input.name = "选项";
             input.value = options[i];
+            input.placeholder = options[i];
+            input.style.marginLeft = "15%";
+            input.style.width = "65%";
             input.onkeydown = function(event) {
                 event = event || window.event;
 		            if (event.keyCode == 13) {
                         options[i] = input.value;
-                        var choices = document.querySelectorAll("input.choice");
-                        choices[i].title = options[i];
-                        var option = document.querySelectorAll("option");
+                        var choices = document.querySelectorAll("button.choice-button");
+                        choices[i].textContent = String.fromCharCode(65 + i) + "." + options[i];
+                        var option = document.querySelectorAll("div.optionbox option");
                         option[i].textContent = options[i];
                         fresh_form();
                     } 
             }
-            div.appendChild(input);
+            option_div.appendChild(input);
+            div.appendChild(option_div);
         })(i);
     }
 
     var right_div = document.createElement("div");
     right_div.className = "rightgrade";
-    var text = document.createElement("div");
-    text.className = "textContent";
+    right_div.style.marginTop = "10px";
+    right_div.style.width = "100%";
+
+    var right_option_box = document.createElement("div");
+    right_option_box.style.display = "flex";
+    right_option_box.style.alignItems = "center";
+    right_option_box.style.width = "100%";
+
+    var text = document.createElement("span");
+    text.classList= "title-span";
     text.innerHTML = "正确答案";
-    right_div.appendChild(text);
+    right_option_box.appendChild(text);
+
     var select_div = document.createElement("div")
     select_div.className = "layui-col-md6 optionbox";
+    select_div.style.width = "65%";
+    select_div.style.marginLeft = "8%";
+
     var select = document.createElement("select");
-    for (var i = 0; i < 3; i++) {
+    select.style.width = "100%";
+    select.style.height = "38px";
+    for (var i = 0; i < options.length; i++) {
         (function(i){
             var option = document.createElement("option");
             option.value = i;
@@ -301,19 +419,42 @@ function question(datas, id) {
         })(i);
     }
     select_div.appendChild(select);
-    right_div.appendChild(select_div);
-    var text = document.createElement("div");
-    text.className = "textContent";
+    right_option_box.appendChild(select_div);
+    right_div.appendChild(right_option_box);
+
+    var number_div = document.createElement("div");
+    number_div.style.display = "flex";
+    number_div.style.alignItems = "center";
+    number_div.style.width = "100%";
+    number_div.style.margin = "5% 0";
+
+    var text = document.createElement("span");
+    text.className = "title-span";
     text.innerHTML = "获得分数";
-    right_div.appendChild(text);
+    number_div.appendChild(text);
+
     var input = document.createElement("input");
     input.classList = "layui-input gradeinput";
     input.type = "number";
     input.setAttribute("lay-affix", "number");
+    input.style.height = "25px";
+    input.style.width = "65px";
+    input.style.marginLeft = "8%";
     input.step = "1";
     input.value = "0";
+    input.min = "0";
+    input.max = "100";
     input.title = "请输入整数";
-    right_div.appendChild(input);
+    input.addEventListener("input", function() {
+        if (Number(input.value) > 100) {
+            input.value = "100";
+        }
+        else if (Number(input.value) < 0 || input.value === "") {
+            input.value = "0";
+        };
+    });
+    number_div.appendChild(input);
+    right_div.appendChild(number_div);
 
     div.appendChild(right_div);
     root.appendChild(div);
@@ -325,8 +466,9 @@ function question(datas, id) {
  * 视频加载函数
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {Boolean} mode 是否启用模板模式
  */
-function video(datas, id) {
+function video(datas, id, mode) {
     sessionStorage.setItem("video", "0");
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
@@ -339,16 +481,21 @@ function video(datas, id) {
     video_div.setAttribute("autoplay", "false");
     video_div.style.width = "100%";
     video_div.style.height = "100%";
-    video_div.addEventListener("canplay", function() {
-        if (!video_div.paused) {
-            video_div.play();
-        }
-        else{
+
+    // 添加等待
+    layui.use(function () {
+        var layer = layui.layer;
+        var loadIndex = layer.load(0, {shade: 0.5});
+    
+        video_div.addEventListener("canplay", function() {
+            if (!video_div.paused) {
+                video_div.play();
+            }
+        });
+        video_div.addEventListener('loadeddata', function(e) {
             video_div.pause();
-        }
-    });
-    video_div.addEventListener('loadeddata', function(e) {
-        video_div.pause();
+            layer.close(loadIndex);
+        });
     });
 
     var video_source = document.createElement("source");
@@ -366,27 +513,62 @@ function video(datas, id) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "video_option item";
+    root.style.width = "100%";
+
+    var name_div = document.createElement("div");
+    name_div.className = "item-name";
+    name_div.style.display = "flex";
+    name_div.style.alignItems = "center";
+    name_div.style.marginTop = "15px";
+    name_div.style.width = "100";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "视频名称";
+    name_div.appendChild(title_span);
 
     var title = document.createElement("input");
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "视频名称";
+    title.value = "视频测试"
     title.placeholder = "视频测试";
     title.style.border = "none";
-    root.appendChild(title);
+    title.style.marginLeft = "15px";
+    title.style.width = "65%";
+    name_div.appendChild(title);
+    root.appendChild(name_div);
+
+    var remark_div = document.createElement("div");
+    remark_div.style.display = "flex";
+    remark_div.style.alignItems = "center";
+    remark_div.style.marginTop = "5%";
+    remark_div.style.width = "100";
+
+    var video_span = document.createElement("span");
+    video_span.className = "title-span";
+    video_span.textContent = "视频备注";
+    remark_div.appendChild(video_span);
+
+    var textarea = document.createElement("textarea");
+    textarea.classList = "layui-textarea video-remark";
+    textarea.style.resize = "none";
+    textarea.style.height = "75px"
+    textarea.style.marginLeft = "15px";
+    textarea.style.width = "65%";
+    textarea.value = "空";
+    textarea.placeholder = "空";
+    remark_div.appendChild(textarea);
+    root.appendChild(remark_div);
 
     var update_button = document.createElement("button");
     update_button.type = "button";
-    update_button.classList = "ayui-btn video-accept";
+    update_button.classList = "layui-btn video-accept";
+    update_button.id = "ID-upload-video-btn";
+    update_button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 视频上传';
     update_button.setAttribute("lay-options", "{accept: 'video'}");
-
-    var i = document.createElement("i");
-    i.classList = "layui-icon layui-icon-upload";
-    update_button.appendChild(i);
-
-    var textNode = document.createTextNode("上传视频")
-    update_button.appendChild(textNode);
-    
+    update_button.style.width = "50%";
+    update_button.style.margin = "5% 25%";
     root.appendChild(update_button);
     infplace.appendChild(root);
 
@@ -413,8 +595,9 @@ function video(datas, id) {
  * 音频加载函数
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {Boolean} mode 是否启用模板模式
  */
-function audio(datas, id) {
+function audio(datas, id, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "audio-item";
@@ -430,4 +613,83 @@ function audio(datas, id) {
     root_div.appendChild(audio_div);
     place.appendChild(root_div);
 
+    // 编辑栏加载
+    var root = document.createElement("div");
+    root.classList = "audio_option item";
+    root.style.width = "100%";
+
+    var name_div = document.createElement("div");
+    name_div.className = "item-name";
+    name_div.style.display = "flex";
+    name_div.style.alignItems = "center";
+    name_div.style.marginTop = "15px";
+    name_div.style.width = "100";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "音频名称";
+    name_div.appendChild(title_span);
+
+    var title = document.createElement("input");
+    title.classList = "layui-input input";
+    title.type = "text";
+    title.name = "音频名称";
+    title.value = "音频测试"
+    title.placeholder = "音频测试";
+    title.style.border = "none";
+    title.style.marginLeft = "15px";
+    title.style.width = "65%";
+    name_div.appendChild(title);
+    root.appendChild(name_div);
+
+    var remark_div = document.createElement("div");
+    remark_div.style.display = "flex";
+    remark_div.style.alignItems = "center";
+    remark_div.style.marginTop = "5%";
+    remark_div.style.width = "100";
+
+    var video_span = document.createElement("span");
+    video_span.className = "title-span";
+    video_span.textContent = "音频备注";
+    remark_div.appendChild(video_span);
+
+    var textarea = document.createElement("textarea");
+    textarea.classList = "layui-textarea audio-remark";
+    textarea.style.resize = "none";
+    textarea.style.height = "75px"
+    textarea.style.marginLeft = "15px";
+    textarea.style.width = "65%";
+    textarea.value = "空";
+    textarea.placeholder = "空";
+    remark_div.appendChild(textarea);
+    root.appendChild(remark_div);
+
+    var update_button = document.createElement("button");
+    update_button.type = "button";
+    update_button.classList = "layui-btn audio-accept";
+    update_button.setAttribute("lay-options", "{accept: 'audio'}");
+    update_button.id = "ID-upload-audio-btn";
+    update_button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 音频上传';
+    update_button.style.width = "50%";
+    update_button.style.margin = "5% 25%";
+    root.appendChild(update_button);
+    infplace.appendChild(root);
+
+    layui.use(function(){
+        var upload = layui.upload;
+        var layer = layui.layer;
+        // 渲染
+        upload.render({
+          elem: '.audio-accept', // 绑定多个元素
+          url: '', // 此处配置你自己的上传接口即可
+          accept: 'file', // 普通文件
+          before: function(obj){
+            alert(666);
+          },
+          done: function(res){
+            layer.msg('上传成功');
+            console.log(res);
+          }
+        });
+      });
 }

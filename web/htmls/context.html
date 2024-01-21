@@ -11,6 +11,7 @@
 
         <link rel="stylesheet" href="../styles/context.css" />
         <script src="../scripts/context.js" defer></script>
+        <script src="../scripts/item.js" defer></script>
     </head>
     <body style="display: flex; overflow: hidden;">
         <div class="column1" style="height: 100vh; width: 20vw;">
@@ -170,7 +171,7 @@
                                                                 '<div class="layui-card showitem-panel">' +
                                                                 '<div class="head-item">' +
                                                                 '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
-                                                                '<i style="color: black; font-size: 18px">时间显示测试</i>' +
+                                                                '<i style="color: black; font-size: 14px">时间显示测试</i>' +
                                                                 '</div>' +
                                                                 '<div class="main-item"></div>' +
                                                                 '<div class="bottom-item">' +
@@ -306,10 +307,12 @@
                                     <textarea name="task-remark" placeholder="空" class="layui-textarea task-remark" style="height: 100%; min-height: 0; width: 120px; margin-left: 30px; font-size: smaller; resize: none;"></textarea>
                                 </div>
                             </div>
-                            <div class="module">
+                            <hr class="layui-border-black" style="margin-top: 15px;"/>
+                            <div class="module-frame">
                             </div>
+                            <hr class="layui-border-black"/>
                             <div class="AR-add">
-                                <div class="AR-state" style="display: flex; width: 100% ; margin-top: 20px; align-items: center;">
+                                <div class="AR-state" style="display: flex; width: 100% ; margin-top: 15px; align-items: center;">
                                     <span class="title-span">添加AR功能</span>
                                     <div class="layui-form AR-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; margin-left: 8%;">
                                         <div class="option1 opt" style="height: 100%;">
@@ -367,7 +370,7 @@
                                     });
                                 </script>
                             </div>
-                            <div class="act-sure" style="margin-top: 15px; display: flex; justify-content: center;">
+                            <div class="act-sure" style="margin: 15px 0; display: flex; justify-content: center;">
                                 <button type="button" class="layui-btn layui-btn-sm update-btn">保存|更新</button>
                             </div>
                         </div>

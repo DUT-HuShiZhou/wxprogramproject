@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     let point_menu = document.querySelector("ul.point-menu");
     let operate_panel = document.querySelector("div.operate-root");
+    let main_item = document.querySelector("div.preview-panel div.main-item");
+    let module_frame = document.querySelector("div.module-frame");
+
+    let update_btn = document.querySelector("button.update-btn"); 
 
     AMapLoader.load({
         key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -78,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = point_datas[i][0];
                     nextpoint_selector.add(option);
                 })(i);
-            }
+            };
 
             // 设置鼠标选中显示描述
             let shwoName = document.querySelectorAll("div.custom-content-marker");
@@ -106,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         shwoName[i].setAttribute("point-name", "");
                     });
                 })(i);
-            }
+            };
             
             layui.use(function(){
                 var dropdown = layui.dropdown;
@@ -147,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (var i = 0; i < task_line.length; i++) {
                     tasks.push(task_line[i].split(":"));
                 };
-                //task_panel_load(tasks);
+                // task_panel_load(tasks, elemnet.getAttribute("ID"));
             };
         };
 
@@ -158,8 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else {
             task_panel_load([],);
-        }
-    }
+        };
+    };
 
     /**
      * 任务列表加载主函数
@@ -219,7 +223,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     xhr.send(params);
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], "", "1:2"]);
+
+                    var items = ""
+                    switch (i) {
+                        case 0: 
+                            items = "video|90x40|5x0|*:question|90x60|5x0|*";
+                            break;
+                        case 1:
+                            items = "photo|90x40|5x0|*:question|90x60|5x0|*";
+                            break;
+                        case 2:
+                            items = "audio|90x40|5x0|*:question|90x60|5x0|*";
+                            break;
+                        default:
+                            items = "";
+                            break;
+                    };
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);
                 };
                 task_div.appendChild(button);
 
@@ -251,8 +271,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             xhr.onreadystatechange = function () {
                                 if (xhr.readyState === 4) {
                                     var data = xhr.responseText;
+                                    
                                 };
-                            }
+                            };
 
                             xhr.send(params);
 
@@ -260,12 +281,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             layer.close(index);
                         }, );
                     });
-                }
+                };
                 task_div.appendChild(button);
 
                 task_card.appendChild(task_div);
             })(i);
-        }
+        };
 
         var add_div = document.createElement("div");
         add_div.classList = "layui-panel add-panel";
@@ -304,13 +325,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.onclick = function () {
                     task_div.remove();
                     operate_panel.style.display = "none";
-                }
+                };
                 task_div.appendChild(button);
 
                 task_card.appendChild(task_div);
                 task_card.appendChild(add_div);
-            }
-        })
+            };
+        });
         add_div.appendChild(_i);
 
         var hr = document.createElement("hr");
@@ -321,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
         add_div.appendChild(text);
 
         task_card.appendChild(add_div);
-    }
+    };
 
     /**
      * 任务信息加载主函数 
@@ -339,9 +360,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 "type": type,
                 "state": state
             });
-        })
+        });
 
         var name_input = document.querySelector("input.task-name");
+        name_input.value = name;
         name_input.placeholder = name;
 
         if (objs.length != 0) {
@@ -352,9 +374,15 @@ document.addEventListener('DOMContentLoaded', function() {
             nexttask_selector.value = objs[1];
 
             var remark = document.querySelector("textarea.task-remark");
+            remark.value = objs[2];
             remark.placeholder = objs[2];
 
-
+            var items = objs[3].split(":");
+            var datas = [];
+            items.forEach(item => {
+                datas.push(item.split("|"));
+            });
+            items_load(datas);
 
             if (objs[4].split(":").length > 1) {
                 // 1|AR类型|获取数据URL
@@ -405,12 +433,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var nexttask_selector = document.querySelector("select.nexttask");
             nexttask_selector.selectedIndex = 0;
-        }
-    }
+        };
+    };
 
     /**初始化任务编辑栏基础组件 */
     function init_panel () {
         layui.use("form", function () {
+            main_item.innerHTML = "";
+            module_frame.innerHTML = "";
+            
             var form = layui.form;
             form.val('operate-input-form', {
                 "type": 1,
@@ -428,9 +459,11 @@ document.addEventListener('DOMContentLoaded', function() {
             question_selector.selectedIndex = 0;
 
             var name_input = document.querySelector("input.task-name");
+            name_input.value = "新建任务";
             name_input.placeholder = "新建任务";
     
             var remark = document.querySelector("textarea.task-remark");
+            remark.value = "空"
             remark.placeholder = "空";
 
             var form0 = layui.form;
@@ -444,14 +477,49 @@ document.addEventListener('DOMContentLoaded', function() {
             var div2 = document.querySelector("div.AR-file-update");
             div1.style.display = "none";
             div2.style.display = "none";
-        })
-    }
+        });
+    };
 
     /**
      * 组件加载
-     * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url
+     * @param {Array<Array>} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url
      */
-    function items_load (items) {
+    function items_load (datas) {
+        itemsClear();
 
+        for (var i = 0; i < datas.length; i++) {
+            (function(i) {
+                switch (datas[i][0]) {
+                    case "photo":
+                        photo(datas[i], i);
+                        break;
+                    case "question":
+                        question(datas[i], i);
+                        break;
+                    case "video":
+                        video(datas[i], i);
+                        break;
+                    case "audio":
+                        audio(datas[i], i);
+                        break;
+                    default:
+                        break;
+                }
+            })(i);
+        };
+
+        var inputs = document.querySelectorAll("input[type='text']");
+        inputs.forEach(input => {
+            input.onkeydown = function(event) {
+                event = event || window.event;
+		            if (event.keyCode == 13) {
+                        input.placeholder = input.value;
+                    } 
+            }
+        })
+    };
+
+    update_btn.onclick = function () {
+        Update_All();
     }
-})
+});

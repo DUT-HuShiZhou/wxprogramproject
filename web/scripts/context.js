@@ -227,13 +227,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     var items = ""
                     switch (i) {
                         case 0: 
-                            items = "video|90x40|5x0|*:question|90x60|5x0|*";
+                            items = "video|90x40|5x0|../video:question|90x60|5x0|*";
                             break;
                         case 1:
-                            items = "photo|90x40|5x0|*:question|90x60|5x0|*";
+                            items = "photo|90x40|5x0|../photo:question|90x60|5x0|*";
                             break;
                         case 2:
-                            items = "audio|90x40|5x0|*:question|90x60|5x0|*";
+                            items = "audio|90x40|5x0|../audio:question|90x60|5x0|*";
                             break;
                         default:
                             items = "";
@@ -491,16 +491,16 @@ document.addEventListener('DOMContentLoaded', function() {
             (function(i) {
                 switch (datas[i][0]) {
                     case "photo":
-                        photo(datas[i], i);
+                        photo(datas[i], i, "update-btn");
                         break;
                     case "question":
-                        question(datas[i], i);
+                        question(datas[i], i, "update-btn");
                         break;
                     case "video":
-                        video(datas[i], i);
+                        video(datas[i], i, "update-btn");
                         break;
                     case "audio":
-                        audio(datas[i], i);
+                        audio(datas[i], i, "update-btn");
                         break;
                     default:
                         break;

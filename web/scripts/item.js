@@ -75,9 +75,10 @@ function hr_add() {
  * 图片加载函数 
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
-function photo(datas, id, mode) {
+function photo(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "photo-item";
@@ -210,7 +211,7 @@ function photo(datas, id, mode) {
         // 单图片上传
         var uploadInst = upload.render({
             elem: '#ID-upload-img-btn',
-            url: '../images', // 实际使用时改成您自己的上传接口即可。
+            url: datas[3], // 实际使用时改成您自己的上传接口即可。
             before: function (obj) {
                 var demoText = $('#ID-upload-img-text');
                 demoText.html('');
@@ -264,9 +265,10 @@ function photo(datas, id, mode) {
  * 问题加载函数 
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
-function question(datas, id, mode) {
+function question(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "question-item";
@@ -466,9 +468,10 @@ function question(datas, id, mode) {
  * 视频加载函数
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
-function video(datas, id, mode) {
+function video(datas, id, buttonID, mode) {
     sessionStorage.setItem("video", "0");
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
@@ -561,6 +564,24 @@ function video(datas, id, mode) {
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
 
+    var file_div = document.createElement("div");
+    file_div.className = "file-div";
+    file_div.style.display = "flex";
+    file_div.style.flexDirection = "column";
+    file_div.style.marginTop = "5%";
+    file_div.style.width = "100%";
+
+    var file_textarea = document.createElement("textarea");
+    file_textarea.className = "file-name";
+    file_textarea.style.width = "90%";
+    file_textarea.style.height = "auto";
+    file_textarea.style.marginLeft = "5%";
+    file_textarea.style.display = "inline-block";
+    file_textarea.style.resize = "none";
+    file_textarea.style.minHeight = "5px";
+    file_textarea.readOnly = "true";
+    file_div.appendChild(file_textarea);
+
     var update_button = document.createElement("button");
     update_button.type = "button";
     update_button.classList = "layui-btn video-accept";
@@ -569,7 +590,8 @@ function video(datas, id, mode) {
     update_button.setAttribute("lay-options", "{accept: 'video'}");
     update_button.style.width = "50%";
     update_button.style.margin = "5% 25%";
-    root.appendChild(update_button);
+    file_div.appendChild(update_button);
+    root.appendChild(file_div);
     infplace.appendChild(root);
 
     layui.use(function(){
@@ -577,16 +599,27 @@ function video(datas, id, mode) {
         var layer = layui.layer;
         // 渲染
         upload.render({
-          elem: '.video-accept', // 绑定多个元素
-          url: '', // 此处配置你自己的上传接口即可
-          accept: 'file', // 普通文件
-          before: function(obj){
-            alert(666);
-          },
-          done: function(res){
-            layer.msg('上传成功');
-            console.log(res);
-          }
+            elem: '.video-accept', // 绑定多个元素
+            url: datas[3], // 此处配置你自己的上传接口即可
+            auto: false,
+            bindAction: "#" + buttonID,
+            accept: 'file', // 普通文件
+            choose: function (obj) {
+                obj.preview(function(index, file, result){
+                    var size;
+                    if (file.size/1024/1024 > 0) {
+                        size = Math.ceil(file.size/1024/1024) + "MB";
+                    }
+                    else {
+                        size = Math.ceil(file.size/1024) + "KB";
+                    };
+                    file_textarea.textContent = file.name + "   " + size;
+                }); 
+            },
+            done: function(res){
+                layer.msg('上传成功');
+                console.log(res);
+            }
         });
       });
 }
@@ -595,9 +628,10 @@ function video(datas, id, mode) {
  * 音频加载函数
  * @param {Array} datas
  * @param {Number} id 序号
+ * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
-function audio(datas, id, mode) {
+function audio(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "audio-item";
@@ -664,6 +698,24 @@ function audio(datas, id, mode) {
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
 
+    var file_div = document.createElement("div");
+    file_div.className = "file-div";
+    file_div.style.display = "flex";
+    file_div.style.flexDirection = "column";
+    file_div.style.marginTop = "5%";
+    file_div.style.width = "100%";
+
+    var file_textarea = document.createElement("textarea");
+    file_textarea.className = "file-name";
+    file_textarea.style.width = "90%";
+    file_textarea.style.height = "auto";
+    file_textarea.style.marginLeft = "5%";
+    file_textarea.style.display = "inline-block";
+    file_textarea.style.resize = "none";
+    file_textarea.style.minHeight = "5px";
+    file_textarea.readOnly = "true";
+    file_div.appendChild(file_textarea);
+
     var update_button = document.createElement("button");
     update_button.type = "button";
     update_button.classList = "layui-btn audio-accept";
@@ -672,7 +724,8 @@ function audio(datas, id, mode) {
     update_button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 音频上传';
     update_button.style.width = "50%";
     update_button.style.margin = "5% 25%";
-    root.appendChild(update_button);
+    file_div.appendChild(update_button);
+    root.appendChild(file_div);
     infplace.appendChild(root);
 
     layui.use(function(){
@@ -681,10 +734,21 @@ function audio(datas, id, mode) {
         // 渲染
         upload.render({
           elem: '.audio-accept', // 绑定多个元素
-          url: '', // 此处配置你自己的上传接口即可
+          url: datas[3], // 此处配置你自己的上传接口即可
+          auto: false, // 取消自动上传
+          bindAction: "#" + buttonID, // 绑定上传按钮自动实现点击上传功能
           accept: 'file', // 普通文件
-          before: function(obj){
-            alert(666);
+          choose: function (obj) {
+              obj.preview(function(index, file, result){
+                  var size;
+                  if (file.size/1024/1024 > 0) {
+                      size = Math.ceil(file.size/1024/1024) + "MB";
+                  }
+                  else {
+                      size = Math.ceil(file.size/1024) + "KB";
+                  };
+                  file_textarea.textContent = file.name + "   " + size;
+              }); 
           },
           done: function(res){
             layer.msg('上传成功');

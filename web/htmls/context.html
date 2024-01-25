@@ -55,12 +55,14 @@
                             <span class="title-span" style="margin-top: 5px;">任务类型</span>
                             <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%;">
                                 <div class="option1 opt" style="margin: 0 10px">
-                                    <input type="radio" name="type" value="1" title="普通任务" checked>
+                                    <input type="radio" lay-filter="operate-type-input" name="type" value="1" title="普通任务" checked>
                                 </div>
                                 <div class="option2 opt" style="display: flex; align-items: center;">
-                                    <input type="radio" name="type" value="0" title="结束任务">
+                                    <input type="radio" lay-filter="operate-type-input" name="type" value="0" title="结束任务">
                                 </div>
                             </div>
+                            <script>
+                            </script>
                         </div>
                         <hr/>
                         <div class="option-part" style="width: 100%; height: 30%;">
@@ -88,7 +90,7 @@
                                     var _i = next_point.querySelector("i");
                                     var selector0 = next_point.querySelector("select.nextpoint");
                                     _i.addEventListener("mousedown", function (e) {
-                                        if (e.button === 0) {
+                                        if (e.button === 0 && !selector1.hasAttribute("disabled")) {
                                             selector0.selectedIndex = 0;
                                         }
                                     })
@@ -107,7 +109,7 @@
                                     var __i = next_task.querySelector("i");
                                     var selector1 = next_task.querySelector("select.nexttask");
                                     __i.addEventListener("mousedown", function (e) {
-                                        if (e.button === 0) {
+                                        if (e.button === 0 && !selector1.hasAttribute("disabled")) {
                                             selector1.selectedIndex = 0;
                                         }
                                     })

@@ -35,6 +35,12 @@ function SP_load(size, position) {
     return obj;
 }
 
+
+function getdatas (url) {
+
+    return 
+}
+
 function itemsClear() {
     items = [];
 }
@@ -46,7 +52,7 @@ function fresh_form() {
     });
 }
 
-/**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url*/
+/**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))*/
 
 /**
  * 数据更新
@@ -73,7 +79,7 @@ function hr_add() {
 
 /** 
  * 图片加载函数 
- * @param {Array} datas
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
@@ -82,14 +88,17 @@ function photo(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "photo-item";
+    // root_div.title = datas[4].split("~!")[0];
     root_div.title = "测试名称";
 
     var photo_img = document.createElement("img");
     photo_img.className = "photo";
 
+    // photo_img.src = datas[3]; 
     photo_img.src = "../images/test.jpg";
     photo_img.style.width = "100%";
-    photo_img.style.height = "auto";
+    photo_img.style.height = "100%";
+    
 
     root_div.appendChild(photo_img);
 
@@ -116,11 +125,18 @@ function photo(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "图片名称";
+    // title.value = datas[4].split("~!")[0];
+    // title.placeholder = datas[4].split("~!")[0];
     title.value = "图片测试"
     title.placeholder = "图片测试";
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
+    title.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            root_div.title = title.value;
+        }
+    });
     name_div.appendChild(title);
     root.appendChild(name_div);
 
@@ -141,6 +157,8 @@ function photo(datas, id, buttonID, mode) {
     textarea.style.height = "75px"
     textarea.style.marginLeft = "15px";
     textarea.style.width = "65%";
+    // textarea.value = datas[4].split("~!")[1];
+    // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
     remark_div.appendChild(textarea);
@@ -167,29 +185,11 @@ function photo(datas, id, buttonID, mode) {
     var img = document.createElement("img");
     img.classList = "layui-upload-img upload-img";
     img.id = "ID-upload-img-img";
-    img.src = "../images/test.jpg";
     img.style.width = "90%";
     img.style.height = "auto";
     div_load.appendChild(img);
-
-    var div_text = document.createElement("div");
-    div_text.id = "ID-upload-img-text";
-    div_text.style.width = "90%";
-    div_load.appendChild(div_text);
     box.appendChild(div_load);
-
-    var lay_filter = document.createElement("div");
-    lay_filter.classList = "layui-progress layui-progress-big progress";
-    lay_filter.setAttribute("lay-showPercent", "yes");
-    lay_filter.setAttribute("lay-filter", "filter-demo");
-    lay_filter.style.width = "100%";
-
-    var demo_bar = document.createElement("div");
-    demo_bar.className = "layui-progress-bar";
-    demo_bar.setAttribute("lay-percent", "");
-    lay_filter.appendChild(demo_bar);
-    box.appendChild(lay_filter);
-    push_div.appendChild(box);
+    push_div.appendChild(box)
 
     var button = document.createElement("button");
     button.type = "button";
@@ -212,49 +212,18 @@ function photo(datas, id, buttonID, mode) {
         var uploadInst = upload.render({
             elem: '#ID-upload-img-btn',
             url: datas[3], // 实际使用时改成您自己的上传接口即可。
-            before: function (obj) {
-                var demoText = $('#ID-upload-img-text');
-                demoText.html('');
-                element.progress('filter-demo', '0%');
-
-                // 预读本地文件示例，不支持ie8
+            auto: false,
+            bindAction: "#" + buttonID,
+            accept: 'file', // 普通文件
+            choose: function (obj) {
                 obj.preview(function (index, file, result) {
                     $('#ID-upload-img-img').attr('src', result); // 图片链接（base64）
                     photo_img.src = result;
                 });
-    
-                function upload() {
-                    element.progress('filter-demo', '0%'); // 进度条复位
-                }
-
-                update_items(id, uploadInst, upload);
-
-                if (updata === false){
-                    return false;
-                }
-                else{
-                    return true;
-                }
             },
             done: function (res) {
-                // 若上传失败
-                if (res.code > 0) {
-                }
-                // 上传成功的一些操作
-                // …
-                $('#ID-upload-img-text').html(''); // 置空上传失败的状态
-            },
-            error: function () {
-                // 演示失败状态，并实现重传
-                var demoText = $('#ID-upload-img-text');
-                demoText.html('<span style="color: #FF5722;">上传失败</span>');
-            },
-            // 进度条
-            progress: function (n, elem, e) {
-                element.progress('filter-demo', n + '%'); // 可配合 layui 进度条元素使用
-                if (n == 100) {
-                    layer.msg('上传完毕', { icon: 1 });
-                }
+                layer.msg('上传成功');
+                console.log(res);
             }
         });
     })
@@ -263,7 +232,7 @@ function photo(datas, id, buttonID, mode) {
 
 /** 
  * 问题加载函数 
- * @param {Array} datas
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
@@ -272,6 +241,7 @@ function question(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "question-item";
+    // root_div.title = datas[4].split("~!")[0];
     root_div.title = "问题测试";
 
     var question_div = document.createElement("div");
@@ -282,6 +252,7 @@ function question(datas, id, buttonID, mode) {
 
     var text_div = document.createElement("div");
     text_div.className = "text";
+    // text_div.textContent = datas[4].split("~!")[1].split("~@")[0];
     text_div.textContent = "问题测试";
     text_div.style.color = "black";
     text_div.style.width = "100%";
@@ -297,9 +268,12 @@ function question(datas, id, buttonID, mode) {
     choose_div.style.width = "100%";
     choose_div.style.height = "75%";
 
-
-    // test 3可修改,选项也可修改
-    var options = ["测试1", "测试2", "测试3", "测试4"];
+    var options = [];
+    // var optiondata = datas[4].split("~!")[1].split("~@")[0].split("~#");
+    // for (var i = 0; i < optiondata.length; i++) {
+    //     options.push(optiondata[i]);
+    // };
+    options = ["测试1", "测试2", "测试3", "测试4"];
     for (var i = 0; i < options.length; i++) {
         var button = document.createElement("button");
         button.type = "button";
@@ -340,13 +314,53 @@ function question(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "问题名称";
+    // title.value = datas[4].split("~!")[0];
+    // title.placeholder = datas[4].split("~!")[0];
     title.value = "问题测试";
     title.placeholder = "问题测试";
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
+    title.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            root_div.title = title.value;
+        }
+    });
     name_div.appendChild(title);
     root.appendChild(name_div);
+
+    var context_div = document.createElement("div");
+    context_div.className = "item-name";
+    context_div.style.display = "flex";
+    context_div.style.alignItems = "center";
+    context_div.style.marginTop = "5px";
+    context_div.style.width = "100";
+
+    var context_span = document.createElement("span");
+    context_span.className = "title-span";
+    context_span.textContent = "问题内容";
+    context_div.appendChild(context_span);
+
+    var textarea = document.createElement("textarea");
+    textarea.classList = "layui-textarea question-context";
+    textarea.style.resize = "none";
+    textarea.style.height = "75px"
+    textarea.style.marginLeft = "15px";
+    textarea.style.width = "65%";
+    // textarea.value = datas[4].split("~!")[1].split("~@")[0];
+    // textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
+    textarea.value = "问题测试";
+    textarea.placeholder = "问题测试";
+    textarea.addEventListener("keydown", function (event) {
+        event = event || window.event;
+        if (event.key === 'Enter' && event.shiftKey) {
+            textarea.placeholder = textarea.value;
+            text_div.textContent = textarea.value;
+            event.preventDefault();
+        };
+    })
+    context_div.appendChild(textarea);
+    root.appendChild(context_div);
 
     var div = document.createElement("div");
     div.className = "Qbox";
@@ -373,9 +387,9 @@ function question(datas, id, buttonID, mode) {
             input.placeholder = options[i];
             input.style.marginLeft = "15%";
             input.style.width = "65%";
-            input.onkeydown = function(event) {
+            input.addEventListener("keydown", function(event) {
                 event = event || window.event;
-		            if (event.keyCode == 13) {
+		            if (event.key === "Enter") {
                         options[i] = input.value;
                         var choices = document.querySelectorAll("button.choice-button");
                         choices[i].textContent = String.fromCharCode(65 + i) + "." + options[i];
@@ -383,7 +397,7 @@ function question(datas, id, buttonID, mode) {
                         option[i].textContent = options[i];
                         fresh_form();
                     } 
-            }
+            })
             option_div.appendChild(input);
             div.appendChild(option_div);
         })(i);
@@ -455,6 +469,11 @@ function question(datas, id, buttonID, mode) {
             input.value = "0";
         };
     });
+    input.addEventListener("keydown", function(event) {
+        if (event.key === '.') {
+            event.preventDefault();
+        }
+    });
     number_div.appendChild(input);
     right_div.appendChild(number_div);
 
@@ -466,7 +485,7 @@ function question(datas, id, buttonID, mode) {
 
 /**
  * 视频加载函数
- * @param {Array} datas
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
@@ -476,6 +495,7 @@ function video(datas, id, buttonID, mode) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2]);
     root_div.className = "video-item";
+    // root_div.title = datas[4].split("~!")[0];
     root_div.title = "视频测试";
 
     var video_div = document.createElement("video");
@@ -503,6 +523,8 @@ function video(datas, id, buttonID, mode) {
 
     var video_source = document.createElement("source");
     video_source.className = "video-source";
+    // video_source.src = datas[3]; 
+    // video_source.type = "video/" + datas[3].split(".")[datas[3].split(".").length - 1];
     video_source.src = "../video/video_test.mp4";
     video_source.type = "video/mp4";
     video_div.appendChild(video_source);
@@ -534,11 +556,18 @@ function video(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "视频名称";
+    // title.value = datas[4].split("~!")[0];
+    // title.placeholder = datas[4].split("~!")[0];
     title.value = "视频测试"
     title.placeholder = "视频测试";
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
+    title.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            root_div.title = title.value;
+        }
+    });
     name_div.appendChild(title);
     root.appendChild(name_div);
 
@@ -559,6 +588,8 @@ function video(datas, id, buttonID, mode) {
     textarea.style.height = "75px"
     textarea.style.marginLeft = "15px";
     textarea.style.width = "65%";
+    // textarea.value = datas[4].split("~!")[1];
+    // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
     remark_div.appendChild(textarea);
@@ -614,6 +645,10 @@ function video(datas, id, buttonID, mode) {
                         size = Math.ceil(file.size/1024) + "KB";
                     };
                     file_textarea.textContent = file.name + "   " + size;
+
+                    // 实时加载视频资源组件未完成
+                    // video_source.src = file;
+                    // video_source.type = "video/" + result.split(".")[result.split(".").length - 1];
                 }); 
             },
             done: function(res){
@@ -626,7 +661,7 @@ function video(datas, id, buttonID, mode) {
 
 /**
  * 音频加载函数
- * @param {Array} datas
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
@@ -639,6 +674,7 @@ function audio(datas, id, buttonID, mode) {
 
     var audio_div = document.createElement("audio");
     audio_div.className = "audio";
+    // audio_div.src = datas[3]; 
     audio_div.src = "../audio/test.mp3";
     audio_div.setAttribute("controls", "true");
     audio_div.style.width = "100%";
@@ -668,11 +704,18 @@ function audio(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "音频名称";
+    // title.value = datas[4].split("~!")[0];
+    // title.placeholder = datas[4].split("~!")[0];
     title.value = "音频测试"
     title.placeholder = "音频测试";
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
+    title.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            root_div.title = title.value;
+        }
+    });
     name_div.appendChild(title);
     root.appendChild(name_div);
 
@@ -693,6 +736,8 @@ function audio(datas, id, buttonID, mode) {
     textarea.style.height = "75px"
     textarea.style.marginLeft = "15px";
     textarea.style.width = "65%";
+    // textarea.value = datas[4].split("~!")[1];
+    // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
     remark_div.appendChild(textarea);
@@ -748,6 +793,8 @@ function audio(datas, id, buttonID, mode) {
                       size = Math.ceil(file.size/1024) + "KB";
                   };
                   file_textarea.textContent = file.name + "   " + size;
+
+                  audio_div.src = result;
               }); 
           },
           done: function(res){

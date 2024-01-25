@@ -119,6 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     map.setCenter(this.getAttribute("position").split(","))
                     point_choose_action(this);
                 });
+
+                var form = layui.form;
+                form.on('radio(operate-type-input)', function(data){
+                    var value = data.elem.value;
+                    state_change(value, []);
+                });
             });
 
         })
@@ -167,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * 任务列表加载主函数
-     * @param {Array<Array>} tasks 任务名称,任务类型,任务ID
+     * @param {Array<Array>} tasks 任务名称,任务类型(1普通任务,0结束任务),任务ID
      * @param {Number} pointID 点位ID
      */
     function task_panel_load (tasks, pointID) {
@@ -213,6 +219,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     xhr.open("POST", url, true);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) {
+                            task_select(task_div);
+                            sessionStorage.setItem("newtask", "false");
+
                             // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
                             var data = xhr.responseText;
 
@@ -246,6 +255,90 @@ document.addEventListener('DOMContentLoaded', function() {
                 var button = document.createElement("button");
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "复制";
+                button.onclick = function () {
+                    var add_div = document.querySelector("div.add-panel");
+                    task_card.removeChild(add_div);
+
+                    var task_div = document.createElement("div");
+                    task_div.classList = "layui-panel task-panel new";
+        
+                    var name = document.createElement("span");
+                    name.textContent = "复制-" + tasks[i][0];
+                    task_div.appendChild(name);
+        
+                    var hr = document.createElement("hr");
+                    task_div.appendChild(hr);
+
+                    var button = document.createElement("button");
+                    button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                    button.textContent = "选择";
+                    button.onclick = function() {
+                        task_select(task_div);
+                        sessionStorage.setItem("newtask", "true");
+                        
+                        init_panel();
+
+                        var params = new FormData();
+                        params.append("un", sessionStorage.getItem("un"));
+                        params.append("LineID", sessionStorage.getItem("LineID"));
+                        params.append("PointID", pointID);
+                        params.append("ID", tasks[i][2]);
+
+                        var xhr = new XMLHttpRequest();
+                        var url = "/getTask";
+
+                        xhr.open("POST", url, true);
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                task_select(task_div);
+                                sessionStorage.setItem("newtask", "false");
+
+                                // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
+                                var data = xhr.responseText;
+
+                                var source = data.split(";");
+
+                                // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                            };
+                        }
+
+                        xhr.send(params);
+
+                        var items = ""
+                        switch (i) {
+                            case 0: 
+                                items = "video|90x40|5x0|../video:question|90x60|5x0|*";
+                                break;
+                            case 1:
+                                items = "photo|90x40|5x0|../photo:question|90x60|5x0|*";
+                                break;
+                            case 2:
+                                items = "audio|90x40|5x0|../audio:question|90x60|5x0|*";
+                                break;
+                            default:
+                                items = "";
+                                break;
+                        };
+                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);
+                    };
+                    task_div.appendChild(button);
+
+                    var button = document.createElement("button");
+                    button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
+                    button.textContent = "删除";
+                    button.onclick = function () {
+                        if (task_div.classList.contains("selected")) {
+                            init_panel();
+                            
+                            operate_panel.style.display = "none";
+                        }
+                        task_div.remove();
+                    };
+                    task_div.appendChild(button);
+
+                    task_card.appendChild(task_div);
+                    task_card.appendChild(add_div);
+                }
                 task_div.appendChild(button);
 
                 var button = document.createElement("button");
@@ -276,6 +369,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             };
 
                             xhr.send(params);
+                            
+                            if (task_div.classList.contains("selected")) {
+                                init_panel();
+
+                                operate_panel.style.display = "none";
+                            }
 
                             task_div.remove();
                             layer.close(index);
@@ -313,6 +412,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "选择";
                 button.onclick = function() {
+                    task_select(task_div);
+                    sessionStorage.setItem("newtask", "true");
+                    
                     init_panel();
 
                     task_load(1, 0, "新建任务", []);
@@ -323,8 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
                 button.textContent = "删除";
                 button.onclick = function () {
+                    if (task_div.classList.contains("selected")) {
+                        init_panel();
+                        
+                        operate_panel.style.display = "none";
+                    }
                     task_div.remove();
-                    operate_panel.style.display = "none";
                 };
                 task_div.appendChild(button);
 
@@ -367,11 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
         name_input.placeholder = name;
 
         if (objs.length != 0) {
-            var nextpoint_selector = document.querySelector("select.nextpoint");
-            nextpoint_selector.value = objs[0];
-
-            var nexttask_selector = document.querySelector("select.nexttask");
-            nexttask_selector.value = objs[1];
+            state_change(type, [objs[0], objs[1]]);
 
             var remark = document.querySelector("textarea.task-remark");
             remark.value = objs[2];
@@ -482,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * 组件加载
-     * @param {Array<Array>} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url
+     * @param {Array<Array>} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
      */
     function items_load (datas) {
         itemsClear();
@@ -512,14 +614,57 @@ document.addEventListener('DOMContentLoaded', function() {
         inputs.forEach(input => {
             input.onkeydown = function(event) {
                 event = event || window.event;
-		            if (event.keyCode == 13) {
-                        input.placeholder = input.value;
-                    } 
-            }
-        })
+                if (event.keyCode == 13) {
+                    input.placeholder = input.value;
+                };
+            };
+        });
+
+        var textareas = document.querySelectorAll("textarea");
+        textareas.forEach(textarea => {
+            textarea.onkeydown = function(event) {
+                event = event || window.event;
+                if (event.key === "Enter" && event.shiftKey) {
+                    textarea.placeholder = textarea.value;
+                    event.preventDefault();
+                };
+            };
+        });
     };
+
+    function task_select (elem) {
+        var tasks = document.querySelectorAll("div.task-panel");
+        tasks.forEach(task => {
+            task.classList.remove("selected");
+        })
+
+        elem.classList.add("selected");
+    }
 
     update_btn.onclick = function () {
         Update_All();
+    }
+
+    /**
+     * 任务状态改变主函数
+     * @param {(Number|String)} type 类型(1普通任务|0结束任务)
+     * @param {Array} values 两个值，一个点位选择值，一个任务选择值
+     */
+    function state_change (type, values) {
+        var nextpoint_selector = document.querySelector("select.nextpoint");
+        var nexttask_selector = document.querySelector("select.nexttask");
+        if (type === 1 || type === "1"){
+            nextpoint_selector.removeAttribute("disabled");
+            nexttask_selector.removeAttribute("disabled");
+
+            if (values.length > 0){
+                nextpoint_selector.value = values[0];
+                nexttask_selector.value = values[1];
+            }
+        }
+        else {
+            nextpoint_selector.setAttribute("disabled", true);
+            nexttask_selector.setAttribute("disabled", true);
+        }
     }
 });

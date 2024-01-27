@@ -1,0 +1,18 @@
+ /* 样式同上 */
+ #addQuestionModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    width: 720px;
+    height: 533px;
+}
+
+.layui-card::-webkit-scrollbar{
+    display: none;
+}

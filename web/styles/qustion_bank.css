@@ -1,0 +1,73 @@
+ /* 样式同上 */
+ #addQuestionModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    width: 720px;
+    height: 533px;
+}
+
+.layui-card::-webkit-scrollbar{
+    display: none;
+}
+
+
+.preview-panel {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    height: 50%;
+}
+
+.showitem-panel {
+    width: 75%;
+    height: 95%;
+    position: relative;
+}
+
+.head-item {
+    width: 100%;
+    height: 7%;
+    background-color: #426ffe;
+}
+
+.main-item {
+    width: 100%;
+    height: 83%;
+    background-color: #426ffe;
+    overflow: hidden;
+}
+
+.form {
+    overflow-y: scroll;
+}
+.form::-webkit-scrollbar {
+    display: none;
+}
+
+.choice-button {
+    width: 90%;
+    text-align: left;
+    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
+}
+
+.bottom-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 10%;
+    background-color: #0000ff;
+    overflow: hidden;
+}         
+
+.img-item {
+    object-fit: cover;
+    height: 100%;
+    width: auto;
+}

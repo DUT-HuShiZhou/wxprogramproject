@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>qustion_bank</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <link type="text/css" rel="styleSheet"  href="../styles/qustion_bank.css" />
+</head>
+    <script src="../layui/layui.js"></script>
+    <script src="../scripts/question_bank.js"></script>
+    <script src="../scripts/item.js" defer></script>
+<body style="background-color: #eeeeee;">
+    <div class="layui-panel" style="margin: 12px;">
+    <h1 style="margin-left: 20px;margin-top: 20px;">题目列表</h1>
+    <div class="layui-btn-container"> 
+    <button onclick="openAddQuestionModal()" class="layui-btn layui-btn-primary layui-border" 
+    style="font-weight: 1000; margin-left: 150px;margin-top: -40px;">添加题目</button>
+    </div> 
+    <div style="margin-left: 20px;">
+    <h2>查找题目</h2>
+    <label for="searchInput">请输入题目的关键字：</label>
+    <input type="text" id="searchInput" oninput="searchByTitle()">
+    <button onclick="clearButton()">清空</button>
+    </div>
+    <div style="margin-left: 700px;margin-top: -45px;">
+          <h2>删除题目</h2>
+          <label for="deleteIdInput">请输入要删除的题目ID：</label>
+          <input type="text" id="deleteIdInput">
+          <button onclick="deleteQuestion()">删除</button>
+    </div>
+
+    <div style="margin-left: 20px;">
+      <label for="categorySelect">选择类别：</label>
+      <select id="categorySelect" onchange="filterByCategory()">
+          <option value="all">全部</option>
+          <!-- 同上 -->
+      </select>
+    </div>
+
+
+    <div id="addQuestionModal" class="layui-bg-gray">
+        <div class="layui-bg-gray" style="padding: 0px;">
+            <div class="layui-row layui-col-space15">
+              <div class="layui-col-md6">
+                <div class="layui-card" style="width: 300px;height: 533px; display: flex; align-items: center;">
+                  <div class="layui-card-body" style="width: 90%; height: 70%;">
+                    <div class="layui-card" style="width: 100%; height: 98%; display: flex; align-items: center; justify-content: center;">
+                      <div class="layui-card showitem-panel">
+                          <div class="head-item">
+                              <img src="../images/return_item.png" alt="Image" class="return-img img-item" />
+                              <i style="color: black; font-size: 80%">时间显示测试</i>
+                          </div>
+                          <div class="main-item"></div>
+                          <div class="bottom-item">
+                              <img src="../images/help_item.png" alt="Image" class="help-img img-item" />
+                              <img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-md6">
+                 <div  class="layui-card" style="width: 400px;height: 533px;overflow-y: scroll;margin-left: -50px;">
+                    <div class="layui-card-body">
+                    
+                      <div class="layui-form" style="margin-left: 65px;">
+                        <input type="radio" name="AAA" value="1" title="普通任务">
+                        <input type="radio" name="AAA" value="2" title="结束任务"> 
+                      </div>
+
+                      <div class="layui-form-item" style="margin-top: 20px;">
+                        <label class="layui-form-label">任务</label>
+                        <div class="layui-input-block">
+                          <input type="text" id="titleInput" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                      </div>
+
+                      <div style="display: flex;">
+                        <div style="margin-left: 67px;width: 50px;margin-top: 7px;">
+                        <text>类型</text>
+                        </div>
+                        <div class="layui-form" style="width: 190px;margin-left: -7px;margin-bottom: 15px;">
+                        <select lay-filter="demo-select-filter" > 
+                          <option value="">请选择类型</option>
+                          <option value="图片">图片</option>
+                          <option value="音频">音频</option>
+                          <option value="视频">视频</option>
+                        </select>
+                        </div>
+                      </div>       
+                    
+                      <div class="layui-form-item">
+                        <label class="layui-form-label">分值</label>
+                        <div class="layui-input-block">
+                          <input id="gradeInput" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                      </div>
+
+                      <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">题目描述</label>
+                        <div class="layui-input-block">
+                          <textarea style="resize: none;" placeholder="请输入内容" class="layui-textarea"></textarea>
+                        </div>
+                      </div>
+
+                      <div style="display: flex;">
+                        <div style="margin-left: 67px;width: 50px;margin-top: 7px;">
+                        <text>题型</text>
+                        </div>
+                        <div class="layui-form" style="width: 190px;margin-left: -7px;margin-bottom: 15px;">
+                        <select lay-filter="demo-select-filter2" > 
+                          <option value="">请选择题型</option>
+                          <option value="选择">选择</option>
+                          <option value="填空">填空</option>
+                          <option value="拍照">拍照</option>
+                        </select>
+                        </div>
+                      </div> 
+
+                      <div id="qustionTitle" style="display: none;">
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">选项一</label>
+                          <div class="layui-input-block">
+                            <input id="qus1" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">选项二</label>
+                          <div class="layui-input-block">
+                            <input id="qus2" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">选项三</label>
+                          <div class="layui-input-block">
+                            <input id="qus3" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">选项四</label>
+                          <div class="layui-input-block">
+                            <input id="qus4" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="FillBlank" style="display: none;">
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">答案</label>
+                          <div class="layui-input-block">
+                            <input id="Blank" type="text"  name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="layui-form" style="margin-left: 0px;">
+                        <label class="layui-form-label">添加AR功能</label>
+                        <input type="radio" name="AAA" value="1" title="开启" lay-filter="demo-radio-filter">
+                        <input type="radio" name="AAA" value="2" title="关闭" lay-filter="demo-radio-filter" checked> 
+                      </div>  
+                    <div>
+                      <button class="layui-btn layui-btn-primary" style="display: none;margin-top: 10px;margin-left: 110px;" id="ARbutton">图片上传</button>
+                    </div>
+
+                    <div class="module-frame" style="width: 100%">
+
+                    </div>
+              
+                    <div id="Photo" style="display: none;margin-left: 110px;margin-top: 30px;">
+                      <button type="button" class="layui-btn" id="ID-upload-demo-btn">
+                        <i class="layui-icon layui-icon-upload"></i> 单图片上传
+                      </button>
+                      <div style="width: 132px;">
+                        <div class="layui-upload-list">
+                          <img class="layui-upload-img" id="ID-upload-demo-img" style="width: 100%; height: 92px;">
+                          <div id="ID-upload-demo-text"></div>
+                        </div>
+                        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="filter-demo">
+                          <div class="layui-progress-bar" lay-percent=""></div>
+                        </div>
+                      </div>
+                    </div>
+
+                      <div class="layui-btn-container" id="Media" style="display: none;margin-left: 110px;margin-top: 30px;">
+                        <button type="button" class="layui-btn layui-btn-normal" id="ID-upload-demo-choose">选择文件</button>
+                        <button type="button" class="layui-btn" id="ID-upload-demo-action">开始上传</button>
+                      </div>
+                      
+                    <div style="margin-top: 50px;margin-left: 110px;">
+                    <button onclick="addQuestion()" class="layui-btn layui-btn-primary layui-btn-lg">添加</button>
+                    <button onclick="closeAddQuestionModal()" class="layui-btn layui-btn-primary layui-btn-lg">取消</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+
+    <table id="questionTable" class="layui-table" style="margin-top: 30px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>任务</th>
+                <th>类型</th>
+                <th>分值</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>

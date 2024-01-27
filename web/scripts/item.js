@@ -1,25 +1,43 @@
 let place = document.querySelector("div.main-item");
 let infplace = document.querySelector("div.module-frame");
-
+/**Array<type, size, position, url, <title, contain|<question, <options...>, right, grade>>>*/
 let items = [];
-let updata = false;
 
-function Update_All () {
-    updata = true;
-    items.forEach(item => {
-        item[2]();
-        item[1].upload();
-    });
-    updata = false;
-};
+/**组件数据清空函数 */
+function clearitems () {
+    items = [];
+}
+
+/**
+ * 整理组件数据，返回组装完成的字符串
+ * @returns {String} 完整数据格式
+ */
+function updateitems () {
+    var datas = items;
+    for (var i = 0; i < datas.length; i++) {
+        if (Array.isArray(datas[i][4][1])) {
+            datas[i][4][1][1] = datas[i][4][1][1].join("~#");
+            datas[i][4][1] = datas[i][4][1].join("~@");
+        }
+        datas[i][4] = datas[i][4].join("~!");
+        datas[i] = datas[i].join("|");
+    };
+    datas = datas.join(":");
+    return datas;
+}
 
 /**
  * size position preload 
  * @param {string} size datas[1] 
  * @param {string} position datas[2]
- * @returns {Element} 
+ * @param {Number} id 序号
+ * @returns {Element} 返回item根元素
  */
-function SP_load(size, position) {
+function SP_load(size, position, id) {
+    items[id] = [];
+    items[id][1] = size;
+    items[id][2] = position; 
+    
     var obj = document.createElement("div");
     obj.style.position = "relative";
     obj.style.overflow = "hidden";
@@ -35,14 +53,27 @@ function SP_load(size, position) {
     return obj;
 }
 
+function key_bind () {
+    var inputs = document.querySelectorAll("input[type='text']");
+    inputs.forEach(input => {
+        input.onkeydown = function(event) {
+            event = event || window.event;
+            if (event.keyCode == 13) {
+                input.placeholder = input.value;
+            };
+        };
+    });
 
-function getdatas (url) {
-
-    return 
-}
-
-function itemsClear() {
-    items = [];
+    var textareas = document.querySelectorAll("textarea");
+    textareas.forEach(textarea => {
+        textarea.onkeydown = function(event) {
+            event = event || window.event;
+            if (event.key === "Enter" && event.shiftKey) {
+                textarea.placeholder = textarea.value;
+                event.preventDefault();
+            };
+        };
+    });
 }
 
 function fresh_form() {
@@ -52,22 +83,7 @@ function fresh_form() {
     });
 }
 
-/**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))*/
-
-/**
- * 数据更新
- * @param {Number} id 
- * @param {*} item upload.rende的相关配置数据
- * @param {function} upload 组件上传相关显示更新函数
- */
-function update_items(id, item, upload) {
-    if (items.length > id) {
-        items[id] = [id, item, upload];
-    }
-    else{
-        items.push([id, item, upload]);
-    }
-}
+/**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))*/
 
 /**添加分隔符 */
 function hr_add() {
@@ -79,14 +95,17 @@ function hr_add() {
 
 /** 
  * 图片加载函数 
- * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
 function photo(datas, id, buttonID, mode) {
     // 预览加载
-    var root_div = SP_load(datas[1], datas[2]);
+    var root_div = SP_load(datas[1], datas[2], id);
+    items[id][0] = datas[0];
+    items[id][3] = datas[3];
+    items[id][4] = [];
     root_div.className = "photo-item";
     // root_div.title = datas[4].split("~!")[0];
     root_div.title = "测试名称";
@@ -126,15 +145,17 @@ function photo(datas, id, buttonID, mode) {
     title.type = "text";
     title.name = "图片名称";
     // title.value = datas[4].split("~!")[0];
-    // title.placeholder = datas[4].split("~!")[0];
+    // title.placeholder = title.value;
     title.value = "图片测试"
     title.placeholder = "图片测试";
+    items[id][4][0] = title.value;
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
+            items[id][4][0] = title.value;
         }
     });
     name_div.appendChild(title);
@@ -153,6 +174,7 @@ function photo(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea photo-remark";
+    textarea.id = id;
     textarea.style.resize = "none";
     textarea.style.height = "75px"
     textarea.style.marginLeft = "15px";
@@ -161,6 +183,7 @@ function photo(datas, id, buttonID, mode) {
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
+    items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
 
@@ -232,14 +255,19 @@ function photo(datas, id, buttonID, mode) {
 
 /** 
  * 问题加载函数 
- * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
 function question(datas, id, buttonID, mode) {
     // 预览加载
-    var root_div = SP_load(datas[1], datas[2]);
+    var root_div = SP_load(datas[1], datas[2], id);
+    items[id][0] = datas[0];
+    items[id][3] = datas[3];
+    items[id][4] = [];
+    items[id][4][1] = [];
+    items[id][4][1][1] = [];
     root_div.className = "question-item";
     // root_div.title = datas[4].split("~!")[0];
     root_div.title = "问题测试";
@@ -318,12 +346,14 @@ function question(datas, id, buttonID, mode) {
     // title.placeholder = datas[4].split("~!")[0];
     title.value = "问题测试";
     title.placeholder = "问题测试";
+    items[id][4][0] = title.value;
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
+            items[id][4][0] = title.value;
         }
     });
     name_div.appendChild(title);
@@ -351,11 +381,13 @@ function question(datas, id, buttonID, mode) {
     // textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
     textarea.value = "问题测试";
     textarea.placeholder = "问题测试";
+    items[id][4][1][0] = textarea.value;
     textarea.addEventListener("keydown", function (event) {
         event = event || window.event;
         if (event.key === 'Enter' && event.shiftKey) {
             textarea.placeholder = textarea.value;
             text_div.textContent = textarea.value;
+            items[id][4][1][0] = textarea.value;
             event.preventDefault();
         };
     })
@@ -383,8 +415,11 @@ function question(datas, id, buttonID, mode) {
             input.className = "layui-input input Qname-input";
             input.type = "text";
             input.name = "选项";
+            // input.value = datas[4].split("~!")[1].split("~@")[1].split("~#")[i];
+            // input.placeholder = input.value;
             input.value = options[i];
             input.placeholder = options[i];
+            items[id][4][1][1][i] = input.value;
             input.style.marginLeft = "15%";
             input.style.width = "65%";
             input.addEventListener("keydown", function(event) {
@@ -396,6 +431,8 @@ function question(datas, id, buttonID, mode) {
                         var option = document.querySelectorAll("div.optionbox option");
                         option[i].textContent = options[i];
                         fresh_form();
+
+                        items[id][4][1][1][i] = input.value;
                     } 
             })
             option_div.appendChild(input);
@@ -433,7 +470,12 @@ function question(datas, id, buttonID, mode) {
             option.textContent = options[i];
             select.appendChild(option);
         })(i);
-    }
+    };
+    // select.selectedIndex = datas[4].split("~!")[1].split("~@")[2];
+    items[id][4][1][2] = select.selectedIndex;
+    select.addEventListener("change", function (event) {
+        items[id][4][1][2] = select.selectedIndex;
+    });
     select_div.appendChild(select);
     right_option_box.appendChild(select_div);
     right_div.appendChild(right_option_box);
@@ -457,7 +499,9 @@ function question(datas, id, buttonID, mode) {
     input.style.width = "65px";
     input.style.marginLeft = "8%";
     input.step = "1";
+    // input.value = datas[4].split("~!")[1].split("~@")[3];
     input.value = "0";
+    items[id][4][1][3] = input.value;
     input.min = "0";
     input.max = "100";
     input.title = "请输入整数";
@@ -468,6 +512,7 @@ function question(datas, id, buttonID, mode) {
         else if (Number(input.value) < 0 || input.value === "") {
             input.value = "0";
         };
+        items[id][4][1][3] = input.value;
     });
     input.addEventListener("keydown", function(event) {
         if (event.key === '.') {
@@ -485,7 +530,7 @@ function question(datas, id, buttonID, mode) {
 
 /**
  * 视频加载函数
- * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
@@ -493,7 +538,10 @@ function question(datas, id, buttonID, mode) {
 function video(datas, id, buttonID, mode) {
     sessionStorage.setItem("video", "0");
     // 预览加载
-    var root_div = SP_load(datas[1], datas[2]);
+    var root_div = SP_load(datas[1], datas[2], id);
+    items[id][0] = datas[0];
+    items[id][3] = datas[3];
+    items[id][4] = [];
     root_div.className = "video-item";
     // root_div.title = datas[4].split("~!")[0];
     root_div.title = "视频测试";
@@ -557,15 +605,17 @@ function video(datas, id, buttonID, mode) {
     title.type = "text";
     title.name = "视频名称";
     // title.value = datas[4].split("~!")[0];
-    // title.placeholder = datas[4].split("~!")[0];
+    // title.placeholder = title.value;
     title.value = "视频测试"
     title.placeholder = "视频测试";
+    items[id][4][0] = title.value;
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
+            items[id][4][0] = title.value;
         }
     });
     name_div.appendChild(title);
@@ -592,6 +642,7 @@ function video(datas, id, buttonID, mode) {
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
+    items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
 
@@ -646,6 +697,24 @@ function video(datas, id, buttonID, mode) {
                     };
                     file_textarea.textContent = file.name + "   " + size;
 
+                    video_source.src = URL.createObjectURL(file);
+                    video_source.type = file.type;
+
+                    video_div.load(); 
+                    layui.use(function () {
+                        var layer = layui.layer;
+                        var loadIndex = layer.load(0, {shade: 0.5});
+                    
+                        video_div.addEventListener("canplay", function() {
+                            if (!video_div.paused) {
+                                video_div.play();
+                            }
+                        });
+                        video_div.addEventListener('loadeddata', function(e) {
+                            video_div.pause();
+                            layer.close(loadIndex);
+                        });
+                    });
                     // 实时加载视频资源组件未完成
                     // video_source.src = file;
                     // video_source.type = "video/" + result.split(".")[result.split(".").length - 1];
@@ -661,14 +730,17 @@ function video(datas, id, buttonID, mode) {
 
 /**
  * 音频加载函数
- * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
+ * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
  * @param {Boolean} mode 是否启用模板模式
  */
 function audio(datas, id, buttonID, mode) {
     // 预览加载
-    var root_div = SP_load(datas[1], datas[2]);
+    var root_div = SP_load(datas[1], datas[2], id);
+    items[id][0] = datas[0];
+    items[id][3] = datas[3];
+    items[id][4] = [];
     root_div.className = "audio-item";
     root_div.title = "音频测试";
 
@@ -708,12 +780,14 @@ function audio(datas, id, buttonID, mode) {
     // title.placeholder = datas[4].split("~!")[0];
     title.value = "音频测试"
     title.placeholder = "音频测试";
+    items[id][4][0] = title.value;
     title.style.border = "none";
     title.style.marginLeft = "15px";
     title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
+            items[id][4][0] = title.value;
         }
     });
     name_div.appendChild(title);
@@ -740,6 +814,7 @@ function audio(datas, id, buttonID, mode) {
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
     textarea.placeholder = "空";
+    items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
 
@@ -778,29 +853,56 @@ function audio(datas, id, buttonID, mode) {
         var layer = layui.layer;
         // 渲染
         upload.render({
-          elem: '.audio-accept', // 绑定多个元素
-          url: datas[3], // 此处配置你自己的上传接口即可
-          auto: false, // 取消自动上传
-          bindAction: "#" + buttonID, // 绑定上传按钮自动实现点击上传功能
-          accept: 'file', // 普通文件
-          choose: function (obj) {
-              obj.preview(function(index, file, result){
-                  var size;
-                  if (file.size/1024/1024 > 0) {
-                      size = Math.ceil(file.size/1024/1024) + "MB";
-                  }
-                  else {
-                      size = Math.ceil(file.size/1024) + "KB";
-                  };
-                  file_textarea.textContent = file.name + "   " + size;
+            elem: '.audio-accept', // 绑定多个元素
+            url: datas[3], // 此处配置你自己的上传接口即可
+            auto: false, // 取消自动上传
+            bindAction: "#" + buttonID, // 绑定上传按钮自动实现点击上传功能
+            accept: 'file', // 普通文件
+            choose: function (obj) {
+                obj.preview(function(index, file, result){
+                    var size;
+                    if (file.size/1024/1024 > 0) {
+                        size = Math.ceil(file.size/1024/1024) + "MB";
+                    }
+                    else {
+                        size = Math.ceil(file.size/1024) + "KB";
+                    };
+                    file_textarea.textContent = file.name + "   " + size;
 
-                  audio_div.src = result;
-              }); 
-          },
-          done: function(res){
-            layer.msg('上传成功');
-            console.log(res);
-          }
+                    audio_div.src = result;
+                }); 
+            },
+            done: function(res){
+                layer.msg('上传成功');
+                console.log(res);
+            }
         });
       });
+}
+
+
+function AR () {
+    layui.use("", function() {
+        var layer = layui.layer
+
+        var root = document.createElement("div");
+    });
+}
+
+/**
+ * POST快捷函数
+ * @param {String} url 上传接口 
+ * @param {FormData} params 上传参数
+ * @param {function callback(xhr)} callback 回调函数
+ */
+function xhr_send (url, params, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr);
+        }
+    }
+
+    xhr.send(params);
 }

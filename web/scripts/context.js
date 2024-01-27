@@ -587,8 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Array<Array>} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项))
      */
     function items_load (datas) {
-        itemsClear();
-
+        clearitems();
         for (var i = 0; i < datas.length; i++) {
             (function(i) {
                 switch (datas[i][0]) {
@@ -610,26 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })(i);
         };
 
-        var inputs = document.querySelectorAll("input[type='text']");
-        inputs.forEach(input => {
-            input.onkeydown = function(event) {
-                event = event || window.event;
-                if (event.keyCode == 13) {
-                    input.placeholder = input.value;
-                };
-            };
-        });
-
-        var textareas = document.querySelectorAll("textarea");
-        textareas.forEach(textarea => {
-            textarea.onkeydown = function(event) {
-                event = event || window.event;
-                if (event.key === "Enter" && event.shiftKey) {
-                    textarea.placeholder = textarea.value;
-                    event.preventDefault();
-                };
-            };
-        });
+        key_bind();
     };
 
     function task_select (elem) {
@@ -642,7 +622,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     update_btn.onclick = function () {
-        Update_All();
+        var xhr = new XMLHttpRequest();
+        var url = "/pushDatas";
+        var params = new FormData();
+        layui.use("form", function () {
+            params.append("un", sessionStorage.getItem("un"));
+            params.append("LineID", sessionStorage.getItem("LineID"));
+            params.append("PointID", sessionStorage.getItem("PointID"));
+            if (sessionStorage.getItem("newtask")) {
+                params.append("TaskID", "new");
+            }
+            else {
+                params.append("TaskID", sessionStorage.getItem("TaskID"));
+            };
+            var task = [];
+            var form = layui.form;
+            task.push(form.val('operate-input-form').state);
+            task.push(document.querySelector("select.nextpoint").selectedIndex);
+            task.push(document.querySelector("select.nexttask").selectedIndex);
+            task.push(document.querySelector("textarea.task-remark").value);
+            task.push(updateitems());
+            task = task.join(";");
+            params.append("taskDatas", task);
+            params.append("taskType", form.val('operate-input-form').type);
+            params.append("taskName", document.querySelector("input.task-name").value);
+            params.append("AR", );
+        });
+
+        xhr.open("OPST", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                // 重加载点位任务数据以及任务面板数据
+            };
+        };
+
+        xhr.send(params);
     }
 
     /**

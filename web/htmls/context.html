@@ -55,14 +55,12 @@
                             <span class="title-span" style="margin-top: 5px;">任务类型</span>
                             <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%;">
                                 <div class="option1 opt" style="margin: 0 10px">
-                                    <input type="radio" lay-filter="operate-type-input" name="type" value="1" title="普通任务" checked>
+                                    <input type="radio" lay-filter="operate-type-input" name="type" value="1" title="普通任务" checked = "true">
                                 </div>
                                 <div class="option2 opt" style="display: flex; align-items: center;">
                                     <input type="radio" lay-filter="operate-type-input" name="type" value="0" title="结束任务">
                                 </div>
                             </div>
-                            <script>
-                            </script>
                         </div>
                         <hr/>
                         <div class="option-part" style="width: 100%; height: 30%;">
@@ -73,7 +71,7 @@
                                         <input type="radio" name="state" value="1" title="开启">
                                     </div>
                                     <div class="option2 opt">
-                                        <input type="radio" name="state" value="0" title="关闭" checked>
+                                        <input type="radio" name="state" value="0" title="关闭" checked = "true">
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +183,7 @@
                                                                 var items = context0[i].split("||"); 
 
                                                                 for (var j = 0; j < items.length; j++) {
-                                                                    /*宽|高|左间距|上间距|内容文本*/
+                                                                    /*宽|高|左间距|上间距|内容文本|背景颜色|字体颜色*/
                                                                     var item = items[j].split("|");
 
                                                                     var _div_ = document.createElement("div");
@@ -200,6 +198,7 @@
                                                                     _div_.style.top = item[3] + "%";
                                                                     _div_.textContent = item[4];
                                                                     _div_.style.backgroundColor = item[5];
+                                                                    _div_.style.color = item[6];
 
                                                                     main_div.appendChild(_div_);
                                                                 }
@@ -293,7 +292,64 @@
                                                 }).catch(error => console.error('Fetch error:', error));
                                             });
                                         };
-                                    })
+                                    });
+                                    
+                                    var a_s = document.querySelectorAll("div.bank-show a");
+                                    a_s[0].onclick = function () {
+                                        layui.use(function () {
+                                            var frame_selector = document.querySelector("select.question-selector");
+                                            var opetions = frame_selector.querySelectorAll("option");
+                                            if (opetions[frame_selector.selectedIndex].value > 0) {
+                                                var xhr = new XMLHttpRequest();
+                                                var url = "/getFrame";
+                                                var params = new FormData();
+                                                params.append("un", sessionStorage.getItem("un"));
+                                                xhr.open("POST", url, true);
+                                                xhr.onreadystatechange = function () {
+                                                    if (xhr.readyState === 4) {
+                                                        var datas = xhr.responseText;
+                                                        // ...
+
+                                                        var page = document.createElement("div")
+                                                        page.style.display = "flex";
+                                                        page.style.flexDirection = "column";
+                                                        page.style.alignItems = "center";
+                                                        page.style.justifyContent = "center";
+                                                        page.style.height = "100%";
+                                                        page.style.width = "100%";
+                                                                            
+                                                        page.innerHTML = '<div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">' +
+                                                        '<div class="layui-card showitem-panel">' +
+                                                        '<div class="head-item">' +
+                                                        '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
+                                                        '<i style="color: black; font-size: 14px">时间显示测试</i>' +
+                                                        '</div>' +
+                                                        '<div class="main-item"></div>' +
+                                                        '<div class="bottom-item">' +
+                                                        '<img src="../images/help_item.png" alt="Image" class="help-img img-item" />' +
+                                                        '<img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />' +
+                                                        '</div></div></div>'
+        
+                                                        var main_div = page.querySelector("div.main-item");
+                                                        // ...
+        
+                                                        layer.open({
+                                                            type: 1,
+                                                            title: false,
+                                                            closeBtn: 0,
+                                                            area: ['420px', '480px'],
+                                                            maxmin: false,
+                                                            shadeClose: true,
+                                                            content: page.outerHTML
+                                                        });
+                                                    }
+                                                }
+
+                                                xhr.send(params);
+                                            };
+                                            return false
+                                        });
+                                    }
                                 </script>
                             </div>
                         </div>

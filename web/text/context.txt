@@ -21,8 +21,7 @@
 <span>因此，任何刷新操作都将会重置全部修改数据，请谨慎操作。</span>
 !!<span>5-内容保存与预览相关功能</span>
 <hr style="margin:10px 0;">
-<span>点击‘保存|更新’更新按钮时，上传的数据是输入框中所携带的值，不需要严格按下回车键‘Enter’</span>
-<span>如果希望预览面板上体现修改内容，需要按下回车键‘Enter’才可完成加载</span>
+<span>需要按下回车键‘Enter’才可完成加载，上传数据</span>
 <span>注意：多行输入框回车键‘Enter’为换行操作，如需保存需要按Shift+Enter</span>
 !!<span>6-警告</span>
 <hr style="margin:10px 0;">

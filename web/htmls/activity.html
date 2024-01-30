@@ -4,15 +4,18 @@
         <meta charset="utf-8" />
         <meta name="activity", content="活动列表" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        <link rel="stylesheet" href="../layui/css/layui.css">
         <link rel="stylesheet" href="../styles/activity.css" />
         <script src="../scripts/page-load.js" defer></script>
         <script src="../scripts/activity.js" defer></script>
+        <script src="../layui/layui.js"></script>
         <title>活动列表</title>
     </head>
-    <body>
-        <table id="gradesTable">
+    <body style="background-color: #eeeeee;">
+        <div class="layui-panel" style="margin: 12px;">
+        <table id="gradesTable" class="layui-table">
             <!-- 表格内容将通过JavaScript动态生成 -->
         </table>
+        </div>
     </body>
 </html>

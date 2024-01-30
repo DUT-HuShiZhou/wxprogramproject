@@ -46,11 +46,11 @@ body {
 
 
 .header {
-    font-size: 38px;
+    font-size: 70px;
     font-weight: bold;
     text-align: center;
     line-height: 200px;
-    font-family: "寒蝉秋红";
+    
 }
 
 
@@ -61,7 +61,7 @@ body {
     border: 0;
     padding: 10px;
     border-bottom: 1px solid rgb(128, 125, 125);
-    font-size: 15px;
+    font-size: 18px;
     outline: none;
     font-family: "pacifico";
 }
@@ -81,6 +81,7 @@ body {
     border-radius: 30px;
     transition: all 0.5s;
     font-family: "pacifico";
+    font-size: larger;
 }
 
 
@@ -93,7 +94,7 @@ body {
 .msg {
     text-align: center;
     line-height: 88px;
-    font-family: "pacifico";
+    
 }
 
 
@@ -119,4 +120,14 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.Regi {
+    background-color: transparent; /* 背景颜色设置为透明 */
+    border: none; /* 移除边框 */
+    padding: 10px 20px; /* 设置按钮内边距 */
+    text-decoration: underline; /* 文字下划线 */
+    color: #000; /* 设置文字颜色 */
+    cursor: pointer; /* 鼠标样式设为指针 */
+    font-size: larger;
 }

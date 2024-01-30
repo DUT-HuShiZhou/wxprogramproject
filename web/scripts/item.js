@@ -2,6 +2,7 @@ let place = document.querySelector("div.main-item");
 let infplace = document.querySelector("div.module-frame");
 /**Array<type, size, position, url, <title, contain|<question, <options...>, right, grade>>>*/
 let items = [];
+let ARfiles = [];
 
 /**组件数据清空函数 */
 function clearitems () {
@@ -53,6 +54,7 @@ function SP_load(size, position, id) {
     return obj;
 }
 
+/**按键绑定 */
 function key_bind () {
     var inputs = document.querySelectorAll("input[type='text']");
     inputs.forEach(input => {
@@ -76,6 +78,7 @@ function key_bind () {
     });
 }
 
+/**更新框架 */
 function fresh_form() {
     layui.use('form', function(){
         var form = layui.form;
@@ -276,6 +279,9 @@ function question(datas, id, buttonID, mode) {
     question_div.classList = "question";
     question_div.style.width = "100%";
     question_div.style.height = "100%";
+    question_div.style.overflow = "hidden";
+    question_div.style.display = "flex";
+    question_div.style.flexDirection = "column";
     question_div.style.backgroundColor = "rgb(240, 240, 240, 0)"
 
     var text_div = document.createElement("div");
@@ -284,7 +290,11 @@ function question(datas, id, buttonID, mode) {
     text_div.textContent = "问题测试";
     text_div.style.color = "black";
     text_div.style.width = "100%";
-    text_div.style.height = "25%";
+    text_div.style.minHeight = "25%";
+    text_div.style.height = "auto";
+    text_div.style.overflowWrap = "break-word";
+    text_div.style.wordBreak = "normal";
+    text_div.style.whiteSpace = "pre-wrap";
     text_div.style.setProperty("font-size", "10px", "important");
     question_div.appendChild(text_div);
 
@@ -294,6 +304,7 @@ function question(datas, id, buttonID, mode) {
     choose_div.style.flexDirection = "column";
     choose_div.style.alignItems = "center";
     choose_div.style.width = "100%";
+    choose_div.style.flexGrow = "1";
     choose_div.style.height = "75%";
 
     var options = [];
@@ -307,8 +318,7 @@ function question(datas, id, buttonID, mode) {
         button.type = "button";
         button.classList = "layui-btn choice-button";
         button.style.margin = "0.5%";
-        button.style.height = "23%";
-        button.style.lineHeight = "0";
+        button.style.lineHeight = "20px";
         button.style.fontSize = "8px";
         button.value = i;
         button.textContent = String.fromCharCode(65 + i) + "." + options[i];
@@ -881,11 +891,98 @@ function audio(datas, id, buttonID, mode) {
 }
 
 
-function AR () {
-    layui.use("", function() {
+function AR (xD) {
+    layui.use(function() {
         var layer = layui.layer
 
         var root = document.createElement("div");
+        root.style.width = "480px";
+        root.style.height = "200px";
+        root.style.overflow = "hidden";
+        root.style.display = "flex";
+
+        var bottom_div = document.createElement("div");
+        bottom_div.style.width = "40%";
+        bottom_div.style.height = "100%";
+        bottom_div.style.padding = "5%";
+        bottom_div.style.display = "flex";
+        bottom_div.style.flexDirection = "column";
+
+        var file_choose = document.createElement("button");
+        file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传glb或gltf文件';
+        file_choose.type = "button";
+        file_choose.classList = "layui-btn module-set-button"; 
+        file_choose.setAttribute("lay-options", "{accept: 'file', exts: 'glb|gitf'}");
+        bottom_div.appendChild(file_choose);
+
+        var file_choose = document.createElement("button");
+        file_choose.classList = "layui-btn module-set-button"; 
+        file_choose.style.marginTop = "5%";
+        file_choose.type = "button";
+        // 2DMarker
+        if (xD === 2){
+            file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传图片文件';
+            file_choose.setAttribute("lay-options", "{accept: 'file', exts: 'jpg|png'}");
+        }
+        // 3DMarker
+        else {
+            file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传视频文件';
+            file_choose.setAttribute("lay-options", "{accept: 'video'}");
+        }
+        bottom_div.appendChild(file_choose);
+
+        var sure = document.createElement("button");
+        sure.classList = "layui-btn certain-btn";
+        sure.textContent = "保存";
+        sure.style.width = "80px";
+        sure.style.margin = "20px 56px";
+        bottom_div.appendChild(sure);
+        root.appendChild(bottom_div);
+
+        var file_textarea = document.createElement("textarea");
+        file_textarea.className = "file-name";
+        file_textarea.style.marginLeft = "5%";
+        file_textarea.style.display = "inline-block";
+        file_textarea.style.resize = "none";
+        file_textarea.style.minHeight = "5px";
+        file_textarea.style.height = "160px";
+        file_textarea.style.width = "180px";
+        file_textarea.style.marginTop = "20px";
+        file_textarea.readOnly = "true";
+        root.appendChild(file_textarea);
+
+        layer.open({
+            type: 1,
+            area: ['480px', '200px'],
+            title: false,
+            content: root.outerHTML + 
+            "<script>" + `
+            layui.use(function() {
+                var upload = layui.upload;
+                upload.render({
+                    elem: '.module-set-button', // 绑定多个元素
+                    url: '', // 此处配置你自己的上传接口即可
+                    accept: 'file', // 普通文件
+                    auto: false,
+                    bindAction: "#",
+                    choose: function () {
+                        obj.preview(function(index, file, result){
+                            var size;
+                            if (file.size/1024/1024 > 0) {
+                                size = Math.ceil(file.size/1024/1024) + "MB";
+                            }
+                            else {
+                                size = Math.ceil(file.size/1024) + "KB";
+                            };
+                            file_textarea.textContent = file_textarea.textContent + file.name + "   " + size;
+                        });
+                    },
+                    done: function (res) {
+                    }
+                });
+            });
+            ` + "</script>"
+        });
     });
 }
 

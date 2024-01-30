@@ -173,11 +173,15 @@ layui.use(function(){
     var layer = layui.layer;
     // select 事件
     form.on('select(demo-select-filter)', function(data){
+        var main_item = document.querySelector("div.main-item");
+        var module_frame = document.querySelector("div.module-frame");
+            main_item.innerHTML = "";
+            module_frame.innerHTML = "";
         var selectedCategoryValue = data.value; // 获得被选中的值
 
-        var options = [[["video", "90x40", "5x0", ""], ["question", "90x40", "5x0", ""]],
-        [["photo", "90x40", "5x0", ""], ["question", "90x40", "5x0", ""]],
-        [["audio", "90x40", "5x0", ""], ["question", "90x40", "5x0", ""]]];
+        var options = [[["video", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]],
+        [["photo", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]],
+        [["audio", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]]];
 
         var datas = []
         if (selectedCategoryValue === "视频") {
@@ -200,6 +204,8 @@ layui.use(function(){
                       break;
                   case "question":
                       question(datas[i], i, "update-btn");
+                      var text = document.querySelector("div.text");
+                      text.style.setProperty("font-size", "large", "important");
                       break;
                   case "video":
                       video(datas[i], i, "update-btn");

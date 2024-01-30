@@ -395,7 +395,7 @@
                                         <span class="title-span" style="margin-left: 5%;">状态:</span>
                                         <span class="title-span">未达标</span>
                                         <a onclick=""style="margin-left: 10%; margin-right: 5%;">清空</a>
-                                        <a onclick="">上传文件</a>
+                                        <a onclick="ARfile_update()">上传文件</a>
                                     </div>
                                 </div>
                                 <script>
@@ -413,9 +413,9 @@
                                             };
                                         });
 
-                                        var form0 = layui.form;
+                                        var form = layui.form;
 
-                                        form0.on("select(AR-selector)", function (data) {
+                                        form.on("select(AR-selector)", function (data) {
                                             var div = document.querySelector("div.AR-file-update");
                                             
                                             if (data.value === "1" || data.value === "2") {
@@ -426,6 +426,12 @@
                                             };
                                         })
                                     });
+
+                                    var AR_selector = document.querySelector("select.AR-selector");
+
+                                    function ARfile_update () {
+                                        AR(AR_selector.selectedIndex + 1);
+                                    }
                                 </script>
                             </div>
                             <div class="act-sure" style="margin: 15px 0; display: flex; justify-content: center;">

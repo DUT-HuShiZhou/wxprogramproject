@@ -967,6 +967,7 @@ function AR (xD) {
                     bindAction: "#",
                     choose: function () {
                         obj.preview(function(index, file, result){
+                            alert(6);
                             var size;
                             if (file.size/1024/1024 > 0) {
                                 size = Math.ceil(file.size/1024/1024) + "MB";
@@ -974,7 +975,8 @@ function AR (xD) {
                             else {
                                 size = Math.ceil(file.size/1024) + "KB";
                             };
-                            file_textarea.textContent = file_textarea.textContent + file.name + "   " + size;
+                            var file_textarea = document.querySelector("textarea.file-name");
+                            file_textarea.textContent = file.name + "   " + size;
                         });
                     },
                     done: function (res) {

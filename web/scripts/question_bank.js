@@ -172,16 +172,15 @@ layui.use(function(){
     var form = layui.form;
     var layer = layui.layer;
     // select 事件
-    form.on('select(demo-select-filter)', function(data){
+    form.on( 'select(demo-select-filter)', function(data){
         var main_item = document.querySelector("div.main-item");
         var module_frame = document.querySelector("div.module-frame");
-            main_item.innerHTML = "";
-            module_frame.innerHTML = "";
+        main_item.innerHTML = "";
+       module_frame.innerHTML = "";
         var selectedCategoryValue = data.value; // 获得被选中的值
-
-        var options = [[["video", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]],
-        [["photo", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]],
-        [["audio", "90x40", "5x0", ""], ["question", "90x60", "5x0", ""]]];
+        var options = [[["video", "90x40", "5x0", ""], ["question", "90x50", "5x0", ""]],
+        [["photo", "90x40", "5x0", ""], ["question", "90x50", "5x0", ""]],
+        [["audio", "90x40", "5x0", ""], ["question", "90x50", "5x0", ""]]];
 
         var datas = []
         if (selectedCategoryValue === "视频") {
@@ -205,7 +204,8 @@ layui.use(function(){
                   case "question":
                       question(datas[i], i, "update-btn");
                       var text = document.querySelector("div.text");
-                      text.style.setProperty("font-size", "large", "important");
+                      text.style.setProperty("color","white");
+
                       break;
                   case "video":
                       video(datas[i], i, "update-btn");
@@ -222,111 +222,8 @@ layui.use(function(){
     });
   });
 
-  layui.use(function(){
-    var form = layui.form;
-    var layer = layui.layer;
-    // select 事件
-    form.on('select(demo-select-filter2)', function(data){
-        selectedCategoryValue = data.value; // 获得被选中的值
-
-        if(selectedCategoryValue === "选择"){
-            document.getElementById('qustionTitle').style.display = 'block';
-            document.getElementById('FillBlank').style.display = 'none';
-        }
-        else if(selectedCategoryValue === "填空"){
-            document.getElementById('qustionTitle').style.display = 'none';
-            document.getElementById('FillBlank').style.display = 'block';
-        }
-        else {
-            document.getElementById('qustionTitle').style.display = 'none';
-            document.getElementById('FillBlank').style.display = 'none';
-        }
-    });
-  });
 
 
-//lay图片上传
-layui.use(function(){
-    var upload = layui.upload;
-    var layer = layui.layer;
-    var element = layui.element;
-    var $ = layui.$;
-    // 单图片上传
-    var uploadInst = upload.render({
-      elem: '#ID-upload-demo-btn',
-      url: '', // 实际使用时改成您自己的上传接口即可。
-      before: function(obj){
-        // 预读本地文件示例，不支持ie8
-        obj.preview(function(index, file, result){
-          $('#ID-upload-demo-img').attr('src', result); // 图片链接（base64）
-        });
-        
-        element.progress('filter-demo', '0%'); // 进度条复位
-        layer.msg('上传中', {icon: 16, time: 0});
-      },
-      done: function(res){
-        // 若上传失败
-        if(res.code > 0){
-          return layer.msg('上传失败');
-        }
-        // 上传成功的一些操作
-        // …
-        $('#ID-upload-demo-text').html(''); // 置空上传失败的状态
-      },
-      error: function(){
-        // 演示失败状态，并实现重传
-        var demoText = $('#ID-upload-demo-text');
-        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-        demoText.find('.demo-reload').on('click', function(){
-          uploadInst.upload();
-        });
-      },
-      // 进度条
-      progress: function(n, elem, e){
-        element.progress('filter-demo', n + '%'); // 可配合 layui 进度条元素使用
-        if(n == 100){
-          layer.msg('上传完毕', {icon: 1});
-        }
-      }
-    });  
-});
 
-//上传文件
-layui.use(function(){
-    var upload = layui.upload;
-    // 渲染
-    upload.render({
-      elem: '#ID-upload-demo-choose',
-      url: '', // 此处配置你自己的上传接口即可
-      auto: false,
-      // multiple: true,
-      bindAction: '#ID-upload-demo-action',
-      done: function(res){
-        layer.msg('上传成功');
-        console.log(res)
-      }
-    });
-  });
-
-//AR选择框
-  layui.use(function(){
-    var form = layui.form;
-    var layer = layui.layer;
-    // radio 事件
-    form.on('radio(demo-radio-filter)', function(data){
-      var elem = data.elem; // 获得 radio 原始 DOM 对象
-      var value = elem.value; // 获得 radio 值
-      if(value==="1")
-      {
-        document.getElementById('ARbutton').style.display = 'block';
-      }
-      else
-      {
-        document.getElementById('ARbutton').style.display = 'none';
-      }
-     
-    });
-    
-  });
 
 

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     AMapLoader.load({
         key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
-        version: "2.0", //指定要加载的 JS API 的版本，缺省时默认为 1.4.15
+        version: "2.0", //指定要加载的 JS API 的版本
         plugin: "AMap.Walking" 
         })
         .then((AMap) => {
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function() {
             if ( xhr.readyState === 4){
-                //任务列表  单元：任务名:任务类型:任务ID
+                //任务列表  单元：任务名:任务类型:任务ID:模板类型|题目类型
                 var data = xhr.responseText;
                 var task_line = data.split(";");
                 var tasks = [];
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send(params);
 
         if (elemnet.getAttribute("ID") === "测试"){
-            task_panel_load([["视频模板", "1", "视频"], ["图片模板", "0", "图片"], ["音频模板", "1", "音频"]], elemnet.getAttribute("ID"));
+            task_panel_load([["视频模板", "1", "视频", "video|selection"], ["图片模板", "0", "图片", "photo|selection"], ["音频模板", "1", "音频", "audio|selection"]], elemnet.getAttribute("ID"));
         }
         else {
             task_panel_load([],);
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * 任务列表加载主函数
-     * @param {Array<Array>} tasks 任务名称,任务类型(1普通任务,0结束任务),任务ID
+     * @param {Array<Array>} tasks 任务名称,任务类型(1普通任务,0结束任务),任务ID,模板类型
      * @param {Number} pointID 点位ID
      */
     function task_panel_load (tasks, pointID) {
@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (xhr.readyState === 4) {
                             task_select(task_div);
                             sessionStorage.setItem("newtask", "false");
+                            sessionStorage.setItem("module-type", tasks[i][3]);
 
                             // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
                             var data = xhr.responseText;
@@ -291,7 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         xhr.onreadystatechange = function () {
                             if (xhr.readyState === 4) {
                                 task_select(task_div);
-                                sessionStorage.setItem("newtask", "false");
+                                sessionStorage.setItem("newtask", "true");
+                                sessionStorage.setItem("module-type", tasks[i][3]);
 
                                 // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
                                 var data = xhr.responseText;
@@ -622,43 +624,80 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     update_btn.onclick = function () {
-        var xhr = new XMLHttpRequest();
-        var url = "/pushDatas";
-        var params = new FormData();
+        // 判断是否为新建任务
+        if (sessionStorage.getItem("newtask") != "false"){
+            // 二次确定
+                var xhr = new XMLHttpRequest();
+                var url = "/getTaskID";
+                var params = new FormData();
+                params.append("un", sessionStorage.getItem("un"));
+                params.append("LineID", sessionStorage.getItem("LineID"));
+                params.append("PointID", sessionStorage.getItem("PointID"));
+                
+                xhr.open("POST", url, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        update_event(xhr.responseText);
+                    };
+                };
+
+                xhr.send(params);
+        }
+        else {
+            update_event(sessionStorage.getItem("TaskID"));
+        }
+
+    }
+
+    function update_event (TaskID) {
         layui.use("form", function () {
-            params.append("un", sessionStorage.getItem("un"));
-            params.append("LineID", sessionStorage.getItem("LineID"));
-            params.append("PointID", sessionStorage.getItem("PointID"));
-            if (sessionStorage.getItem("newtask")) {
-                params.append("TaskID", "new");
-            }
-            else {
-                params.append("TaskID", sessionStorage.getItem("TaskID"));
-            };
-            var task = [];
-            var form = layui.form;
-            task.push(form.val('operate-input-form').state);
-            task.push(document.querySelector("select.nextpoint").selectedIndex);
-            task.push(document.querySelector("select.nexttask").selectedIndex);
-            task.push(document.querySelector("textarea.task-remark").value);
-            task.push(updateitems());
-            task = task.join(";");
-            params.append("taskDatas", task);
-            params.append("taskType", form.val('operate-input-form').type);
-            params.append("taskName", document.querySelector("input.task-name").value);
+            var layer = layui.layer;
+            layer.confirm("此操作将修改服务器上的全部相关内容，且无法撤销，请再一次确认是否进行？", {
+                title: "询问",
+                icon: 3,
+            }, function (index) {
+                var xhr = new XMLHttpRequest();
+                var url = "/pushDatas";
+                var params = new FormData();
+                params.append("un", sessionStorage.getItem("un"));
+                params.append("LineID", sessionStorage.getItem("LineID"));
+                params.append("PointID", sessionStorage.getItem("PointID"));
+                params.append("TaskID", TaskID);
 
-            var indexs = get_fileresponse();
-            params.append("filesIndex", );
+                var type = sessionStorage.getItem("module-type").split("|");
+                params.append("mediatype", type[0]);
+                params.append("questiontype", type[1]);
+                
+                var task = [];
+                var form = layui.form;
+                task.push(form.val('operate-input-form').state);
+                task.push(document.querySelector("select.nextpoint").selectedIndex);
+                task.push(document.querySelector("select.nexttask").selectedIndex);
+                task.push(document.querySelector("textarea.task-remark").value);
+                task.push(updateitems());
+                task = task.join(";");
+                params.append("taskDatas", task);
+                params.append("missiontype", form.val('operate-input-form').type);
+                params.append("missionname", document.querySelector("input.task-name").value);
+
+                var indexs = get_fileresponse();
+                for (var key in indexs) {
+                    params.appendChild(key, indexs[key]);
+                };
+
+                xhr.open("POST", url, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        // 重加载点位任务数据以及任务面板数据
+
+                        layer.close(index);
+                        layer.msg("上传成功");
+                    };
+                };
+
+                xhr.send(params);
+            });
         });
-
-        xhr.open("POST", url, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                // 重加载点位任务数据以及任务面板数据
-            };
-        };
-
-        xhr.send(params);
     }
 
     /**

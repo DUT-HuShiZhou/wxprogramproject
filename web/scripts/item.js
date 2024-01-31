@@ -109,6 +109,7 @@ function hr_add() {
  * @param {Boolean} mode 是否启用模板模式
  */
 function photo(datas, id, buttonID, mode) {
+    files_index.push({"image": datas[3]});
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
@@ -258,7 +259,7 @@ function photo(datas, id, buttonID, mode) {
                 });
             },
             done: function (res) {
-                var newDict = {"photo": res.response};
+                var newDict = {"image": res.response};
                 var existingIndex = files_index.findIndex(function(item) {
                     return item.photo !== undefined; 
                 });
@@ -564,6 +565,7 @@ function question(datas, id, buttonID, mode) {
  * @param {Boolean} mode 是否启用模板模式
  */
 function video(datas, id, buttonID, mode) {
+    files_index.push({"video": datas[3]});
     sessionStorage.setItem("video", "0");
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
@@ -777,6 +779,7 @@ function video(datas, id, buttonID, mode) {
  * @param {Boolean} mode 是否启用模板模式
  */
 function audio(datas, id, buttonID, mode) {
+    files_index.push({"audio": datas[3]});
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
@@ -985,7 +988,7 @@ function AR (xD) {
         root.appendChild(bottom_div);
 
         var file_textarea = document.createElement("textarea");
-        file_textarea.className = "file-name";
+        file_textarea.className = "AR-file-name";
         file_textarea.style.marginLeft = "5%";
         file_textarea.style.display = "inline-block";
         file_textarea.style.resize = "none";
@@ -1007,9 +1010,7 @@ function AR (xD) {
         upload.render({
             elem: '.module-set-button',
             url: 'http://129.204.130.33:8080/file/upload',
-            accept: 'file', // 普通文件       
-            auto: false,
-            bindAction:"#certain-btn",
+            accept: 'file', // 普通文件
             data: {
                 "LineID": sessionStorage.getItem("LineID"),
                 "PointID": sessionStorage.getItem("PointID"),
@@ -1024,17 +1025,26 @@ function AR (xD) {
                     else {
                         size = Math.ceil(file.size/1024) + "KB";
                     };
-                    var file_textarea = document.querySelector("textarea.file-name");
-                    if (file_textarea.textContent === ""){
-                        file_textarea.textContent = file.name + "   " + size;
+                    var file_textarea = document.querySelector("textarea.AR-file-name");
+                    var text = file_textarea.textContent;
+                    text = text.split("\n");
+                    if (file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2) === "glb" ||
+                    file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2) === "gitf") {
+                        text[0] = file.name + "   " + size;
+                        text[1] = text[1]===undefined?"":text[1];
                     }
                     else {
-                        file_textarea.textContent = file_textarea.textContent + "\n" + file.name + "   " + size;
-                    };
+                        text[0] = text[0]===undefined?"":text[0];
+                        text[1] = file.name + "   " + size;
+                    }
+                    file_textarea.textContent = text[0] + "\n" + text[1];
                 });
             },
             done: function (res) {
-                var newDict = {"AR": res.response};
+                var file = res.file;
+                var fileExtension = "AR" + file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+                var newDict = {};
+                newDict[fileExtension] = res.response;
                 var existingIndex = files_index.findIndex(function(item) {
                     return item.photo !== undefined; 
                 });

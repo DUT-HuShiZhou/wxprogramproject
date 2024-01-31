@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             type: 1,
             shade: false, // 不显示遮罩
             skin: 'circular-popup',
+            offset: ["50px", "50px"],
             closeBtn: 0,
             title: "移动",
             area: ['80px', '80px'],

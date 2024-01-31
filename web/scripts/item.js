@@ -2,7 +2,7 @@ let place = document.querySelector("div.main-item");
 let infplace = document.querySelector("div.module-frame");
 /**Array<type, size, position, url, <title, contain|<question, <options...>, right, grade>>>*/
 let items = [];
-let ARfiles = [];
+let files_index = [];
 
 /**组件数据清空函数 */
 function clearitems () {
@@ -25,6 +25,11 @@ function updateitems () {
     };
     datas = datas.join(":");
     return datas;
+}
+
+/**获取文件路径索引函数 */
+function get_fileresponse () {
+    return files_index;
 }
 
 /**
@@ -241,6 +246,11 @@ function photo(datas, id, buttonID, mode) {
             auto: false,
             bindAction: "#" + buttonID,
             accept: 'file', // 普通文件
+            data: {
+                "LineID": sessionStorage.getItem("LineID"),
+                "PointID": sessionStorage.getItem("PointID"),
+                "TaskID": sessionStorage.getItem("TaskID"),
+            }, 
             choose: function (obj) {
                 obj.preview(function (index, file, result) {
                     $('#ID-upload-img-img').attr('src', result); // 图片链接（base64）
@@ -248,8 +258,16 @@ function photo(datas, id, buttonID, mode) {
                 });
             },
             done: function (res) {
-                layer.msg('上传成功');
-                console.log(res);
+                var newDict = {"photo": res.response};
+                var existingIndex = files_index.findIndex(function(item) {
+                    return item.photo !== undefined; 
+                });
+                if (existingIndex !== -1) {
+                    files_index[existingIndex] = newDict;
+                }
+                else {
+                    files_index.push(newDict); 
+                }
             }
         });
     })
@@ -696,6 +714,11 @@ function video(datas, id, buttonID, mode) {
             auto: false,
             bindAction: "#" + buttonID,
             accept: 'file', // 普通文件
+            data: {
+                "LineID": sessionStorage.getItem("LineID"),
+                "PointID": sessionStorage.getItem("PointID"),
+                "TaskID": sessionStorage.getItem("TaskID"),
+            }, 
             choose: function (obj) {
                 obj.preview(function(index, file, result){
                     var size;
@@ -730,9 +753,17 @@ function video(datas, id, buttonID, mode) {
                     // video_source.type = "video/" + result.split(".")[result.split(".").length - 1];
                 }); 
             },
-            done: function(res){
-                layer.msg('上传成功');
-                console.log(res);
+            done: function (res) {
+                var newDict = {"video": res.response};
+                var existingIndex = files_index.findIndex(function(item) {
+                    return item.photo !== undefined; 
+                });
+                if (existingIndex !== -1) {
+                    files_index[existingIndex] = newDict;
+                }
+                else {
+                    files_index.push(newDict); 
+                }
             }
         });
       });
@@ -868,6 +899,11 @@ function audio(datas, id, buttonID, mode) {
             auto: false, // 取消自动上传
             bindAction: "#" + buttonID, // 绑定上传按钮自动实现点击上传功能
             accept: 'file', // 普通文件
+            data: {
+                "LineID": sessionStorage.getItem("LineID"),
+                "PointID": sessionStorage.getItem("PointID"),
+                "TaskID": sessionStorage.getItem("TaskID"),
+            }, 
             choose: function (obj) {
                 obj.preview(function(index, file, result){
                     var size;
@@ -882,9 +918,17 @@ function audio(datas, id, buttonID, mode) {
                     audio_div.src = result;
                 }); 
             },
-            done: function(res){
-                layer.msg('上传成功');
-                console.log(res);
+            done: function (res) {
+                var newDict = {"audio": res.response};
+                var existingIndex = files_index.findIndex(function(item) {
+                    return item.photo !== undefined; 
+                });
+                if (existingIndex !== -1) {
+                    files_index[existingIndex] = newDict;
+                }
+                else {
+                    files_index.push(newDict); 
+                }
             }
         });
       });
@@ -908,31 +952,32 @@ function AR (xD) {
         bottom_div.style.display = "flex";
         bottom_div.style.flexDirection = "column";
 
-        var file_choose = document.createElement("button");
-        file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传glb或gltf文件';
-        file_choose.type = "button";
-        file_choose.classList = "layui-btn module-set-button"; 
-        file_choose.setAttribute("lay-options", "{accept: 'file', exts: 'glb|gitf'}");
-        bottom_div.appendChild(file_choose);
+        var file_choose1 = document.createElement("button");
+        file_choose1.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传glb或gltf文件';
+        file_choose1.type = "button";
+        file_choose1.classList = "layui-btn module-set-button"; 
+        file_choose1.setAttribute("lay-options", "{accept: 'file', exts: 'glb|gitf'}");
+        bottom_div.appendChild(file_choose1);
 
-        var file_choose = document.createElement("button");
-        file_choose.classList = "layui-btn module-set-button"; 
-        file_choose.style.marginTop = "5%";
-        file_choose.type = "button";
+        var file_choose2 = document.createElement("button");
+        file_choose2.classList = "layui-btn module-set-button"; 
+        file_choose2.style.marginTop = "5%";
+        file_choose2.type = "button";
         // 2DMarker
         if (xD === 2){
-            file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传图片文件';
-            file_choose.setAttribute("lay-options", "{accept: 'file', exts: 'jpg|png'}");
+            file_choose2.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传图片文件';
+            file_choose2.setAttribute("lay-options", "{accept: 'file', exts: 'jpg|png'}");
         }
         // 3DMarker
         else {
-            file_choose.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传视频文件';
-            file_choose.setAttribute("lay-options", "{accept: 'video'}");
+            file_choose2.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 上传视频文件';
+            file_choose2.setAttribute("lay-options", "{accept: 'video'}");
         }
-        bottom_div.appendChild(file_choose);
+        bottom_div.appendChild(file_choose2);
 
         var sure = document.createElement("button");
         sure.classList = "layui-btn certain-btn";
+        sure.id = "certain-btn";
         sure.textContent = "保存";
         sure.style.width = "80px";
         sure.style.margin = "20px 56px";
@@ -951,39 +996,62 @@ function AR (xD) {
         file_textarea.readOnly = "true";
         root.appendChild(file_textarea);
 
-        layer.open({
+        var index = layer.open({
             type: 1,
             area: ['480px', '200px'],
             title: false,
-            content: root.outerHTML + 
-            "<script>" + `
-            layui.use(function() {
-                var upload = layui.upload;
-                upload.render({
-                    elem: '.module-set-button', // 绑定多个元素
-                    url: '', // 此处配置你自己的上传接口即可
-                    accept: 'file', // 普通文件
-                    auto: false,
-                    bindAction: "#",
-                    choose: function () {
-                        obj.preview(function(index, file, result){
-                            alert(6);
-                            var size;
-                            if (file.size/1024/1024 > 0) {
-                                size = Math.ceil(file.size/1024/1024) + "MB";
-                            }
-                            else {
-                                size = Math.ceil(file.size/1024) + "KB";
-                            };
-                            var file_textarea = document.querySelector("textarea.file-name");
-                            file_textarea.textContent = file.name + "   " + size;
-                        });
-                    },
-                    done: function (res) {
+            content: root.outerHTML
+        });
+
+        var upload = layui.upload;
+        upload.render({
+            elem: '.module-set-button',
+            url: 'http://129.204.130.33:8080/file/upload',
+            accept: 'file', // 普通文件       
+            auto: false,
+            bindAction:"#certain-btn",
+            data: {
+                "LineID": sessionStorage.getItem("LineID"),
+                "PointID": sessionStorage.getItem("PointID"),
+                "TaskID": sessionStorage.getItem("TaskID"),
+            }, 
+            choose: function (obj) {
+                obj.preview(function(index, file, result){
+                    var size;
+                    if (file.size/1024/1024 > 0) {
+                        size = Math.ceil(file.size/1024/1024) + "MB";
                     }
+                    else {
+                        size = Math.ceil(file.size/1024) + "KB";
+                    };
+                    var file_textarea = document.querySelector("textarea.file-name");
+                    if (file_textarea.textContent === ""){
+                        file_textarea.textContent = file.name + "   " + size;
+                    }
+                    else {
+                        file_textarea.textContent = file_textarea.textContent + "\n" + file.name + "   " + size;
+                    };
                 });
-            });
-            ` + "</script>"
+            },
+            done: function (res) {
+                var newDict = {"AR": res.response};
+                var existingIndex = files_index.findIndex(function(item) {
+                    return item.photo !== undefined; 
+                });
+                if (existingIndex !== -1) {
+                    files_index[existingIndex] = newDict;
+                }
+                else {
+                    files_index.push(newDict); 
+                }
+
+                var ARfile_state = document.querySelector("span.AR-state-span");
+                ARfile_state.textContent = "已达标";
+                layer.close(index);
+            },
+            error: function() {
+
+            }
         });
     });
 }

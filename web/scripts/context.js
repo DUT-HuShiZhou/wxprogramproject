@@ -646,10 +646,12 @@ document.addEventListener('DOMContentLoaded', function() {
             params.append("taskDatas", task);
             params.append("taskType", form.val('operate-input-form').type);
             params.append("taskName", document.querySelector("input.task-name").value);
-            params.append("AR", );
+
+            var indexs = get_fileresponse();
+            params.append("filesIndex", );
         });
 
-        xhr.open("OPST", url, true);
+        xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 // 重加载点位任务数据以及任务面板数据

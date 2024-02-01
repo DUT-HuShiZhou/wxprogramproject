@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
             skin: 'circular-popup',
             offset: ["50px", "50px"],
             closeBtn: 0,
-            title: "移动",
-            area: ['80px', '80px'],
+            title: "目录",
+            area: ['90px', '90px'],
             content: $('#circle-layer-wrapper'), // 捕获的元素
             end: function(){
               // layer.msg('关闭后的回调', {icon:6});

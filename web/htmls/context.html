@@ -53,20 +53,20 @@
                     <div class="operate-root" style="width: 100%; height: 100%; overflow-y: hidden; display: none;">
                         <div class="type-part" style="width: 100%; height: 10%;">
                             <span class="title-span" style="margin-top: 5px;">任务类型</span>
-                            <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%;">
-                                <div class="option1 opt" style="margin: 0 10px">
+                            <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; justify-content: space-between;">
+                                <div class="option1 opt" style="margin: 0 8%">
                                     <input type="radio" lay-filter="operate-type-input" name="type" value="1" title="普通任务" checked = "true">
                                 </div>
-                                <div class="option2 opt" style="display: flex; align-items: center;">
+                                <div class="option2 opt" style="margin: 0 8%">
                                     <input type="radio" lay-filter="operate-type-input" name="type" value="0" title="结束任务">
                                 </div>
                             </div>
                         </div>
                         <hr/>
-                        <div class="option-part" style="width: 100%; height: 30%;">
+                        <div class="option-part" style="width: 100%; height: 25%;">
                             <div class="state-option" style="display: flex; width: 100% ; margin-top: 20px;">
-                                <span class="title-span">有效状态</span>
-                                <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; margin-left: 18%">
+                                <span class="title-span" style="width:25%">有效状态</span>
+                                <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 50%; height: 70%; margin-left: 25%">
                                     <div class="option1 opt" style="height: 100%;">
                                         <input type="radio" name="state" value="1" title="开启">
                                     </div>
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             <div class="next-point" style="display: flex; width: 100% ; margin-top: 10px;">
-                                <span class="title-span">下一个点位</span>
+                                <span class="title-span" style="width:25%">下一个点位</span>
                                 <div class="layui-col-md6 option-select">
                                     <select style="width: 100%;" class="nextpoint">
                                         <option value="">点击选择</option>
@@ -95,7 +95,7 @@
                                 </script>
                             </div>
                             <div class="next-task" style="display: flex; width: 100% ; margin-top: 20px;">
-                                <span class="title-span">下一个任务</span>
+                                <span class="title-span" style="width:25%">下一个任务</span>
                                 <div class="layui-col-md6 option-select">
                                     <select style="width: 100%;" class="nexttask">
                                         <option value="">点击选择</option>
@@ -120,115 +120,9 @@
                                         <option value="">点击选择题库</option>
                                         <option value="-1">点击使用模板</option>
                                     </select>
-                                    <script>
-                                        layui.use(function(){                   
-                                            var layer = layui.layer;
-                                            var selector = document.querySelector("select.question-selector");
-                                            // select 事件
-                                            selector.addEventListener("change", function () {
-                                                if (selector.value === "-1") {
-                                                    selector.selectedIndex = 0;
-                                                    fetch("../text/frametype.txt").then(response => {
-                                                        if (!response.ok) {
-                                                        throw new Error('Network response was not ok');
-                                                        }
-                                                        return response.text();
-                                                    }).then(content => {
-                                                        var page_window = document.createElement("div");
-                                                        page_window.classList = "layui-tab layui-tab-brief";
-                                                        page_window.style.height = "460px";
-
-                                                        var ul0 = document.createElement("ul");
-                                                        ul0.classList = "layui-tab-title";
-
-                                                        var context0 = content.split("\n!!").splice(1);
-
-                                                        var list0 = context0[0].split("**");
-                                                        for (var i = 0; i < list0.length; i++) {
-                                                            var li = document.createElement("li");
-                                                            if (i === 0) {li.className = "layui-this"};
-
-                                                            li.textContent = list0[i];
-                                                            ul0.appendChild(li);
-                                                        }
-                                                        page_window.appendChild(ul0);
-
-                                                        var div0 = document.createElement("div");
-                                                        div0.className = "layui-tab-content";
-                                                        div0.style.height = "390px"
-
-                                                        for (var i = 1; i <= list0.length; i++) {
-                                                            (function(i) {
-                                                                var page = document.createElement("div");
-                                                                if (i === 1) {page.classList = "layui-tab-item layui-show"}
-                                                                else {page.className = "layui-tab-item"};
-
-                                                                page.style.flexDirection = "column";
-                                                                page.style.alignItems = "center";
-                                                                page.style.height = "100%"
-                                                                
-                                                                page.innerHTML = '<div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">' +
-                                                                '<div class="layui-card showitem-panel">' +
-                                                                '<div class="head-item">' +
-                                                                '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
-                                                                '<i style="color: black; font-size: 14px">时间显示测试</i>' +
-                                                                '</div>' +
-                                                                '<div class="main-item"></div>' +
-                                                                '<div class="bottom-item">' +
-                                                                '<img src="../images/help_item.png" alt="Image" class="help-img img-item" />' +
-                                                                '<img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />' +
-                                                                '</div></div></div>'
-
-                                                                var main_div = page.querySelector("div.main-item");
-                                                                var items = context0[i].split("||"); 
-
-                                                                for (var j = 0; j < items.length; j++) {
-                                                                    /*宽|高|左间距|上间距|内容文本|背景颜色|字体颜色*/
-                                                                    var item = items[j].split("|");
-
-                                                                    var _div_ = document.createElement("div");
-                                                                    _div_.style.position = "relative";
-                                                                    _div_.style.display = "flex";
-                                                                    _div_.style.alignItems = "center";
-                                                                    _div_.style.justifyContent = "center";
-
-                                                                    _div_.style.width = item[0] + "%";
-                                                                    _div_.style.height = item[1] + "%";
-                                                                    _div_.style.left = item[2] + "%";
-                                                                    _div_.style.top = item[3] + "%";
-                                                                    _div_.textContent = item[4];
-                                                                    _div_.style.backgroundColor = item[5];
-                                                                    _div_.style.color = item[6];
-
-                                                                    main_div.appendChild(_div_);
-                                                                }
-                                                                
-                                                                var select_button =document.createElement("button");
-                                                                select_button.classList = "layui-btn layui-btn-radius";
-                                                                select_button.textContent = "——选择——";
-                                                                page.appendChild(select_button);
-
-                                                                div0.appendChild(page);
-                                                            })(i);
-                                                        }
-                                                        page_window.appendChild(div0);
-
-                                                        layer.open({
-                                                            type: 1,
-                                                            title: false,
-                                                            area: ['420px', '480px'],
-                                                            maxmin: false,
-                                                            shadeClose: false,
-                                                            content: page_window.outerHTML
-                                                        });
-                                                    }).catch(error => console.error('Fetch error:', error));
-                                                }
-                                            });
-                                        });
-                                    </script>
                                 </div>
-                                <a onclick="" style="margin: 0 5px;">预览</a>
-                                <a onclick="">加载</a>
+                                <a onclick="" style="margin: 0 2%; width: 10%";>预览</a>
+                                <a onclick="" style="width: 10%">加载</a>
                                 <script>
                                     var bank_show = document.querySelector("div.bank-show");
                                     var _i = bank_show.querySelector("i");
@@ -354,15 +248,15 @@
                             </div>
                         </div>
                         <hr/>
-                        <div class="operate-part" style="width: 100%; height: 60%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
+                        <div class="operate-part" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
                             <div class="task-inform">
                                 <div class="task-name" style="display: flex; height: 25px; width: 100%; align-items: center; margin-top: 10px;">
-                                    <span class="title-span">任务名称</span>
-                                    <input type="text" name="task-name" placeholder="新建任务" class="layui-input task-name" style="height: 100%; width: 120px; margin-left: 30px;">
+                                    <span class="title-span" style="width:25%">任务名称</span>
+                                    <input type="text" name="task-name" placeholder="新建任务" class="layui-input task-name" style="height: 100%; width: 55%; margin-left: 10%;">
                                 </div>
                                 <div class="task-name" style="display: flex; height: 80px; width: 100%; align-items: center; margin-top: 10px;">
-                                    <span class="title-span">任务备注</span>
-                                    <textarea name="task-remark" placeholder="空" class="layui-textarea task-remark" style="height: 100%; min-height: 0; width: 120px; margin-left: 30px; font-size: smaller; resize: none;"></textarea>
+                                    <span class="title-span" style="width:25%">任务备注</span>
+                                    <textarea name="task-remark" placeholder="空" class="layui-textarea task-remark" style="height: 100%; min-height: 0; width: 55%; margin-left: 10%; font-size: smaller; resize: none;"></textarea>
                                 </div>
                             </div>
                             <hr class="layui-border-black" style="margin-top: 15px;"/>
@@ -371,8 +265,8 @@
                             <hr class="layui-border-black"/>
                             <div class="AR-add">
                                 <div class="AR-state" style="display: flex; width: 100% ; margin-top: 15px; align-items: center;">
-                                    <span class="title-span">添加AR功能</span>
-                                    <div class="layui-form AR-options" lay-filter="operate-input-form" style="display: flex; width: 100%; height: 70%; margin-left: 8%;">
+                                    <span class="title-span" style="width:25%">添加AR功能</span>
+                                    <div class="layui-form AR-options" lay-filter="operate-input-form" style="display: flex; width: 50%; height: 70%; margin-left: 25%;">
                                         <div class="option1 opt" style="height: 100%;">
                                             <input type="radio" lay-filter="AR-option" name="AR" value="1" title="开启">
                                         </div>
@@ -382,8 +276,9 @@
                                     </div>
                                 </div>
                                 <div class="AR-operate" style="width: 100%; flex-direction: column; display: none;">
-                                    <div class="AR-type" style="width: 100%;">
-                                        <div class="layui-form option-select" style="width: 95%; margin-left: 0;">
+                                    <div class="AR-type" style="width: 100%;display: flex; align-items: center;">
+                                        <span class="title-span" style="width:25%">文件类型</span>
+                                        <div class="layui-form option-select" style="width: 55%; margin-left: 10%;">
                                             <select style="width: 100%;" lay-filter="AR-selector" class="AR-selector">
                                                 <option value="">请选择AR类型</option>
                                                 <option value="1">2DMarker</option>
@@ -392,9 +287,9 @@
                                         </div>
                                     </div>
                                     <div class="AR-file-update" style="width: 100%; margin-top: 5px; display: none;">
-                                        <span class="title-span" style="margin-left: 5%;">状态:</span>
-                                        <span class="title-span AR-state-span">未达标</span>
-                                        <a onclick="ARfile_update()" style="margin-left: 30%;">上传文件</a>
+                                        <span class="title-span" style="width:10%;">状态:</span>
+                                        <span class="title-span AR-state-span" style="width:15%;">未达标</span>
+                                        <a onclick="ARfile_update()" style="width: 25%; margin-left:38%; text-align: right;">上传文件</a>
                                     </div>
                                 </div>
                                 <script>

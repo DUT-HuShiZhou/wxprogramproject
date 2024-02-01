@@ -132,6 +132,137 @@ document.addEventListener('DOMContentLoaded', function() {
             alert(e); //加载错误提示
         });
 
+    // 模板选择函数
+    layui.use(function(){                   
+        var layer = layui.layer;
+        var selector = document.querySelector("select.question-selector");
+        // select 事件
+        selector.addEventListener("change", function () {
+            if (selector.value === "-1") {
+                selector.selectedIndex = 0;
+                fetch("../text/frametype.txt").then(response => {
+                    if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                }).then(content => {
+                    var page_window = document.createElement("div");
+                    page_window.classList = "layui-tab layui-tab-brief";
+                    page_window.style.height = "460px";
+
+                    var ul0 = document.createElement("ul");
+                    ul0.classList = "layui-tab-title";
+
+                    var context0 = content.split("\n!!").splice(1);
+
+                    var list0 = context0[0].split("**");
+                    for (var i = 0; i < list0.length; i++) {
+                        var li = document.createElement("li");
+                        if (i === 0) {li.className = "layui-this"};
+
+                        li.textContent = list0[i];
+                        ul0.appendChild(li);
+                    }
+                    page_window.appendChild(ul0);
+
+                    var div0 = document.createElement("div");
+                    div0.className = "layui-tab-content";
+                    div0.style.height = "390px"
+
+                    for (var i = 1; i <= list0.length; i++) {
+                        (function(i) {
+                            var page = document.createElement("div");
+                            if (i === 1) {page.classList = "layui-tab-item layui-show"}
+                            else {page.className = "layui-tab-item"};
+
+                            page.style.flexDirection = "column";
+                            page.style.alignItems = "center";
+                            page.style.height = "100%"
+                            
+                            page.innerHTML = '<div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">' +
+                            '<div class="layui-card showitem-panel">' +
+                            '<div class="head-item">' +
+                            '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
+                            '<i style="color: black; font-size: 14px">时间显示测试</i>' +
+                            '</div>' +
+                            '<div class="main-item"></div>' +
+                            '<div class="bottom-item">' +
+                            '<img src="../images/help_item.png" alt="Image" class="help-img img-item" />' +
+                            '<img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />' +
+                            '</div></div></div>'
+
+                            var main_div = page.querySelector("div.main-item");
+                            var items = context0[i].split("||"); 
+                            var Items = [];
+
+                            for (var j = 0; j < items.length; j++) {
+                                /*宽|高|左间距|上间距|内容文本|背景颜色|字体颜色|类型*/
+                                var item = items[j].split("|");
+
+                                var _div_ = document.createElement("div");
+                                _div_.style.position = "relative";
+                                _div_.style.display = "flex";
+                                _div_.style.alignItems = "center";
+                                _div_.style.justifyContent = "center";
+
+                                _div_.style.width = item[0] + "%";
+                                _div_.style.height = item[1] + "%";
+                                _div_.style.left = item[2] + "%";
+                                _div_.style.top = item[3] + "%";
+                                _div_.textContent = item[4];
+                                _div_.style.backgroundColor = item[5];
+                                _div_.style.color = item[6];
+
+                                Items.push(item[7].trim() + "|" + item[0] + "x" + item[1] + "|" + item[2] + "x" + item[3] + "|" + "*");
+
+                                main_div.appendChild(_div_);
+                            }
+                            
+                            var select_button = document.createElement("button");
+                            select_button.classList = "layui-btn frameselect-btn layui-btn-radius";
+                            select_button.textContent = "——选择——";
+                            var mediatype = items[0].split("|")[items[0].split("|").length - 1];
+                            select_button.setAttribute("module-type", (mediatype==="photo"?"image":mediatype) + "|selection");
+                            select_button.setAttribute("item", Items.join(":"));
+                            page.appendChild(select_button);
+
+                            div0.appendChild(page);
+                        })(i);
+                    }
+                    page_window.appendChild(div0);
+
+                    var index = layer.open({
+                        type: 1,
+                        title: false,
+                        area: ['420px', '480px'],
+                        maxmin: false,
+                        shadeClose: false,
+                        content: page_window.outerHTML
+                    });
+
+                    var btns = document.querySelectorAll("button.frameselect-btn");
+                    btns.forEach(btn => {
+                        btn.onclick = function () {
+                            var taskname = document.querySelector("input.task-name").value;
+                            var taskmarket = document.querySelector("textarea.task-remark").value;
+                            var nextpoint = document.querySelector("select.nextpoint").selectedIndex;
+                            var nexttask = document.querySelector("select.nexttask").selectedIndex;
+                            var form = layui.form;
+                            var type = form.val('operate-input-form').type;
+
+                            init_panel();
+
+                            task_load(type, 0, taskname, [nextpoint, nexttask, taskmarket, btn.getAttribute("item"), ""]);
+
+                            sessionStorage.setItem("module-type", btn.getAttribute("module-type"));
+                            layer.close(index);
+                        }
+                    });
+                }).catch(error => console.error('Fetch error:', error));
+            }
+        });
+    });
+
     /**
      * 点位选择操作主函数
      * @param {Element} elemnet 元素 
@@ -249,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             items = "";
                             break;
                     };
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:1"]);
                 };
                 task_div.appendChild(button);
 

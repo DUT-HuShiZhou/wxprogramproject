@@ -65,7 +65,7 @@ function key_bind () {
     inputs.forEach(input => {
         input.onkeydown = function(event) {
             event = event || window.event;
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 input.placeholder = input.value;
             };
         };

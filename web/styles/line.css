@@ -15,8 +15,8 @@ body {
 
 
 main {
-    width: 90%;
-    height: 90%;
+    width: 87.5%;
+    height: 85%;
     display: flex;
     position: fixed;
     background-color: rgb(240, 240, 240);
@@ -104,6 +104,7 @@ th, td {
     max-height: 9vh;
     text-align: center;
     overflow: hidden; /* 防止内容溢出 */
+    border: 0;
 }
 
 
@@ -279,6 +280,7 @@ hr {
 .plist {
     height: 36vh;
     overflow-y: auto;
+    
 }
 
 
@@ -286,12 +288,14 @@ hr {
     height: 11vh;
     table-layout: fixed;
     width: 100%;
+    
 }
 
 
 .pbtn {
     font-size: smaller;
     height: 60%;
+    width: 33%;
 }
 
 
@@ -305,6 +309,7 @@ hr {
     font-size: small;
     height: 6vh;
     max-height: 6vh;
+    
 }
 
 

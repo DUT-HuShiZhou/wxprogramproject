@@ -23,8 +23,9 @@ body {
     height: 80px;
 }
 .circular-popup.open {
-    border-radius: 0;
-    height: 480px !important;
+    border-radius: 20px;
+    height: 370px !important;
+    width: 200px !important;
 }
 
 
@@ -32,7 +33,7 @@ body {
     height: 60px;
 }
 .layui-layer-content.open {
-    height: 460px !important;
+    height: 350px !important;
 }
 
 
@@ -47,10 +48,12 @@ body {
 }
 
 .layui-layer-title {
-    width: 50px;
-    height: 20px;
+    width: 60px;
+    height: 45px;
     text-align: center;
-    line-height: 20px;
+    font-size: 23px;
+    line-height: 39px;
+    font-weight: 1000;
 }
 
 
@@ -78,7 +81,7 @@ body {
 
 
 .main-section {
-    height: calc(100vh - 55px);
+    height: calc(100vh - 35px);
     display: flex;
 }
 
@@ -171,3 +174,6 @@ a:hover {
     user-select: none;
   }
   
+p{
+    margin-top: 15px;
+}

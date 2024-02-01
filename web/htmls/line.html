@@ -4,16 +4,17 @@
         <meta charset="utf-8" />
         <meta name="line", content="路线列表" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        <link rel="stylesheet" href="../layui/css/layui.css">
         <link rel="stylesheet" href="../styles/line.css" />
         <script src="../scripts/page-load.js" defer></script>
         <script src="../scripts/line.js" defer></script>
+        <script src="../layui/layui.js"></script>
         <title>路线列表</title>
     </head>
-    <body>
-        <div id="root">
+    <body style="background-color: #eeeeee;">
+        <div id="root" >
             <div class="column">
-                <main>
+                <main style="margin: 12px;">
                     <div class="line-show">
                         <iframe class="line-ifm" allowfullscreen loading="lazy"
                         src = "about:blank" ></iframe>
@@ -33,33 +34,51 @@
                         </div>
                     </div>
                 </main>
-                <aside class="bottom sidebar">
-                    <nav class="container">
-                        <div class="SelectedPoint-num SP">
-                            <span>序号:</span>
+
+                <aside class="bottom sidebar" style="background-color: white;margin: 12px;border: 0;width: 87.6%;">
+                    <nav class="container" >
+                        <div class="SelectedPoint-num SP" style="margin-top: 20px;">
+                            <label class="layui-form-label" >序号</label>
                             <span class="SP-num"></span>
                         </div>
-                        <div class="SelectedPoint-name SP">
-                            <span>名称:</span>
-                            <input class="SP-name SP-input">
+
+                        <div class="SelectedPoint-name SP layui-form-item" style="margin-top: 20px;">
+                            <label class="layui-form-label">名称</label>
+                            <div class="layui-input-block">
+                            <input class="SP-name SP-input layui-input" lay-verify="required" 
+                            placeholder="请输入" autocomplete="off" >
+                            </div>
                         </div>
-                        <div class="SelectedPoint-description SP">
-                            <span>描述:</span>
-                            <input class="SP-description SP-input">
+
+                        <div class="SelectedPoint-description SP layui-form-item" style="margin-top: 20px;">
+                            <label class="layui-form-label">描述</label>
+                            <div class="layui-input-block">
+                            <input class="SP-description SP-input layui-input" lay-verify="required" 
+                            placeholder="请输入" autocomplete="off" >
+                            </div>
                         </div>
-                        <div class="SelectedPoint-longitude SP">
-                            <span>纬度:</span>
-                            <input class="SP-longitude SP-input">
+
+                        <div class="SelectedPoint-longitude SP layui-form-item" style="margin-top: 20px;">
+                            <label class="layui-form-label">纬度</label>
+                            <div class="layui-input-block">
+                            <input class="SP-longitude SP-input layui-input" lay-verify="required" 
+                            placeholder="请输入" autocomplete="off" >
+                            </div>
                         </div>
-                        <div class="SelectedPoint-latitude SP">
-                            <span>经度:</span>
-                            <input class="SP-latitude SP-input">
+
+                        <div class="SelectedPoint-latitude SP layui-form-item" style="margin-top: 20px;">
+                            <label class="layui-form-label">经度</label>
+                            <div class="layui-input-block">
+                            <input class="SP-latitude SP-input layui-input" lay-verify="required" 
+                            placeholder="请输入" autocomplete="off" >
+                            </div>
                         </div>
+                        
                         <div class="SelectedPoint-options SP">
                             <button class="SP-options">➧</button>
                         </div>
                         <div class="OptionBlock" style="display: none;">
-                            <button class="SP-Sure SP-option">确定</button>
+                            <button class="SP-Sure SP-option " >确定</button>
                             <button class="SP-Reget SP-option">重置</button>
                             <button class="SP-Delete SP-option">删除</button>
                             <button class="SP-Cancer SP-option">取消</button>
@@ -67,42 +86,49 @@
                     </nav>
                 </aside>
             </div>
-            <aside class="right sidebar">
+
+            <aside class="right sidebar" style="background-color: white;margin: 12px;height: 97%;border: 0;">
                 <nav>
-                    <div class="up">
-                        <div class="select-line dbtn">
-                            <button class="sl-btn bbtn">路线选择</button>
+                    <div class="up" >
+                        <div class="select-line dbtn" style="margin-bottom:16px ;">
+                            <button class="sl-btn bbtn layui-btn layui-btn-primary layui-border">路线选择</button>
                         </div>
-                        <div class="setpoint dbtn">
-                            <button class="sp-btn bbtn">创建路线</button>
+                        <div class="setpoint dbtn" style="margin-bottom:16px ;">
+                            <button class="sp-btn bbtn layui-btn layui-btn-primary layui-border">创建路线</button>
                         </div>
-                        <div class="freshmap dbtn">
-                            <button class="freshmap-btn bbtn">刷新地图</button>
+                        <div class="freshmap dbtn" style="margin-bottom:16px ;">
+                            <button class="freshmap-btn bbtn layui-btn layui-btn-primary layui-border">刷新地图</button>
                         </div>
-                        <div class="addpoint dbtn">
-                            <button class="addpoint-btn bbtn">添加点位</button>
+                        <div class="addpoint dbtn" style="margin-bottom:16px ;">
+                            <button class="addpoint-btn bbtn layui-btn layui-btn-primary layui-border">添加点位</button>
                         </div>
-                        <div class="clearcache dbtn">
-                            <button class="clearcache-btn bbtn">清除缓存</button>
+                        <div class="clearcache dbtn" style="margin-bottom:16px ;">
+                            <button class="clearcache-btn bbtn layui-btn layui-btn-primary layui-border">清除缓存</button>
                         </div>
                     </div>
                     <hr />
-                    <div class="down">
-                        <div class="pointsList">
+                    <div class="down" >
+                        <div class="pointsList" >
                             <div class="title">点位顺序切换</div>
                             <div class="plist">
-                                <table class="PList">
-                                    <tr class="PO">
+                                <table class="PList" >
+                                    <tr class="PO" >
                                         <td class="PO1">操作</td>
                                         <td class="PO2">名称</td>
                                     </tr>
                                 </table>
                             </div>
-                            <table class="PList">
-                                <tr class="PO">
-                                    <td><button class="refreshPoints pbtn">确定</button></td>
-                                    <td><button class="reloadPoints pbtn">重置</button></td>
-                                    <td><button class="sendPointsMS pbtn">保存</button></td>
+                            <table class="PList" style="position: absolute;bottom: 17px;">
+                                <tr class="PO" >
+                                    <td><button class="refreshPoints pbtn layui-btn layui-btn-primary layui-border">
+                                        <text style="margin-left: -11px;">确定</text>
+                                    </button></td>
+                                    <td><button class="reloadPoints pbtn layui-btn layui-btn-primary layui-border">
+                                        <text style="margin-left: -11px;">重置</text>
+                                    </button></td>
+                                    <td><button class="sendPointsMS pbtn layui-btn layui-btn-primary layui-border">
+                                        <text style="margin-left: -11px;">保存</text>
+                                    </button></td>
                                 </tr>
                             </table>
                         </div>

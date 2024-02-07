@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,6 +15,7 @@ import (
 )
 
 func main() {
+	var accesstoken string
 	database, err := sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/wxproj")
 	if err != nil {
 		println("连接数据库失败：" + err.Error())
@@ -21,6 +26,7 @@ func main() {
 	r.Static("/scripts", "../web/scripts")
 	r.Static("/images", "../web/images")
 	r.Static("/font", "../web/font")
+	r.Static("/layui", "../web/layui")
 
 	r.GET("/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
@@ -338,10 +344,17 @@ func main() {
 			Username      string `json:"username"`
 		}
 		var mission struct {
-			Missionid   int    `json:"missionid"`
-			Missionname string `json:"missionname"`
-			Status      string `json:"status"`
-			Score       int    `json:"score"`
+			Missionid            int    `json:"missionid"`
+			Missionname          string `json:"missionname"`
+			Status               string `json:"status"`
+			Score                int    `json:"score"`
+			Pointname            string `json:"pointname"`
+			HasARornot           bool   `json:"hasARornot"`
+			ARmodelurl           string `json:"ARmodelurl"`
+			ModeofAR             string `json:"modeofAR"`
+			TwoDMarkerimageurl   string `json:"twoDMarkerimageurl"`
+			ThreeDMarkervideourl string `json:"threeDMarkervideourl"`
+			ARdescription        string `json:"ardescription"`
 		}
 		var resultjson struct {
 			Data interface{} `json:"data"`
@@ -355,12 +368,12 @@ func main() {
 			println(revdata.Username)
 			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
 			println(queryres)
-			rows, errflag2 := database.Query("select missionid,missionname,status,score from dramascript" + queryres + "of" + revdata.Username)
+			rows, errflag2 := database.Query("select missionid,missionname,status,score,pointname,hasARornot,ARmodelurl,modeofAR,2DMarkerimageurl,3DMarkervideourl,ARdescription from dramascript" + queryres + "of" + revdata.Username)
 			if errflag2 != nil {
 				println("获取任务列表失败")
 			} else {
 				for rows.Next() {
-					rows.Scan(&mission.Missionid, &mission.Missionname, &mission.Status, &mission.Score)
+					rows.Scan(&mission.Missionid, &mission.Missionname, &mission.Status, &mission.Score, &mission.Pointname, &mission.HasARornot, &mission.ARmodelurl, &mission.ModeofAR, &mission.TwoDMarkerimageurl, &mission.ThreeDMarkervideourl, &mission.ARdescription)
 					missionlist = append(missionlist, mission)
 				}
 			}
@@ -386,9 +399,16 @@ func main() {
 			Questiondescription      string `json:"questiondescription"`
 			Questioninfo             string `json:"questioninfo"`
 			Questionanswerdescrption string `json:"questionanswerdescription"`
-			Hasoverlay               string `json:"hasoverlay"`
-			Overlayinfo              string `json:"overlayinfo"`
-			Overlayimageurl          string `json:"overlayimageurl"`
+			Hasbeforeoverlay         string `json:"hasbeforeoverlay"`
+			Hasafteroverlay          string `json:"hasafteroverlay"`
+			Beforeoverlayinfo        string `json:"beforeoverlayinfo"`
+			Beforeoverlayimageurl    string `json:"beforeoverlayimageurl"`
+			Beforedialogaudiourllist string `json:"beforedialogaudiourllist"`
+			Afteroverlayinfo         string `json:"afteroverlayinfo"`
+			Afteroverlayimageurl     string `json:"afteroverlayimageurl"`
+			Afterdialogaudiourllist  string `json:"afterdialogaudiourllist"`
+			Falltoolornot            bool   `json:"falltoolornot"`
+			Falltoolname             string `json:"falltoolname"`
 		}
 		var resultjson struct {
 			Data interface{} `json:"data"`
@@ -402,7 +422,10 @@ func main() {
 			println(revdata.Username)
 			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
 			println(queryres)
-			database.QueryRow("select mediatype,mediaaddress,mediadescription,questiontype,questiondescription,questioninfo,questionanswerdescription,hasoverlay,overlayinfo,overlayimageurl from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Mediatype, &questiondata.Mediaaddress, &questiondata.Mediadescription, &questiondata.Questiontype, &questiondata.Questiondescription, &questiondata.Questioninfo, &questiondata.Questionanswerdescrption, &questiondata.Hasoverlay, &questiondata.Overlayinfo, &questiondata.Overlayimageurl)
+			database.QueryRow("select mediatype,mediaaddress,mediadescription,questiontype,questiondescription,questioninfo,questionanswerdescription from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Mediatype, &questiondata.Mediaaddress, &questiondata.Mediadescription, &questiondata.Questiontype, &questiondata.Questiondescription, &questiondata.Questioninfo, &questiondata.Questionanswerdescrption)
+			database.QueryRow("select hasbeforeoverlay,beforeoverlayinfo,beforeoverlayimageurl,beforedialogaudiourllist from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Hasbeforeoverlay, &questiondata.Beforeoverlayinfo, &questiondata.Beforeoverlayimageurl, &questiondata.Beforedialogaudiourllist)
+			database.QueryRow("select hasafteroverlay,afteroverlayinfo,afteroverlayimageurl,afterdialogaudiourllist from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Hasafteroverlay, &questiondata.Afteroverlayinfo, &questiondata.Afteroverlayimageurl, &questiondata.Afterdialogaudiourllist)
+			database.QueryRow("select falltoolornot,falltoolname from dramascript"+queryres+"of"+revdata.Username+" where missionname= ?", revdata.Missionname).Scan(&questiondata.Falltoolornot, &questiondata.Falltoolname)
 			resultjson.Data = questiondata
 			c.JSON(http.StatusOK, resultjson)
 		}
@@ -419,6 +442,7 @@ func main() {
 			Scoreuserget       int    `json:"scoreuserget"`
 			Userfirstlogintime string `json:"userfirstlogintime"`
 			Tooluserget        string `json:"tooluserget"`
+			Pointusernowat     string `json:"pointusernowat"`
 		}
 		errflag1 := c.BindJSON(&resdata)
 		if errflag1 != nil {
@@ -429,7 +453,7 @@ func main() {
 			println(resdata.Username)
 			database.QueryRow("select scoreuserneedtoget from activitylistof"+resdata.Dramascriptcreator+" where activityid= ?", resdata.Activityid).Scan(&data2send.TotalScore)
 			println(data2send.TotalScore)
-			database.QueryRow("select scoreuserget,tooluserget,userfirstlogintime from activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" where username= ?", resdata.Username).Scan(&data2send.Scoreuserget, &data2send.Tooluserget, &data2send.Userfirstlogintime)
+			database.QueryRow("select scoreuserget,tooluserget,userfirstlogintime,pointusernowat from activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" where username= ?", resdata.Username).Scan(&data2send.Scoreuserget, &data2send.Tooluserget, &data2send.Userfirstlogintime, &data2send.Pointusernowat)
 			println(data2send.Scoreuserget, data2send.Tooluserget, data2send.Userfirstlogintime)
 		}
 		c.JSON(http.StatusOK, data2send)
@@ -455,7 +479,430 @@ func main() {
 				c.String(http.StatusOK, "成功更新用户分数")
 			}
 		}
+	})
+	r.POST("/wxgettoolinfo", func(c *gin.Context) {
+		var toolinfolist []interface{}
+		var resdata struct {
+			Tooluserget string `json:"tooluserget"`
+		}
+		var data2send struct {
+			Data interface{} `json:"data"`
+		}
+		var toolinfo struct {
+			Toolid               string `json:"toolid"`
+			Toolname             string `json:"toolname"`
+			Toolimageurl         string `json:"toolimageurl"`
+			Toolinfo             string `json:"toolinfo"`
+			Toolanimationname    string `json:"toolanimationname"`
+			Tooldirectlyuseornot bool   `json:"tooldirectlyuseornot"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("请求用户数据失败(获取道具具体信息)")
+		} else {
+			println("获取道具信息测试:" + resdata.Tooluserget)
+			if resdata.Tooluserget == "" {
+				toolinfolist = nil
+				data2send.Data = toolinfolist
+			} else {
+				var toolusergetlist = strings.Split(resdata.Tooluserget, ",")
+				for _, element := range toolusergetlist {
+					println(element)
+					database.QueryRow("select id,toolname,toolimageurl,tooldescription,toolanimationname,candirectlyuseornot from toollist where toolname=?", element).Scan(&toolinfo.Toolid, &toolinfo.Toolname, &toolinfo.Toolimageurl, &toolinfo.Toolinfo, &toolinfo.Toolanimationname, &toolinfo.Tooldirectlyuseornot)
+					toolinfolist = append(toolinfolist, toolinfo)
+				}
+				data2send.Data = toolinfolist
+			}
 
+			c.JSON(http.StatusOK, data2send)
+		}
+	})
+	r.POST("/wxgetpetlist", func(c *gin.Context) {
+		var petlist []interface{}
+		var petinfo struct {
+			Petid                  int    `json:"petid"`
+			Name                   string `json:"name"`
+			Petname                string `json:"petname"`
+			Petfullbodyimageurl    string `json:"petfullbodyimageurl"`
+			Pettransparentimageurl int    `json:"pettransparentimageurl"`
+			Petinhouseimageurl     string `json:"petinhouseimageurl"`
+			Toolcanuse             string `json:"toolcanuse"`
+		}
+		var resultjson struct {
+			Data interface{} `json:"data"`
+		}
+
+		rows, errflag2 := database.Query("select petid,name,petname,petfullbodyimageurl,pettransparentimageurl,petinhouseimageurl,toolcanuse from petlist")
+		if errflag2 != nil {
+			println("获取任务列表失败")
+		} else {
+			for rows.Next() {
+				rows.Scan(&petinfo.Petid, &petinfo.Name, &petinfo.Petname, &petinfo.Petfullbodyimageurl, &petinfo.Pettransparentimageurl, &petinfo.Petinhouseimageurl, &petinfo.Toolcanuse)
+				petlist = append(petlist, petinfo)
+			}
+		}
+		resultjson.Data = petlist
+		c.JSON(http.StatusOK, resultjson)
+	})
+	r.POST("/wxpetcheckout", func(c *gin.Context) {
+		var resdata struct {
+			Petname string `json:"petname"`
+		}
+		var petinfo struct {
+			Toolcanuse string `json:"toolcanuse"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("请求用户数据失败（检查宠物可用道具）")
+		} else {
+			database.QueryRow("select toolcanuse from petlist").Scan(&petinfo.Toolcanuse)
+			println(petinfo.Toolcanuse)
+			c.JSON(http.StatusOK, petinfo)
+		}
+	})
+	r.POST("/wxupdatetooluserget", func(c *gin.Context) {
+		var resdata struct {
+			Username           string `json:"username"`
+			Newtooluserget     string `json:"newtooluserget"`
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Activityid         string `json:"activityid"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("请求用户数据失败(更新道具列表)")
+		} else {
+			println("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set tooluserget='" + resdata.Newtooluserget + "' where username='" + resdata.Username + "'")
+			_, err := database.Exec("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set tooluserget='" + resdata.Newtooluserget + "' where username='" + resdata.Username + "'")
+			if err != nil {
+				println("更新道具失败:" + err.Error())
+			}
+		}
+	})
+	r.POST("/wxgetstoreinfo", func(c *gin.Context) {
+		var toolinfolist []interface{}
+		var data2send struct {
+			Data interface{} `json:"data"`
+		}
+		var toolinfo struct {
+			Toolid            string `json:"toolid"`
+			Toolname          string `json:"toolname"`
+			Toolimageurl      string `json:"toolimageurl"`
+			Toolinfo          string `json:"toolinfo"`
+			Toolanimationname string `json:"toolanimationname"`
+			Scoreneedtobuy    int    `json:"scoreneedtobuy"`
+		}
+		rows, errflag := database.Query("select id,toolname,toolimageurl,tooldescription,toolanimationname,scoreneedtobuy  from toollist where canbuyornot=1")
+		if errflag != nil {
+			println("获取数据库信息失败（获取积分商店可兑换信息）")
+		} else {
+			for rows.Next() {
+				err := rows.Scan(&toolinfo.Toolid, &toolinfo.Toolname, &toolinfo.Toolimageurl, &toolinfo.Toolinfo, &toolinfo.Toolanimationname, &toolinfo.Scoreneedtobuy)
+				if err != nil {
+					println("查询错误：" + err.Error())
+				}
+				toolinfolist = append(toolinfolist, toolinfo)
+			}
+		}
+		data2send.Data = toolinfolist
+		c.JSON(http.StatusOK, data2send)
+	})
+	r.POST("/wxgetsingletoolinfo", func(c *gin.Context) {
+		var resdata struct {
+			Toolname string `json:"toolname"`
+		}
+		var toolinfo struct {
+			Toolid            string `json:"toolid"`
+			Toolname          string `json:"toolname"`
+			Toolimageurl      string `json:"toolimageurl"`
+			Toolinfo          string `json:"toolinfo"`
+			Toolanimationname string `json:"toolanimationname"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("请求用户数据失败(获取单个道具具体信息)")
+		} else {
+			println(resdata.Toolname)
+			database.QueryRow("select id,toolname,toolimageurl,tooldescription,toolanimationname from toollist where toolname=?", resdata.Toolname).Scan(&toolinfo.Toolid, &toolinfo.Toolname, &toolinfo.Toolimageurl, &toolinfo.Toolinfo, &toolinfo.Toolanimationname)
+			c.JSON(http.StatusOK, toolinfo)
+		}
+	})
+	r.POST("/wxupdatepointusernowat", func(c *gin.Context) {
+		var resdata struct {
+			Username           string `json:"username"`
+			Newpointusernowat  string `json:"newpointusernowat"`
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Activityid         string `json:"activityid"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("请求用户数据失败（更新点位信息）")
+		} else {
+			println("结构体数据:" + resdata.Newpointusernowat + "," + resdata.Username + "," + resdata.Dramascriptcreator + "," + resdata.Activityid)
+			println("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set pointusernowat='" + resdata.Newpointusernowat + "' where username='" + resdata.Username + "';")
+			_, errflag2 := database.Exec("update activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" set pointusernowat='"+resdata.Newpointusernowat+"' where username=?", resdata.Username)
+			if errflag2 != nil {
+				println("更新用户点位失败（数据库错误）")
+			}
+		}
+	})
+	r.POST("/getaccesstoken", func(c *gin.Context) {
+		access_token, errflag1 := c.GetPostForm("accesstoken")
+		if !errflag1 {
+			println("获取accesstoken失败")
+		} else {
+			accesstoken = access_token
+			println("access_token:" + accesstoken)
+		}
+	})
+	r.POST("/textsecuritycheck", func(c *gin.Context) {
+		var resdata struct {
+			Textneedtocheck string `json:"textneedtocheck"`
+		}
+		var data2send struct {
+			Content string `json:"content"`
+		}
+		var checkresult struct {
+			Errcode int    `json:"errcode"`
+			Errmsg  string `json:"errmsg"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		data2send.Content = resdata.Textneedtocheck
+		println(resdata.Textneedtocheck)
+		body, _ := json.Marshal(data2send)
+		if errflag1 != nil {
+			println("获取需进行安全检查的文本失败")
+		} else {
+			resp, err := http.Post("https://api.weixin.qq.com/wxa/msg_sec_check?access_token="+accesstoken, "application/json", bytes.NewBuffer(body))
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			defer resp.Body.Close()
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				// handle error
+				println("读取反馈错误")
+			}
+
+			fmt.Println(string(body))
+			errflag2 := json.Unmarshal(body, &checkresult)
+			if errflag2 != nil {
+				println("内容安全api返回的内容不正常")
+			} else {
+				if checkresult.Errcode == 87014 {
+					println("发现违法违规信息")
+					c.String(http.StatusOK, "发现违法违规信息")
+				}
+				if checkresult.Errcode == 0 {
+					println("内容正常")
+					c.String(http.StatusOK, "内容正常")
+				}
+			}
+		}
+	})
+	r.POST("/miniprogramlogin", func(c *gin.Context) {
+		var resdata struct {
+			Js_code string `json:"js_code"`
+		}
+		var loginresult struct {
+			Session_key string `json:"session_key"`
+			Openid      string `json:"openid"`
+		}
+		var userinfotosend struct {
+			Description       string `json:"description"`
+			Useropenid        string `json:"useropenid"`
+			Username          string `json:"username"`
+			Useravatarurl     string `json:"useravatarurl"`
+			Totalscoreuserget int    `json:"totalscoreuserget"`
+			Userprovince      string `json:"userprovince"`
+			Usercity          string `json:"usercity"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		var appid = "wxa7500b2f7fe874cc"
+		var secret = "ce09f70a9d609854eaddb5fb13760381"
+		println(resdata.Js_code)
+		if errflag1 != nil {
+			println("获取js_code失败")
+		} else {
+			resp, err := http.Get("https://api.weixin.qq.com/sns/jscode2session?appid=" + appid + "&secret=" + secret + "&js_code=" + resdata.Js_code + "&grant_type=authorization_code")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			defer resp.Body.Close()
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				// handle error
+				println("读取反馈错误")
+			}
+
+			fmt.Println(string(body))
+			errflag2 := json.Unmarshal(body, &loginresult)
+			if errflag2 != nil {
+				println("反馈的登录信息不是json")
+			} else {
+				var haveuserinfoornot int
+				println(loginresult.Openid)
+				database.QueryRow("select exists(select * from miniprogramuserinfo where useropenid=?)", loginresult.Openid).Scan(&haveuserinfoornot)
+				println(haveuserinfoornot)
+				if haveuserinfoornot == 0 {
+					var dataneedtosend struct {
+						Description string `json:"description"`
+						Useropenid  string `json:"useropenid"`
+					}
+					dataneedtosend.Description = "无该用户记录，需要注册"
+					dataneedtosend.Useropenid = loginresult.Openid
+					c.JSON(http.StatusOK, dataneedtosend)
+				} else {
+					userinfotosend.Description = "成功登录"
+					database.QueryRow("select useropenid,username,useravatarurl,totalscoreuserget,userprovince,usercity from miniprogramuserinfo where useropenid=?", loginresult.Openid).Scan(&userinfotosend.Useropenid, &userinfotosend.Username, &userinfotosend.Useravatarurl, &userinfotosend.Totalscoreuserget, &userinfotosend.Userprovince, &userinfotosend.Usercity)
+					c.JSON(http.StatusOK, userinfotosend)
+				}
+			}
+		}
+	})
+	r.POST("/miniprogramregister", func(c *gin.Context) {
+		var resdata struct {
+			Useropenid        string `json:"useropenid"`
+			Username          string `json:"username"`
+			Useravatarurl     string `json:"useravatarurl"`
+			Totalscoreuserget int    `json:"totalscoreuserget"`
+			Userprovince      string `json:"userprovince"`
+			Usercity          string `json:"usercity"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("获取小程序用户注册信息失败")
+		} else {
+			_, errflag2 := database.Exec("insert into miniprogramuserinfo(useropenid,username,useravatarurl,totalscoreuserget,userprovince,usercity) values(?,?,?,?,?,?)", resdata.Useropenid, resdata.Username, resdata.Useravatarurl, resdata.Totalscoreuserget, resdata.Userprovince, resdata.Usercity)
+			if errflag2 != nil {
+				println("向数据库插入小程序用户注册信息失败")
+			}
+		}
+	})
+	r.POST("/miniprogramchangeuserregion", func(c *gin.Context) {
+		var resdata struct {
+			Useropenid   string `json:"useropenid"`
+			Userprovince string `json:"userprovince"`
+			Usercity     string `json:"usercity"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("获取小程序用户修改地区数据失败")
+		} else {
+			_, errflag2 := database.Exec("update miniprogramuserinfo set userprovince=?,usercity=? where useropenid=?", resdata.Userprovince, resdata.Usercity, resdata.Useropenid)
+			if errflag2 != nil {
+				println("小程序用户修改地区数据失败")
+			} else {
+				c.String(http.StatusOK, "修改成功")
+			}
+		}
+	})
+	r.POST("/miniprogramchangeusername", func(c *gin.Context) {
+		var resdata struct {
+			Useropenid string `json:"useropenid"`
+			Username   string `json:"username"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("获取小程序用户修改昵称数据失败")
+		} else {
+			_, errflag2 := database.Exec("update miniprogramuserinfo set username=? where useropenid=?", resdata.Username, resdata.Useropenid)
+			if errflag2 != nil {
+				println("小程序用户修改地区数据失败")
+				//这里要向小程序发送错误代码从而正确处理错误，这个要注意
+			} else {
+				c.String(http.StatusOK, "修改成功")
+			}
+		}
+	})
+	r.POST("/miniprogramgetuseractivitylist", func(c *gin.Context) {
+		var resdata struct {
+			Useropenid string `json:"useropenid"`
+		}
+		println(resdata.Useropenid)
+		var queryresult struct {
+			Activityuserparticipate string `json:"activityuserparticipate"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("接收小程序用户获取活动列表数据失败")
+		} else {
+			database.QueryRow("select activityuserparticipate from miniprogramuserinfo where useropenid=?", resdata.Useropenid).Scan(&queryresult.Activityuserparticipate)
+			println("活动列表:" + queryresult.Activityuserparticipate)
+			c.String(http.StatusOK, queryresult.Activityuserparticipate) //需要补充错误处理
+		}
+	})
+	r.POST("/miniprogramgetactivityinfo", func(c *gin.Context) {
+		var resdata struct {
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Activityid         string `json:"activityid"`
+		}
+		var data2send struct {
+			Routeid       int    `json:"routeid"`
+			Dramascriptid int    `json:"dramascriptid"`
+			Activityname  string `json:"activityname"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		println(resdata.Activityid)
+		println(resdata.Dramascriptcreator)
+		if errflag1 != nil {
+			println("接收小程序用户请求获取活动具体信息数据失败")
+		} else {
+			errflag2 := database.QueryRow("select routeid,dramascriptid,activityname from activitylistof"+resdata.Dramascriptcreator+" where activityid=?", resdata.Activityid).Scan(&data2send.Routeid, &data2send.Dramascriptid, &data2send.Activityname)
+			if errflag2 != nil {
+				println("数据库查询失败（小程序用户请求获取活动具体信息）") //前面用过queryrow的地方仿效做一下错误处理的预案代码
+			}
+			c.JSON(http.StatusOK, data2send)
+		}
+	})
+	r.POST("/miniprogramchecknewmemberinactivityornot", func(c *gin.Context) {
+		var resdata struct {
+			Username           string `json:"username"`
+			Useropenid         string `json:"useropenid"`
+			Activityid         string `json:"activityid"`
+			Dramascriptcreator string `json:"dramascriptcreator"`
+			Timenow            string `json:"timenow"`
+		}
+		errflag1 := c.BindJSON(&resdata)
+		if errflag1 != nil {
+			println("接收用户检查是否为活动新用户数据错误")
+		} else {
+			var isnewmemberornot int
+			errflag2 := database.QueryRow("select exists(select * from activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" where useropenid=?)", resdata.Useropenid).Scan(&isnewmemberornot)
+			if errflag2 != nil {
+				println("数据库读取失败（检查是否为活动新用户）")
+			} else {
+				if isnewmemberornot == 0 {
+					_, errflag3 := database.Exec("insert into activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+"(useropenid,userfirstlogintime,username) values(?,?,?)", resdata.Useropenid, resdata.Timenow, resdata.Username) //点位(pointnowuserat)和初始道具和初始得分在创建表的时候设置一个默认值
+					if errflag3 != nil {
+						println("在活动中新建用户数据失败")
+					}
+					var activityuserparticipate string
+					var activityuserparticipatelist []string
+					errflag4 := database.QueryRow("select activityuserparticipate from miniprogramuserinfo where useropenid=?", resdata.Useropenid).Scan(&activityuserparticipate)
+					if errflag4 != nil {
+						println(("数据库读取失败（向小程序用户信息中添加本次活动内容）"))
+					}
+					if activityuserparticipate == "" {
+						activityuserparticipatelist = append(activityuserparticipatelist, ("activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator))
+					} else {
+						activityuserparticipatelist = strings.Split(activityuserparticipate, ";")
+						for _, value := range activityuserparticipatelist {
+							if value == ("activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator) {
+								return
+							}
+						}
+						activityuserparticipatelist = append(activityuserparticipatelist, ("activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator))
+					}
+					activityuserparticipate = strings.Join(activityuserparticipatelist, ";")
+					_, errflag5 := database.Exec("update miniprogramuserinfo set activityuserparticipate=? where useropenid=?", activityuserparticipate, resdata.Useropenid)
+					if errflag5 != nil {
+						println("向小程序用户信息中活动列表中插入本次活动失败") //这些地方要写错误处理
+					}
+				}
+			}
+		}
 	})
 	r.Run(":8000")
 }

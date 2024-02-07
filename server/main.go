@@ -27,6 +27,9 @@ func main() {
 	r.Static("/images", "../web/images")
 	r.Static("/font", "../web/font")
 	r.Static("/layui", "../web/layui")
+	r.Static("/text", "../web/text") //未来经过修改后，应该是向文件服务器调用，而不是静态的文件服务
+	r.Static("/video", "../web/video")
+	r.Static("/audio", "../web/audio")
 
 	r.GET("/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
@@ -51,14 +54,16 @@ func main() {
 		c.HTML(http.StatusOK, "checkin.html", nil)
 	})
 
-	r.GET("/context.html", func(c *gin.Context) {
+	r.GET("/htmls/context.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "context.html", nil)
 	})
 	//这个drama line是否后期是要根据后端数据修改参数大小
 	r.GET("/drama-line.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "drama-line.html", nil)
 	})
-
+	r.GET("/question_bank.html", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "question_bank.html", nil)
+	})
 	//这里要做登录验证数据的处理,前端那边的checkin.js要能够向我们发送信息
 	r.POST("/user", func(c *gin.Context) {
 		username, flag1 := c.GetPostForm("username")
@@ -901,6 +906,61 @@ func main() {
 						println("向小程序用户信息中活动列表中插入本次活动失败") //这些地方要写错误处理
 					}
 				}
+			}
+		}
+	})
+	/*
+		r.POST("/webgetuseractivitylist",func(c *gin.Context) {
+			username,errflag1 :=c.GetPostForm("un")
+			if(errflag1!=nil){
+				println("获取表单数据【用户名】失败（网页获取活动列表）")
+			}else{
+				println(username)
+			}
+			type,errflag2 := c.GetPostForm("type")
+			if(errflag2!=nil){
+				println("获取表单数据【命令类型】失败（网页获取活动列表）")
+			}else{
+				println(type)
+			}
+		})
+	*/
+	r.POST("/webgetroutepoints", func(c *gin.Context) {
+		var result string
+		username, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取用户名失败")
+		} else {
+			println(username)
+		}
+		id, errflag2 := c.GetPostForm("RouteId")
+		if !errflag2 {
+			println("获取路线id失败")
+		} else {
+			println(id)
+			rows, errflag3 := database.Query("select * from route" + id + "of" + username)
+			if errflag3 != nil {
+				println("线路点位获取失败")
+			} else {
+				for rows.Next() {
+					var pointID int
+					var longitude float32
+					var latitude float32 //我在mysql中定义的是float类型变量，不知道获取的时候会不会自动转换
+					var pointName string
+					var pointDescription string
+					//rows.Scan(&pointID)
+					rows.Scan(&pointID, &longitude, &latitude, &pointName, &pointDescription)
+					pointIDstr := strconv.Itoa(pointID)
+					longitudestr := strconv.FormatFloat(float64(longitude), 'f', 6, 32)
+					latitudestr := strconv.FormatFloat(float64(latitude), 'f', 6, 32)
+					println(pointIDstr, longitudestr, latitudestr, pointName, pointDescription) //测试用,已经成功
+					if(result == ""){
+						result = pointName + ":" + pointDescription + ":" + longitudestr + ":" + latitudestr + ":" + pointIDstr
+					}else{
+						result = result + ";" + pointName + ":" + pointDescription + ":" + longitudestr + ":" + latitudestr + ":" + pointIDstr
+					}
+				}
+				c.String(http.StatusOK, result)
 			}
 		}
 	})

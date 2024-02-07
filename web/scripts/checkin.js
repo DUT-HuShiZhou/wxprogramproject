@@ -12,6 +12,25 @@ function pwMD5(pw){
 }
 这里是对输入的密码进行md5加密部分
 */
+
+let i = true;
+
+function switcH(){
+    if(i)
+    {
+        document.getElementById('admin').style.display = 'none';
+        document.getElementById('mess').style.display = 'block';
+        i = !i;
+    }
+    else
+    {
+        document.getElementById('admin').style.display = 'block';
+        document.getElementById('mess').style.display = 'none';
+        i = !i;
+    }
+
+}
+
 btn.onclick = function() {
     let failed = document.getElementById("failed");
     var FD = new FormData();

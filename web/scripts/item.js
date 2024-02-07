@@ -139,10 +139,6 @@ function photo(datas, id, buttonID, mode) {
     
     var name_div = document.createElement("div");
     name_div.className = "item-name";
-    name_div.style.display = "flex";
-    name_div.style.alignItems = "center";
-    name_div.style.marginTop = "15px";
-    name_div.style.width = "100";
 
     var title_span = document.createElement("span");
     title_span.className = "title-span";
@@ -159,8 +155,6 @@ function photo(datas, id, buttonID, mode) {
     title.placeholder = "图片测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
-    title.style.marginLeft = "15px";
-    title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
@@ -184,10 +178,6 @@ function photo(datas, id, buttonID, mode) {
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea photo-remark";
     textarea.id = id;
-    textarea.style.resize = "none";
-    textarea.style.height = "75px"
-    textarea.style.marginLeft = "15px";
-    textarea.style.width = "65%";
     // textarea.value = datas[4].split("~!")[1];
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";

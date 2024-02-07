@@ -45,15 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append("RouteId", i + 1);
                     params.append("type", "drama");
 
-                    url = "/getDramas";
+                    url = "/webgetroutepoints";
                     xhr.open("POST", url, true);
 
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4){
                             // 单元为  点位名称:点位描述:纬度:经度:ID
                             var text = xhr.responseText;
-                            var url = text.split(";")[0];
-                            var state = text.split(";").slice(1);
+                            var state = text.split(";");
                             var states = [];
                             for (var i = 0; i < state.length; i++) {
                                 states.push(state[i].split(":"));

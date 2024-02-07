@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <link type="text/css" rel="styleSheet"  href="../styles/chat.css" />
+</head>
+    <script src="../layui/layui.js"></script>
+    <script src="../scripts/chat.js"></script>
+    <body style="background-color: #eeeeee; display: flex;">
+        <div class="left" >
+            <div class="user layui-panel">
+                <img src="../images/test.ico" style="height: 50px;width: 50px;margin-left: 15px;">
+                <text style="font-size: 20px;margin-left: 30px;">测试ID</text>
+            </div>   
+            
+        </div>
+
+        <div class="right">
+          <div class="message" > 
+            <div class="oneRow">
+            <div class="bubbleL">测试11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</div>
+            </div>
+
+            <div class="oneRowR" >       
+            <div class="bubbleR">测试 2</div>
+            </div>
+
+            <div class="oneRow">       
+            <div class="bubbleL">测试 3</div>       
+            </div>   
+             
+          </div>
+        
+          <textarea  id="chatBox" placeholder="按回车键发送信息" class="layui-textarea send" style="resize: none;
+            height: calc(20vh - 12px);font-size: 25px;" onkeydown="Send(event)"></textarea>
+          <button class="layui-btn layui-btn-primary layui-btn-lg" style="position: fixed;
+          bottom: 40px;right: 40px;"onclick="sendBtn();">
+            发送
+          </button>
+        </div>
+    </body>
+</body>
+</html>

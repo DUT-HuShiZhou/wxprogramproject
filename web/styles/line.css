@@ -339,7 +339,9 @@ hr {
     margin: 5%;
 }
 
-
+button:hover {
+    background-color:white;
+}
 
 .custom-content-marker {
     position: relative;

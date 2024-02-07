@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then((AMap) => {
             /**点位名称|点位描述|纬度|经度|点位ID */
-            var point_datas = JSON.parse(sessionStorage.getItem("line_points"));
+            var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 111, 25, "测试"],["再见", "再也不见", 111.001, 25.001, "空目标"]];
+            point_datas = [["你好", "不好", 25, 111, "测试"],["再见", "再也不见", 25.001, 111.001, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 interval: 180, //刷新间隔，默认180s
             });
             map.add(traffic);
-            map.setCenter([point_datas[0][2],point_datas[0][3]]); 
+            map.setCenter([point_datas[0][3],point_datas[0][2]]); 
 
             for (var i = 0; i < point_datas.length; i++) {
                 (function(i){ 
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     '   <div class="num">' + point_datas[i][0] +'</div>'
                     '</div>'; // 打点图标
 
-                    var position = new AMap.LngLat(point_datas[i][2], point_datas[i][3]);
+                    var position = new AMap.LngLat(point_datas[i][3], point_datas[i][2]);
                     var marker = new AMap.Marker({
                         position: position,
                         content: markerContent, // 将 html 传给 content
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var li = document.createElement("li");
                     li.className = "point";
                     li.setAttribute("ID", point_datas[i][4]);
-                    li.setAttribute("position", (point_datas[i][2].toString() + ',' + point_datas[i][3].toString()));
+                    li.setAttribute("position", (point_datas[i][3].toString() + ',' + point_datas[i][2].toString()));
 
                     var div = document.createElement("div");
                     div.className = "layui-menu-body-title";
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("PointID", elemnet.getAttribute("ID"))
 
         var xhr = new XMLHttpRequest();
-        var url = sessionStorage.getItem("URL");
+        var url = "/getTasks";
         
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function() {

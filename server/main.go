@@ -64,6 +64,9 @@ func main() {
 	r.GET("/question_bank.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "question_bank.html", nil)
 	})
+	r.GET("/chat.html", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "chat.html", nil)
+	})
 	//这里要做登录验证数据的处理,前端那边的checkin.js要能够向我们发送信息
 	r.POST("/user", func(c *gin.Context) {
 		username, flag1 := c.GetPostForm("username")
@@ -104,7 +107,7 @@ func main() {
 				var linenum string
 				var result string
 				database.QueryRow("select count(*) from routelistof2513677").Scan(&linenum) //这里后期要改成索引某个用户的数据表
-				rows, err := database.Query("select routename from routelistof2513677")
+				rows, err := database.Query("select routename,id from routelistof2513677")
 				println(linenum)
 				result = linenum
 				if err != nil {
@@ -113,7 +116,10 @@ func main() {
 					for rows.Next() {
 						var routename string
 						rows.Scan(&routename)
-						result = result + ";" + routename
+						var routeid int
+						var routeidstr = strconv.Itoa(routeid)
+						rows.Scan(&routeid)
+						result = result + ";" + routename + ":" + routeidstr
 					}
 				}
 				println(result)
@@ -938,7 +944,7 @@ func main() {
 			println("获取路线id失败")
 		} else {
 			println(id)
-			rows, errflag3 := database.Query("select * from route" + id + "of" + username)
+			rows, errflag3 := database.Query("select * from route" + id + "of" + username) //这里好像有bug,依靠的是路线列表生成的时候是查询现有路线列表，从而显示的元素的id和实际的id是对应的，如果用户新建了以后会不会出bug?
 			if errflag3 != nil {
 				println("线路点位获取失败")
 			} else {
@@ -954,9 +960,9 @@ func main() {
 					longitudestr := strconv.FormatFloat(float64(longitude), 'f', 6, 32)
 					latitudestr := strconv.FormatFloat(float64(latitude), 'f', 6, 32)
 					println(pointIDstr, longitudestr, latitudestr, pointName, pointDescription) //测试用,已经成功
-					if(result == ""){
+					if result == "" {
 						result = pointName + ":" + pointDescription + ":" + longitudestr + ":" + latitudestr + ":" + pointIDstr
-					}else{
+					} else {
 						result = result + ";" + pointName + ":" + pointDescription + ":" + longitudestr + ":" + latitudestr + ":" + pointIDstr
 					}
 				}
@@ -964,5 +970,55 @@ func main() {
 			}
 		}
 	})
+	r.POST("/webgetmissionindramascriptlist", func(c *gin.Context) { //这里需要等待李立写一下剧本基本信息选取才行
+		dramascriptcreator, errflag1 := c.GetPostForm("un")
+		if errflag1 {
+			println("获取表单数据【剧本创建者】失败(剧本创作获取某个点位的任务列表)") //如果失败则反馈错误信息到网页，这里暂时不写
+		} else {
+			println(dramascriptcreator)
+		}
+		dramascriptid, errflag2 := c.GetPostForm("dramascriptid")
+		if errflag2 {
+			println("获取表单数据【剧本id】失败(剧本创作获取某个点位的任务列表)")
+		} else {
+			println(dramascriptid)
+		}
+		pointid, errflag3 := c.GetPostForm("pointid")
+		if errflag3 {
+			println("获取表单数据【点位id】失败(剧本创作获取某个点位的任务列表)")
+		} else {
+			println(pointid)
+		}
+
+	})
+	r.POST("/webgetdramascript", func(c *gin.Context) {
+		var result string
+		//以formdata形式传递参数过来
+		dramascriptcreator, errflag1 := c.GetPostForm("un")
+		if errflag1 {
+			println("获取表单数据【剧本创建者】失败（剧本创作选择剧本功能）")
+		} else {
+			println(dramascriptcreator)
+			rows, errflag2 := database.Query("select * from dramascriptlistof" + dramascriptcreator)
+			if errflag2 != nil {
+				println("剧本列表获取失败（剧本创作选择剧本功能）")
+			} else {
+				for rows.Next() {
+					var dramascriptid int
+					var dramascriptname string
+					var routeid int
+					rows.Scan(&dramascriptid, &dramascriptname, &routeid)
+					var dramascriptidstr = strconv.Itoa(dramascriptid)
+					var routeidstr = strconv.Itoa(routeid)
+					if result == "" {
+						result = dramascriptidstr + ":" + dramascriptname + ":" + routeidstr
+					} else {
+						result = ";" + dramascriptidstr + ":" + dramascriptname + ":" + routeidstr
+					}
+				}
+				c.String(http.StatusOK, result)
+			}
+		}
+	}) //网页进入剧本创作后首先进入剧本选择界面，则首先需要获取用户的剧本列表信息
 	r.Run(":8000")
 }

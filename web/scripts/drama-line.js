@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var orderCell = row.insertCell();
             orderCell.innerHTML = grades[i].order;
             var courseCell = row.insertCell();
-            courseCell.innerHTML = grades[i].course;
+            courseCell.innerHTML = grades[i].course.split(":")[0];
             var gradeCell = row.insertCell();
 
             var gradeButton = document.createElement('div');
@@ -54,12 +54,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             var text = xhr.responseText;
                             var state = text.split(";");
                             var states = [];
-                            for (var i = 0; i < state.length; i++) {
-                                states.push(state[i].split(":"));
+                            for (var j = 0; j < state.length; j++) {
+                                states.push(state[j].split(":"));
                             }
-                            sessionStorage.setItem("LineID", i + 1);
-                            sessionStorage.setItem("URL", url);
                             sessionStorage.setItem("line_points", JSON.stringify(states));
+                            sessionStorage.setItem("LineID", grades[i].course.split(":")[1]);
                             window.parent.postMessage({ action: "drama-line-loaded"}, "*");
                         }
                     }
@@ -95,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                             sessionStorage.setItem("points", JSON.stringify(points));
                             sessionStorage.setItem("pointsName", grades[i].course);
+                            sessionStorage.setItem("lineId", grades[i].course.split(":")[0]);
                             window.parent.postMessage({ action: "pointStates", num: num}, "*");
                         }
                     }

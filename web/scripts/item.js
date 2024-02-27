@@ -168,7 +168,7 @@ function photo(datas, id, buttonID, mode) {
     remark_div.style.display = "flex";
     remark_div.style.alignItems = "center";
     remark_div.style.marginTop = "5%";
-    remark_div.style.width = "100";
+    remark_div.style.width = "100%";
 
     var photo_span = document.createElement("span");
     photo_span.className = "title-span";
@@ -343,14 +343,9 @@ function question(datas, id, buttonID, mode) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "question_option item";
-    root.style.width = "100%";
 
     var name_div = document.createElement("div");
     name_div.className = "item-name";
-    name_div.style.display = "flex";
-    name_div.style.alignItems = "center";
-    name_div.style.marginTop = "15px";
-    name_div.style.width = "100";
 
     var title_span = document.createElement("span");
     title_span.className = "title-span";
@@ -367,8 +362,6 @@ function question(datas, id, buttonID, mode) {
     title.placeholder = "问题测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
-    title.style.marginLeft = "15px";
-    title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
@@ -379,11 +372,10 @@ function question(datas, id, buttonID, mode) {
     root.appendChild(name_div);
 
     var context_div = document.createElement("div");
-    context_div.className = "item-name";
     context_div.style.display = "flex";
     context_div.style.alignItems = "center";
     context_div.style.marginTop = "5px";
-    context_div.style.width = "100";
+    context_div.style.width = "100%";
 
     var context_span = document.createElement("span");
     context_span.className = "title-span";
@@ -392,10 +384,6 @@ function question(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea question-context";
-    textarea.style.resize = "none";
-    textarea.style.height = "75px"
-    textarea.style.marginLeft = "15px";
-    textarea.style.width = "65%";
     // textarea.value = datas[4].split("~!")[1].split("~@")[0];
     // textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
     textarea.value = "问题测试";
@@ -424,6 +412,7 @@ function question(datas, id, buttonID, mode) {
             option_div.style.display = "flex";
             option_div.style.alignItems = "center";
             option_div.style.width = "100%";
+            option_div.style.height = "25px";
 
             var option_span = document.createElement("span");
             option_span.className = "title-span";
@@ -439,8 +428,6 @@ function question(datas, id, buttonID, mode) {
             input.value = options[i];
             input.placeholder = options[i];
             items[id][4][1][1][i] = input.value;
-            input.style.marginLeft = "15%";
-            input.style.width = "65%";
             input.addEventListener("keydown", function(event) {
                 event = event || window.event;
 		            if (event.key === "Enter") {
@@ -453,7 +440,7 @@ function question(datas, id, buttonID, mode) {
 
                         items[id][4][1][1][i] = input.value;
                     } 
-            })
+            });
             option_div.appendChild(input);
             div.appendChild(option_div);
         })(i);
@@ -476,8 +463,6 @@ function question(datas, id, buttonID, mode) {
 
     var select_div = document.createElement("div")
     select_div.className = "layui-col-md6 optionbox";
-    select_div.style.width = "65%";
-    select_div.style.marginLeft = "8%";
 
     var select = document.createElement("select");
     select.style.width = "100%";
@@ -515,8 +500,6 @@ function question(datas, id, buttonID, mode) {
     input.type = "number";
     input.setAttribute("lay-affix", "number");
     input.style.height = "25px";
-    input.style.width = "65px";
-    input.style.marginLeft = "8%";
     input.step = "1";
     // input.value = datas[4].split("~!")[1].split("~@")[3];
     input.value = "0";
@@ -606,14 +589,9 @@ function video(datas, id, buttonID, mode) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "video_option item";
-    root.style.width = "100%";
 
     var name_div = document.createElement("div");
     name_div.className = "item-name";
-    name_div.style.display = "flex";
-    name_div.style.alignItems = "center";
-    name_div.style.marginTop = "15px";
-    name_div.style.width = "100";
 
     var title_span = document.createElement("span");
     title_span.className = "title-span";
@@ -630,8 +608,6 @@ function video(datas, id, buttonID, mode) {
     title.placeholder = "视频测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
-    title.style.marginLeft = "15px";
-    title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
@@ -654,10 +630,6 @@ function video(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea video-remark";
-    textarea.style.resize = "none";
-    textarea.style.height = "75px"
-    textarea.style.marginLeft = "15px";
-    textarea.style.width = "65%";
     // textarea.value = datas[4].split("~!")[1];
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";
@@ -792,14 +764,9 @@ function audio(datas, id, buttonID, mode) {
     // 编辑栏加载
     var root = document.createElement("div");
     root.classList = "audio_option item";
-    root.style.width = "100%";
 
     var name_div = document.createElement("div");
     name_div.className = "item-name";
-    name_div.style.display = "flex";
-    name_div.style.alignItems = "center";
-    name_div.style.marginTop = "15px";
-    name_div.style.width = "100";
 
     var title_span = document.createElement("span");
     title_span.className = "title-span";
@@ -816,8 +783,6 @@ function audio(datas, id, buttonID, mode) {
     title.placeholder = "音频测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
-    title.style.marginLeft = "15px";
-    title.style.width = "65%";
     title.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             root_div.title = title.value;
@@ -840,10 +805,6 @@ function audio(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea audio-remark";
-    textarea.style.resize = "none";
-    textarea.style.height = "75px"
-    textarea.style.marginLeft = "15px";
-    textarea.style.width = "65%";
     // textarea.value = datas[4].split("~!")[1];
     // textarea.placeholder = datas[4].split("~!")[1];
     textarea.value = "空";

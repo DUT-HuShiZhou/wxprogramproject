@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 25, 111, "测试"],["再见", "再也不见", 25.001, 111.001, "空目标"]];
+            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -272,8 +272,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var params = new FormData();
         params.append("un", sessionStorage.getItem("un"));
-        params.append("LineID", sessionStorage.getItem("LineID"));
-        params.append("PointID", elemnet.getAttribute("ID"))
+        params.append("PointID", elemnet.getAttribute("ID"));
+        params.append("DramaID", sessionStorage.getItem("DramaID"));
 
         var xhr = new XMLHttpRequest();
         var url = "/getTasks";
@@ -340,8 +340,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     var params = new FormData();
                     params.append("un", sessionStorage.getItem("un"));
-                    params.append("LineID", sessionStorage.getItem("LineID"));
                     params.append("PointID", pointID);
+                    params.append("DramaID",sessionStorage.getItem("DramaID"));
                     params.append("ID", tasks[i][2]);
 
                     var xhr = new XMLHttpRequest();
@@ -412,8 +412,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         var params = new FormData();
                         params.append("un", sessionStorage.getItem("un"));
-                        params.append("LineID", sessionStorage.getItem("LineID"));
                         params.append("PointID", pointID);
+                        params.append("DramaID",sessionStorage.getItem("DramaID"));
                         params.append("ID", tasks[i][2]);
 
                         var xhr = new XMLHttpRequest();
@@ -486,8 +486,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         }, function (index) {
                             var params = new FormData();
                             params.append("un", sessionStorage.getItem("un"));
-                            params.append("LineID", sessionStorage.getItem("LineID"));
                             params.append("PointID", pointID);
+                            params.append("DramaID",sessionStorage.getItem("DramaID"));
                             params.append("ID", tasks[i][1]);
 
                             var xhr = new XMLHttpRequest();
@@ -762,7 +762,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 var url = "/getTaskID";
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
-                params.append("LineID", sessionStorage.getItem("LineID"));
                 params.append("PointID", sessionStorage.getItem("PointID"));
                 
                 xhr.open("POST", url, true);
@@ -791,7 +790,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 var url = "/pushDatas";
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
-                params.append("LineID", sessionStorage.getItem("LineID"));
                 params.append("PointID", sessionStorage.getItem("PointID"));
                 params.append("TaskID", TaskID);
 

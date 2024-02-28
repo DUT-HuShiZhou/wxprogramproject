@@ -207,18 +207,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
-    ifm_fram.src = "drama-line.html?choose=1;test";
+    ifm_fram.src = "drama-line.html?choose=1;test"; // 测试可删
     xhr.open("POST", url, true);
     var params = new FormData();
     params.append("type", "lines");
-    params.append("LineID", sessionStorage.getItem("LineID"));
     params.append("un", sessionStorage.getItem("un"));
 
     xhr.onreadystatechange =  function() {
         if(xhr.readyState === 4){
+            // num;数据...   数据单元为  线路名称:LineID
             var data = xhr.responseText;
-            // ifm_fram.src = "drama-line.html?choose=" + data;
-            ifm.style.backgroundColor = "white";
+            // ifm_fram.src = "drama-line.html?choose=" + data;  // 正式代码，测试需启动
+            ifm_fram.style.backgroundColor = "white";
             ls.style.display = "block";
         }
     };

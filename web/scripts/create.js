@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let ifm_fram = document.querySelector(".line-choose-ifm");
 
     var xhr = new XMLHttpRequest();
-    var url = "/searchRoute";
+    var url = "/searchRoute";//这里需要改 发送给你名称+id
 
     const uploadItemEvent = new CustomEvent("UploadAllItem");
 
@@ -22,17 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 };
 
-                var url = "/webgetdramascriptofroute";
+                var url = "/webgetdramascriptlist";
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", url, true);
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
-                params.append("LineID", sessionStorage.getItem("LineID"));
+                params.append("LineID", sessionStorage.getItem("LineID"));//发送路线id从而在后端进行查询
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         // 单元  剧本名称:剧本内容:剧本ID
                         var data = xhr.responseText;
-                        data = "测试1:测试1描述:test1";
+                        //data = "测试1:测试1描述:test1";
 
                         var root = document.createElement("div");
                         root.style.width = "100%";
@@ -207,19 +207,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
-    ifm_fram.src = "drama-line.html?choose=1;test";
+    //ifm_fram.src = "drama-line.html?choose=1;test";
     xhr.open("POST", url, true);
     var params = new FormData();
     params.append("type", "lines");
-    params.append("LineID", sessionStorage.getItem("LineID"));
+    //params.append("LineID", sessionStorage.getItem("LineID"));
     params.append("un", sessionStorage.getItem("un"));
 
     xhr.onreadystatechange =  function() {
         if(xhr.readyState === 4){
             var data = xhr.responseText;
-            // ifm_fram.src = "drama-line.html?choose=" + data;
-            ifm.style.backgroundColor = "white";
-            ls.style.display = "block";
+            ifm_fram.src = "drama-line.html?choose=" + data;
+            //ifm_fram.style.backgroundColor = "white";
+            //ls.style.display = "block";
         }
     };
     
@@ -300,18 +300,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         else {
                             var xhr = new XMLHttpRequest();
-                            var url = "";
+                            var url = "/webcreatenewdramacript";
                             xhr.open("POST", url, true);
                             var params = new FormData();
-                            params.append("un", sessionStorage.getItem("un"));
-                            params.append("LineID", sessionStorage.getItem("LineID"));
-                            params.append("DramaName", input.value);
-                            params.append("DramaMarker", textarea.value);
+                            params.append("un", sessionStorage.getItem("un"));//剧本创建者
+                            params.append("LineID", sessionStorage.getItem("LineID"));//路线id
+                            params.append("DramaName", input.value);//剧本名称
+                            params.append("DramaMarker", textarea.value);//剧本描述
 
                             xhr.onreadystatechange = function () {
                                 if (xhr.readyState === 4) {
                                     if (xhr.responseText){
-                                        sessionStorage.setItem("DramaID", xhr.responseText);
+                                        sessionStorage.setItem("DramaID", xhr.responseText);//后端发送dramascriptid给前端
                                         callback();
                                     }
                                 }

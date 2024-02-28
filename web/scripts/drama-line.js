@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 states.push(state[j].split(":"));
                             }
                             sessionStorage.setItem("line_points", JSON.stringify(states));
-                            sessionStorage.setItem("LineID", grades[i].course.split(":")[1]);
+                            sessionStorage.setItem("LineID", grades[i].course.split(":")[1]);//这个grades[i].cource不知道是什么
                             window.parent.postMessage({ action: "drama-line-loaded"}, "*");
                         }
                     }

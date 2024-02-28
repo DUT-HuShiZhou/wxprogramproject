@@ -115,10 +115,9 @@ func main() {
 				} else {
 					for rows.Next() {
 						var routename string
-						rows.Scan(&routename)
 						var routeid int
+						rows.Scan(&routename, &routeid)
 						var routeidstr = strconv.Itoa(routeid)
-						rows.Scan(&routeid)
 						result = result + ";" + routename + ":" + routeidstr
 					}
 				}
@@ -972,53 +971,146 @@ func main() {
 	})
 	r.POST("/webgetmissionindramascriptlist", func(c *gin.Context) { //这里需要等待李立写一下剧本基本信息选取才行
 		dramascriptcreator, errflag1 := c.GetPostForm("un")
-		if errflag1 {
+		if !errflag1 {
 			println("获取表单数据【剧本创建者】失败(剧本创作获取某个点位的任务列表)") //如果失败则反馈错误信息到网页，这里暂时不写
 		} else {
 			println(dramascriptcreator)
 		}
 		dramascriptid, errflag2 := c.GetPostForm("dramascriptid")
-		if errflag2 {
+		if !errflag2 {
 			println("获取表单数据【剧本id】失败(剧本创作获取某个点位的任务列表)")
 		} else {
 			println(dramascriptid)
 		}
 		pointid, errflag3 := c.GetPostForm("pointid")
-		if errflag3 {
+		if !errflag3 {
 			println("获取表单数据【点位id】失败(剧本创作获取某个点位的任务列表)")
 		} else {
 			println(pointid)
 		}
 
 	})
-	r.POST("/webgetdramascript", func(c *gin.Context) {
+	r.POST("/webgetdramascriptlist", func(c *gin.Context) {
 		var result string
 		//以formdata形式传递参数过来
 		dramascriptcreator, errflag1 := c.GetPostForm("un")
-		if errflag1 {
+		if !errflag1 {
 			println("获取表单数据【剧本创建者】失败（剧本创作选择剧本功能）")
 		} else {
 			println(dramascriptcreator)
-			rows, errflag2 := database.Query("select * from dramascriptlistof" + dramascriptcreator)
-			if errflag2 != nil {
-				println("剧本列表获取失败（剧本创作选择剧本功能）")
-			} else {
-				for rows.Next() {
-					var dramascriptid int
-					var dramascriptname string
-					var routeid int
-					rows.Scan(&dramascriptid, &dramascriptname, &routeid)
-					var dramascriptidstr = strconv.Itoa(dramascriptid)
-					var routeidstr = strconv.Itoa(routeid)
-					if result == "" {
-						result = dramascriptidstr + ":" + dramascriptname + ":" + routeidstr
-					} else {
-						result = ";" + dramascriptidstr + ":" + dramascriptname + ":" + routeidstr
-					}
+		}
+		routeid, errflag2 := c.GetPostForm("LineID")
+		if !errflag2 {
+			println("获取表单数据【路线id】失败（剧本创作选择剧本功能）")
+		} else {
+			println(routeid)
+		}
+		println("select dramascriptname,dramascriptdescription,id from dramascriptlistof" + dramascriptcreator + " where routeid=" + routeid)
+		rows, errflag3 := database.Query("select dramascriptname,dramascriptdescription,id from dramascriptlistof" + dramascriptcreator + " where routeid=" + routeid) //查询指定路线的的所有剧本
+		if errflag3 != nil {
+			fmt.Println(errflag3)
+			println("剧本列表获取失败（剧本创作选择剧本功能）")
+		} else {
+			for rows.Next() {
+				var dramascriptid int
+				var dramascriptname string
+				var dramascriptdescription string
+				rows.Scan(&dramascriptname, &dramascriptdescription, &dramascriptid)
+				var dramascriptidstr = strconv.Itoa(dramascriptid)
+				if result == "" {
+					result = dramascriptname + ":" + dramascriptdescription + ":" + dramascriptidstr
+				} else {
+					result = result + ";" + dramascriptname + ":" + dramascriptdescription + ":" + dramascriptidstr
 				}
-				c.String(http.StatusOK, result)
 			}
+			println(result)
+			c.String(http.StatusOK, result)
 		}
 	}) //网页进入剧本创作后首先进入剧本选择界面，则首先需要获取用户的剧本列表信息
+	r.POST("/webcreatenewdramacript", func(c *gin.Context) {
+		var newdramascriptid int
+		dramascriptcreator, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据【剧本创建者】失败（剧本创作创建新剧本功能）")
+		} else {
+			println(dramascriptcreator)
+		}
+		dramascriptname, errflag2 := c.GetPostForm("DramaName")
+		if !errflag2 {
+			println("获取表单数据【剧本名称】失败（剧本创作创建新剧本功能）")
+		} else {
+			println(dramascriptname)
+		}
+		dramascriptdescription, errflag3 := c.GetPostForm("DramaMarker")
+		if !errflag3 {
+			println("获取表单数据【剧本描述】失败（剧本创作创建新剧本功能）")
+		} else {
+			println(dramascriptdescription)
+		}
+		routeid, errflag4 := c.GetPostForm("LineID")
+		if !errflag4 {
+			println("获取表单数据【路线id】失败（剧本创作创建新剧本功能）")
+		} else {
+			println(routeid)
+		}
+		errflag5 := database.QueryRow("select count(*) from dramascriptlistof" + dramascriptcreator).Scan(&newdramascriptid)
+		if errflag5 != nil {
+			println("数据库查询【剧本列表中剧本个数】错误（剧本创作创建新剧本功能）")
+		} else {
+			newdramascriptid += 1
+			_, errflag6 := database.Exec("insert into dramascriptlistof"+dramascriptcreator+"(id,dramascriptname,dramascriptdescription,routeid) values(?,?,?,?)", newdramascriptid, dramascriptname, dramascriptdescription, routeid)
+			if errflag6 != nil {
+				println("向数据库中插入数据【新剧本有关记录】失败（剧本创作创建新剧本功能）")
+			} else {
+				_, errflag7 := database.Exec("create table dramascript" + strconv.Itoa(newdramascriptid) + "of" + dramascriptcreator + "(missionid int unsigned,missionname varchar(100) not null default(''),missiontype tinyint(1) default(1),mediatype varchar(50) not null default(''),mediaaddress varchar(200) not null default(''),mediadescription varchar(200) not null default(''),questiontype varchar(50) not null default(''),questiondescription varchar(200) not null default(''),questioninfo varchar(300) not null default(''),questionanswerdescription varchar(100) not null default(''),status tinyint(1) default 0,score int default 0,hasbeforeoverlay tinyint(1) default 0,beforeoverlayinfo varchar(200) not null default(''),beforeoverlayimageurl varchar(200) not null default(''),beforedialogaudiourllist varchar(500) not null default(''),hasafteroverlay tinyint(1) default 0,afteroverlayinfo varchar(200) not null default(''),afteroverlayimageurl varchar(200) not null default(''),afterdialogaudiourllist varchar(500) not null default(''),pointid int default 0,pointname varchar(200) not null default(''),falltoolornot tinyint(1) default 0,ARmodelurl varchar(500) not null default(''),modeofAR varchar(100) not null default(''),2DMarkerimageurl varchar(500) not null default(''),3DMarkervideourl varchar(500) not null default(''),ARdescription varchar(200) not null default(''))")
+				if errflag7 != nil {
+					println("创建新剧本对应的新表失败（剧本创作创建新剧本功能）")
+				} else {
+					c.String(http.StatusOK, strconv.Itoa(newdramascriptid))
+				}
+			}
+		}
+	})
+	r.POST("/webgetpointmissions", func(c *gin.Context) {
+		var result string
+		dramascriptcreator, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（剧本创建者）失败（获取属于该点位的任务列表）")
+		} else {
+			println(dramascriptcreator)
+		}
+		pointid, errflag2 := c.GetPostForm("PointID")
+		if !errflag2 {
+			println("获取表单数据（点位Id）失败（获取属于该点位的任务列表）")
+		} else {
+			println(pointid)
+		}
+		dramascriptid, errflag3 := c.GetPostForm("DramaID")
+		if !errflag3 {
+			println("获取表单数据（剧本id）失败（获取属于该点位的任务列表）")
+		} else {
+			println(dramascriptid)
+		}
+		rows, errflag4 := database.Query("select missionname,missiontype,missionid,mediatype,questiontype from dramascript"+dramascriptid+"of"+dramascriptcreator+" where pointid=?", pointid)
+		if errflag4 != nil {
+			fmt.Println(errflag4)
+			println("数据库查询（属于某个点位的任务列表）失败（获取属于该点位的任务列表）")
+		} else {
+			var missionname string
+			var missiontype int
+			var missionid int
+			var mediatype string
+			var questiontype string
+			for rows.Next() {
+				rows.Scan(&missionname, &missiontype, &missionid, &mediatype, &questiontype)
+				if result == "" {
+					result = missionname + ":" + strconv.Itoa(missiontype) + ":" + strconv.Itoa(missionid) + ":" + mediatype + "|" + questiontype
+				} else {
+					result = result + ";" + missionname + ":" + strconv.Itoa(missiontype) + ":" + strconv.Itoa(missionid) + ":" + mediatype + "|" + questiontype
+				}
+			}
+			c.String(http.StatusOK,result)
+		}
+	})
 	r.Run(":8000")
 }

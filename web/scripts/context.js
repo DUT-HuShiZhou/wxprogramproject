@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
+            //point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -276,19 +276,21 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("DramaID", sessionStorage.getItem("DramaID"));
 
         var xhr = new XMLHttpRequest();
-        var url = "/getTasks";
+        var url = "/webgetpointmissions";
         
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function() {
             if ( xhr.readyState === 4){
-                //任务列表  单元：任务名:任务类型:任务ID:模板类型|题目类型
+                //任务列表  单元：任务名:任务类型(普通任务和结束任务,0是结束任务，1是普通):任务ID:模板类型(video/photo/audio)|题目类型(selection)
                 var data = xhr.responseText;
-                var task_line = data.split(";");
-                var tasks = [];
-                for (var i = 0; i < task_line.length; i++) {
-                    tasks.push(task_line[i].split(":"));
-                };
-                // task_panel_load(tasks, elemnet.getAttribute("ID"));
+                if(data !=""){//主要是解决没有任务的时候也会加载一个任务的问题
+                    var task_line = data.split(";");
+                    var tasks = [];
+                    for (var i = 0; i < task_line.length; i++) {
+                        tasks.push(task_line[i].split(":"));
+                    };
+                    task_panel_load(tasks, elemnet.getAttribute("ID"));
+                }//这里后面还需要这个task_panel_load吗，交给你来改了 @李立 修改理由上一条注释
             };
         };
 
@@ -342,10 +344,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append("un", sessionStorage.getItem("un"));
                     params.append("PointID", pointID);
                     params.append("DramaID",sessionStorage.getItem("DramaID"));
-                    params.append("ID", tasks[i][2]);
+                    params.append("ID", tasks[i][2]);//应该是题目的id
 
                     var xhr = new XMLHttpRequest();
-                    var url = "/getTask";
+                    var url = "/getTask";//这里需要实现选择功能
 
                     xhr.open("POST", url, true);
                     xhr.onreadystatechange = function () {
@@ -354,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             sessionStorage.setItem("newtask", "false");
                             sessionStorage.setItem("module-type", tasks[i][3]);
 
-                            // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
+                            // 任务状态(status应该是);下一个点位;下一个任务;任务备注;题库内容;ar功能 //这里需要把下一个点位这个机制删除掉 @李立
                             var data = xhr.responseText;
 
                             var source = data.split(";");
@@ -417,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         params.append("ID", tasks[i][2]);
 
                         var xhr = new XMLHttpRequest();
-                        var url = "/getTask";
+                        var url = "/getTask";//应该到创建新题目的函数,这里要实现的是复制功能
 
                         xhr.open("POST", url, true);
                         xhr.onreadystatechange = function () {
@@ -458,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     var button = document.createElement("button");
                     button.classList = "layui-btn layui-btn-primary layui-btn-radius task-btn";
-                    button.textContent = "删除";
+                    button.textContent = "删除"; 
                     button.onclick = function () {
                         if (task_div.classList.contains("selected")) {
                             init_panel();
@@ -491,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             params.append("ID", tasks[i][1]);
 
                             var xhr = new XMLHttpRequest();
-                            var url = "/getTask";
+                            var url = "/getTask";//这里要实现删除功能
 
                             xhr.open("POST", url, true);
                             xhr.onreadystatechange = function () {

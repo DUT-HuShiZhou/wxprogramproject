@@ -290,6 +290,49 @@ func main() {
 			}
 		}
 	})
+	r.POST("/wxGetPoints", func(c *gin.Context) {
+		var result string
+		var pointsnum int
+		username, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取用户名失败")
+		} else {
+			println(username)
+		}
+		id, errflag2 := c.GetPostForm("RouteId")
+		if !errflag2 {
+			println("获取路线id失败")
+		} else {
+			println(id)
+			rows, errflag3 := database.Query("select * from route" + id + "of" + username)
+			if errflag3 != nil {
+				println("线路点位获取失败")
+			} else {
+				database.QueryRow("select count(*) from route" + id + "of" + username).Scan(&pointsnum)
+				pointsnumstr := strconv.Itoa(pointsnum)
+				result = result + pointsnumstr
+				for rows.Next() {
+					var pointID int
+					var longitude float32
+					var latitude float32 //我在mysql中定义的是float类型变量，不知道获取的时候会不会自动转换
+					var pointName string
+					var pointDescription string
+					//rows.Scan(&pointID)
+					rows.Scan(&pointID, &longitude, &latitude, &pointName, &pointDescription)
+					pointIDstr := strconv.Itoa(pointID)
+					longitudestr := strconv.FormatFloat(float64(longitude), 'f', 6, 32)
+					latitudestr := strconv.FormatFloat(float64(latitude), 'f', 6, 32)
+					println(pointIDstr, longitudestr, latitudestr, pointName, pointDescription) //测试用,已经成功
+					if result == "" {
+						result = longitudestr + ":" + latitudestr + ":" + pointName + ":" + pointDescription + ":" + pointIDstr
+					} else {
+						result = result + ";" + longitudestr + ":" + latitudestr + ":" + pointName + ":" + pointDescription + ":" + pointIDstr
+					}
+				}
+				c.String(http.StatusOK, result)
+			}
+		}
+	})
 	r.POST("/changeOrder", func(c *gin.Context) {
 		username, errflag1 := c.GetPostForm("un")
 		if !errflag1 {
@@ -350,15 +393,16 @@ func main() {
 		var missionlist []interface{}
 		var revdata struct {
 			Dramascriptid string `json:"dramascriptid"`
-			Missionname   string `json:"missionname"`
-			Username      string `json:"username"`
+			//Missionname   string `json:"missionname"`
+			Username string `json:"username"`
 		}
 		var mission struct {
 			Missionid            int    `json:"missionid"`
+			Nextmissionid        int    `json:"nextmissionid"`
 			Missionname          string `json:"missionname"`
 			Status               string `json:"status"`
 			Score                int    `json:"score"`
-			Pointname            string `json:"pointname"`
+			Pointid              string `json:"pointid"`
 			HasARornot           bool   `json:"hasARornot"`
 			ARmodelurl           string `json:"ARmodelurl"`
 			ModeofAR             string `json:"modeofAR"`
@@ -374,16 +418,17 @@ func main() {
 			println("获取剧本名称和任务名称失败")
 		} else {
 			println(revdata.Dramascriptid)
-			println(revdata.Missionname)
+			//println(revdata.Missionname)
 			println(revdata.Username)
-			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where dramascriptname= ?", revdata.Dramascriptid).Scan(&queryres)
+			database.QueryRow("select id from dramascriptlistof"+revdata.Username+" where id= ?", revdata.Dramascriptid).Scan(&queryres)
 			println(queryres)
-			rows, errflag2 := database.Query("select missionid,missionname,status,score,pointname,hasARornot,ARmodelurl,modeofAR,2DMarkerimageurl,3DMarkervideourl,ARdescription from dramascript" + queryres + "of" + revdata.Username)
+			rows, errflag2 := database.Query("select missionid,nextmissionid,missionname,status,score,pointid,hasARornot,ARmodelurl,modeofAR,2DMarkerimageurl,3DMarkervideourl,ARdescription from dramascript" + queryres + "of" + revdata.Username)
 			if errflag2 != nil {
 				println("获取任务列表失败")
+				fmt.Println(errflag2)
 			} else {
 				for rows.Next() {
-					rows.Scan(&mission.Missionid, &mission.Missionname, &mission.Status, &mission.Score, &mission.Pointname, &mission.HasARornot, &mission.ARmodelurl, &mission.ModeofAR, &mission.TwoDMarkerimageurl, &mission.ThreeDMarkervideourl, &mission.ARdescription)
+					rows.Scan(&mission.Missionid, &mission.Nextmissionid, &mission.Missionname, &mission.Status, &mission.Score, &mission.Pointid, &mission.HasARornot, &mission.ARmodelurl, &mission.ModeofAR, &mission.TwoDMarkerimageurl, &mission.ThreeDMarkervideourl, &mission.ARdescription)
 					missionlist = append(missionlist, mission)
 				}
 			}
@@ -452,7 +497,7 @@ func main() {
 			Scoreuserget       int    `json:"scoreuserget"`
 			Userfirstlogintime string `json:"userfirstlogintime"`
 			Tooluserget        string `json:"tooluserget"`
-			Pointusernowat     string `json:"pointusernowat"`
+			Pointusernowat     int    `json:"pointusernowat"` //这里改成了pointid
 		}
 		errflag1 := c.BindJSON(&resdata)
 		if errflag1 != nil {
@@ -544,7 +589,8 @@ func main() {
 
 		rows, errflag2 := database.Query("select petid,name,petname,petfullbodyimageurl,pettransparentimageurl,petinhouseimageurl,toolcanuse from petlist")
 		if errflag2 != nil {
-			println("获取任务列表失败")
+			println("获取宠物列表失败")
+			fmt.Println(errflag2)
 		} else {
 			for rows.Next() {
 				rows.Scan(&petinfo.Petid, &petinfo.Name, &petinfo.Petname, &petinfo.Petfullbodyimageurl, &petinfo.Pettransparentimageurl, &petinfo.Petinhouseimageurl, &petinfo.Toolcanuse)
@@ -639,7 +685,7 @@ func main() {
 	r.POST("/wxupdatepointusernowat", func(c *gin.Context) {
 		var resdata struct {
 			Username           string `json:"username"`
-			Newpointusernowat  string `json:"newpointusernowat"`
+			Newpointusernowat  int    `json:"newpointusernowat"`
 			Dramascriptcreator string `json:"dramascriptcreator"`
 			Activityid         string `json:"activityid"`
 		}
@@ -647,9 +693,9 @@ func main() {
 		if errflag1 != nil {
 			println("请求用户数据失败（更新点位信息）")
 		} else {
-			println("结构体数据:" + resdata.Newpointusernowat + "," + resdata.Username + "," + resdata.Dramascriptcreator + "," + resdata.Activityid)
-			println("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set pointusernowat='" + resdata.Newpointusernowat + "' where username='" + resdata.Username + "';")
-			_, errflag2 := database.Exec("update activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" set pointusernowat='"+resdata.Newpointusernowat+"' where username=?", resdata.Username)
+			println("结构体数据:" + strconv.Itoa(resdata.Newpointusernowat) + "," + resdata.Username + "," + resdata.Dramascriptcreator + "," + resdata.Activityid)
+			println("update activity" + resdata.Activityid + "of" + resdata.Dramascriptcreator + " set pointusernowat=" + strconv.Itoa(resdata.Newpointusernowat) + " where username='" + resdata.Username + "';")
+			_, errflag2 := database.Exec("update activity"+resdata.Activityid+"of"+resdata.Dramascriptcreator+" set pointusernowat="+strconv.Itoa(resdata.Newpointusernowat)+" where username=?", resdata.Username)
 			if errflag2 != nil {
 				println("更新用户点位失败（数据库错误）")
 			}
@@ -1109,7 +1155,53 @@ func main() {
 					result = result + ";" + missionname + ":" + strconv.Itoa(missiontype) + ":" + strconv.Itoa(missionid) + ":" + mediatype + "|" + questiontype
 				}
 			}
-			c.String(http.StatusOK,result)
+			c.String(http.StatusOK, result)
+		}
+	})
+	r.POST("/webGetTasks", func(c *gin.Context) {
+		un, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（用户名）失败，（网页获取任务具体信息）")
+		} else {
+			println(un)
+		}
+		pointid, errflag2 := c.GetPostForm("PointID")
+		if !errflag2 {
+			println("获取表单数据（点位id）失败，（网页获取任务具体信息）")
+		} else {
+			println(pointid)
+		}
+		dramascriptid, errflag3 := c.GetPostForm("DramaID")
+		if !errflag3 {
+			println("获取表单数据（剧本id）失败，（网页获取任务具体信息）")
+		} else {
+			println(dramascriptid)
+		}
+		missionid, errflag4 := c.GetPostForm("ID")
+		if !errflag4 {
+			println("获取表单数据（任务ID）失败，（网页获取任务具体信息）")
+		} else {
+			println(missionid)
+		}
+		var data2send struct {
+			Missionstatus             int
+			Nextmissionid             int
+			Missionnote               string
+			Mediatype                 string
+			Mediaaddress              string
+			Questionname              string
+			Questiondescription       string
+			Questioninfo              string
+			Questionanswerdescription string
+			Score                     int
+		}
+		errflag5 := database.QueryRow("select missionStatus,nextmissionid,missionnote,mediatype,mediaaddress,questionname,questiondescription,questioninfo,questionanswerdescription,score from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.Missionstatus, &data2send.Nextmissionid, &data2send.Missionnote, &data2send.Mediatype, &data2send.Mediaaddress, &data2send.Questionname, &data2send.Questiondescription, &data2send.Questioninfo, &data2send.Questionanswerdescription, &data2send.Score)
+		if errflag5 != nil {
+			fmt.Println(errflag5)
+			println("数据库查询失败（网页获取任务具体信息）")
+		} else {
+			var optionslist = strings.Split(data2send.Questioninfo, ";")
+			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+data2send.Mediaaddress+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questioninfo+"~@"+strings.Join(optionslist, "~#")+"~@"+data2send.Questionanswerdescription+"~@"+strconv.Itoa(data2send.Score))
 		}
 	})
 	r.Run(":8000")

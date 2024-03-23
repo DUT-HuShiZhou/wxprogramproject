@@ -359,11 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             sessionStorage.setItem("newtask", "false");
                             sessionStorage.setItem("module-type", tasks[i][3]);
 
-<<<<<<< Updated upstream
                             // 任务状态(status应该是);下一个点位【这个需要删除】;下一个任务id;任务备注;题库内容;ar功能 //这里需要把下一个点位这个机制删除掉 @李立
-=======
-                            // 任务状态(status应该是);下一个任务;任务备注;题库内容;ar功能
->>>>>>> Stashed changes
                             var data = xhr.responseText;
 
                             var source = data.split(";");

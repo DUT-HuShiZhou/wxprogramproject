@@ -4,7 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let main_item = document.querySelector("div.preview-panel div.main-item");
     let module_frame = document.querySelector("div.module-frame");
 
+    let fn_update_btn = document.querySelector("button.fn-update-btn");
     let update_btn = document.querySelector("button.update-btn"); 
+    let bn_update_btn = document.querySelector("button.bn-update-btn");
+
+    // 屏蔽全局右键
+    document.oncontextmenu = (e) => {
+        e.preventDefault()
+    }    
 
     AMapLoader.load({
         key: "ed729e18de199349c4ab973ba060babe", //申请好的Web端开发者key，调用 load 时必填
@@ -15,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            //point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
+            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -75,12 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     point_menu.append(li);
 
-                    var nextpoint_selector = document.querySelector("select.nextpoint");
-
                     var option = document.createElement("option");
                     option.value = point_datas[i][4];
                     option.textContent = point_datas[i][0];
-                    nextpoint_selector.add(option);
                 })(i);
             };
 
@@ -245,14 +249,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.onclick = function () {
                             var taskname = document.querySelector("input.task-name").value;
                             var taskmarket = document.querySelector("textarea.task-remark").value;
-                            var nextpoint = document.querySelector("select.nextpoint").selectedIndex;
                             var nexttask = document.querySelector("select.nexttask").selectedIndex;
                             var form = layui.form;
                             var type = form.val('operate-input-form').type;
 
                             init_panel();
 
-                            task_load(type, 0, taskname, [nextpoint, nexttask, taskmarket, btn.getAttribute("item"), ""]);
+                            task_load(type, 0, taskname, [nexttask, taskmarket, btn.getAttribute("item"), ""]);
 
                             sessionStorage.setItem("module-type", btn.getAttribute("module-type"));
                             layer.close(index);
@@ -356,12 +359,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             sessionStorage.setItem("newtask", "false");
                             sessionStorage.setItem("module-type", tasks[i][3]);
 
+<<<<<<< Updated upstream
                             // 任务状态(status应该是);下一个点位【这个需要删除】;下一个任务id;任务备注;题库内容;ar功能 //这里需要把下一个点位这个机制删除掉 @李立
+=======
+                            // 任务状态(status应该是);下一个任务;任务备注;题库内容;ar功能
+>>>>>>> Stashed changes
                             var data = xhr.responseText;
 
                             var source = data.split(";");
 
                             // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+
+                            reload_task();
                         };
                     }
 
@@ -428,12 +437,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 sessionStorage.setItem("newtask", "true");
                                 sessionStorage.setItem("module-type", tasks[i][3]);
 
-                                // 任务状态;下一个点位;下一个任务;任务备注;题库内容;ar功能
+                                // 任务状态;下一个任务;任务备注;题库内容;ar功能
                                 var data = xhr.responseText;
 
                                 var source = data.split(";");
 
                                 // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                                
+                                reload_task();
                             };
                         }
 
@@ -553,6 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     init_panel();
 
                     task_load(1, 0, "新建任务", []);
+                    reload_task
                 };
                 task_div.appendChild(button);
 
@@ -590,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Number} type 任务类型
      * @param {Number} state 任务启动状态
      * @param {String} name 任务名称
-     * @param {Array} objs 任务组件  下一个点位|下一个任务|任务备注|题库内容|ar功能
+     * @param {Array} objs 任务组件  下一个任务|任务备注|题库内容|ar功能
      */
     function task_load (type, state, name, objs) {
         operate_panel.style.display = "block";
@@ -608,7 +620,7 @@ document.addEventListener('DOMContentLoaded', function() {
         name_input.placeholder = name;
 
         if (objs.length != 0) {
-            state_change(type, [objs[0], objs[1]]);
+            state_change(type, objs[1]);
 
             var remark = document.querySelector("textarea.task-remark");
             remark.value = objs[2];
@@ -665,9 +677,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
         else {
-            var nextpoint_selector = document.querySelector("select.nextpoint");
-            nextpoint_selector.selectedIndex = 0;
-
             var nexttask_selector = document.querySelector("select.nexttask");
             nexttask_selector.selectedIndex = 0;
         };
@@ -685,10 +694,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 "state": 0,
                 "AR": 0
             });
-
-            var nextpoint_selector = document.querySelector("select.nextpoint");
-            nextpoint_selector.selectedIndex = 0;
-
             var nexttask_selector = document.querySelector("select.nexttask");
             nexttask_selector.selectedIndex = 0;
 
@@ -745,6 +750,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         key_bind();
+        
+        narration_load();
     };
 
     function task_select (elem) {
@@ -756,24 +763,68 @@ document.addEventListener('DOMContentLoaded', function() {
         elem.classList.add("selected");
     }
 
+    /**
+     * 任务重选页面重置函数
+     */
+    function reload_task () {
+        var btndiv = document.querySelector("div.pageChange-btn");
+        var pages = document.querySelectorAll("div.operate-part");
+        pages.forEach(page => {
+            page.style.display = "none";
+        })
+        pages[1].style.display = "block";
+        btndiv.querySelector("button.layui-btn-disabled").classList.remove("layui-btn-disabled");
+        document.querySelector("button.question_page").classList.add("layui-btn-disabled");
+    }
+
+    // 前旁白上传按钮
+    fn_update_btn.onclick = function () {
+        var xhr = new XMLHttpRequest();
+        var params = new FormData();
+        params.append("un", sessionStorage.getItem("un"));
+        params.append("LineID", sessionStorage.getItem("LineID"));
+        params.append("DramaID", sessionStorage.getItem("DramaID"));
+        params.append("PointID", sessionStorage.getItem("PointID"));
+        params.append("TaskID", sessionStorage.getItem("TaskID"));
+        params.append("NarrationType", "Front");
+        params.append("content", fn_updata(0)[0]);
+        params.append("url", fn_updata(0)[1]);
+        
+        xhr.open("POST", "", true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.responseText === true) {
+                    window_set("提示", "修改成功");
+                }
+                else {
+                    window_set("未知错误", "修改失败");
+                }
+            }
+        }
+        xhr.send(params);
+    }
+
+    // 问题上传按钮
     update_btn.onclick = function () {
         // 判断是否为新建任务
         if (sessionStorage.getItem("newtask") != "false"){
             // 二次确定
-                var xhr = new XMLHttpRequest();
-                var url = "/getTaskID";
-                var params = new FormData();
-                params.append("un", sessionStorage.getItem("un"));
-                params.append("PointID", sessionStorage.getItem("PointID"));
-                
-                xhr.open("POST", url, true);
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        update_event(xhr.responseText);
-                    };
+            var xhr = new XMLHttpRequest();
+            var url = "/getTaskID";
+            var params = new FormData();
+            params.append("un", sessionStorage.getItem("un"));
+            params.append("LineID", sessionStorage.getItem("LineID"));
+            params.append("DramaID", sessionStorage.getItem("DramaID"));
+            params.append("PointID", sessionStorage.getItem("PointID"));
+            
+            xhr.open("POST", url, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    update_event(xhr.responseText);
                 };
+            };
 
-                xhr.send(params);
+            xhr.send(params);
         }
         else {
             update_event(sessionStorage.getItem("TaskID"));
@@ -781,6 +832,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
+    // 后旁白上传按钮
+    bn_update_btn.onclick = function () {
+        var xhr = new XMLHttpRequest();
+        var params = new FormData();
+        params.append("un", sessionStorage.getItem("un"));
+        params.append("LineID", sessionStorage.getItem("LineID"));
+        params.append("DramaID", sessionStorage.getItem("DramaID"));
+        params.append("PointID", sessionStorage.getItem("PointID"));
+        params.append("TaskID", sessionStorage.getItem("TaskID"));
+        params.append("NarrationType", "Back");
+        params.append("content", fn_updata(1)[0]);
+        params.append("url", fn_updata(1)[1]);
+        
+        xhr.open("POST", "", true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.responseText === true) {
+                    window_set("提示", "修改成功");
+                }
+                else {
+                    window_set("未知错误", "修改失败");
+                }
+            }
+        }
+        xhr.send(params);
+    }
+
+    /**
+     * 上传任务数据
+     * @param {String} TaskID 
+     */
     function update_event (TaskID) {
         layui.use("form", function () {
             var layer = layui.layer;
@@ -792,6 +874,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 var url = "/pushDatas";
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
+                params.append("LineID", sessionStorage.getItem("LineID"));
+                params.append("DramaID", sessionStorage.getItem("DramaID"));
                 params.append("PointID", sessionStorage.getItem("PointID"));
                 params.append("TaskID", TaskID);
 
@@ -802,7 +886,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 var task = [];
                 var form = layui.form;
                 task.push(form.val('operate-input-form').state);
-                task.push(document.querySelector("select.nextpoint").selectedIndex);
                 task.push(document.querySelector("select.nexttask").selectedIndex);
                 task.push(document.querySelector("textarea.task-remark").value);
                 task.push(updateitems());
@@ -834,22 +917,18 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * 任务状态改变主函数
      * @param {(Number|String)} type 类型(1普通任务|0结束任务)
-     * @param {Array} values 两个值，一个点位选择值，一个任务选择值
+     * @param {Number} value 任务选择值
      */
-    function state_change (type, values) {
-        var nextpoint_selector = document.querySelector("select.nextpoint");
+    function state_change (type, value) {
         var nexttask_selector = document.querySelector("select.nexttask");
         if (type === 1 || type === "1"){
-            nextpoint_selector.removeAttribute("disabled");
             nexttask_selector.removeAttribute("disabled");
 
-            if (values.length > 0){
-                nextpoint_selector.value = values[0];
-                nexttask_selector.value = values[1];
+            if (value != null){
+                nexttask_selector.value = value;
             }
         }
         else {
-            nextpoint_selector.setAttribute("disabled", true);
             nexttask_selector.setAttribute("disabled", true);
         }
     }

@@ -150,7 +150,10 @@ body {
 
 .type-part,
 .option-part,
-.operate-part {
+.operate-part0,
+.operate-part1,
+.operate-part2,
+.operate-part3 {
     display: flex;
     flex-direction: column;
 }
@@ -173,7 +176,12 @@ body {
     margin-right: 3%;
 }
 
-.operate-part::-webkit-scrollbar {
+.operate-part0::-webkit-scrollbar,
+.operate-part1::-webkit-scrollbar,
+.operate-part2::-webkit-scrollbar,
+.operate-part3::-webkit-scrollbar,
+.narration-btnBox0::-webkit-scrollbar,
+.narration-btnBox1::-webkit-scrollbar {
     display: none;
 }
 

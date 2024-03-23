@@ -1,167 +1,113 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="first-page" content="首页" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        <!-- LayUI引入 -->
-        <link rel="stylesheet" href="../layui/css/layui.css">
-        <script src="../layui/layui.js"></script>
 
-        <link rel="stylesheet" href="../styles/first.css" />
-        <script src="../scripts/page-load.js" defer></script>
-        <script src="../scripts/first.js" defer></script>
-        <title>首页</title>
-    </head>
-    <body style="background-color: #eeeeee;">
-        <div id="root">
+<head>
+  <meta charset="utf-8" />
+  <meta name="first-page" content="首页" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-            <div  style="padding: 16px;">
-                <div class="layui-row layui-col-space15">
+  <!-- LayUI引入 -->
+  <link rel="stylesheet" href="../layui/css/layui.css">
+  <script src="../layui/layui.js"></script>
 
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">活动数量</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                    </div>
-                    </div>
-                  </div>
+  <link rel="stylesheet" href="../styles/first.css" />
+  <script src="../scripts/page-load.js" defer></script>
+  <script src="../scripts/first.js" defer></script>
+  <title>首页</title>
+</head>
 
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">线路数量</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">参与活动人数</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">完成活动人数</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">生成码剩余使用次数</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">充值码剩余使用次数</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="layui-col-md6" style="width: 25%;">
-                    <div class="layui-card">
-                      <div class="layui-card-header" style="font-size: 20px;">隐藏路线兑换数量</div>
-                      <div class="layui-card-body"  style="font-size: 30px;">
-                        0
-                        <br>
-                      <div  style="font-size: 15px;">
-                        次
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </div>
+<body style="background-color: #eeeeee; height: 100vh">
+  <div id="root">
+    <div style="padding: 16px;">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">活动数量</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
               </div>
-
-
-
-
-
-
-
-
-
-            <!-- <main class="datashow">
-                <div class="data-show">
-                    <div class="data data1">
-                        <span>在线人数:</span>
-                        <span class="num-online"></span>
-                    </div>
-                    <div class="data">
-                        <span>管理路线进行人数:</span>
-                        <span class="mnum-online"></span>
-                    </div>
-                    <div class="data">
-                        <span>管理路线完成人数:</span>
-                        <span class="mnum-finish"></span>
-                    </div>
-                </div>
-                <div class="option-description">
-                    <div class="重置按键 option">
-                        <span>重置按钮会将所有修改过的数据重置为接收到的初始数据，或最后一次发送给服务端的临时数据</span>
-                        </div>
-                    <div class="保存按键 option">
-                        <span>保存按钮会将你修改的值变为缓存数据，暂时存放到本地，但不会修改你所获取到的数据，以便重置修改，但不使用保存按钮则会导致你修改过的数据，在你点击其他页面后丢失，请谨慎使用</span>
-                    </div>
-                    <div class="上传按键 option">
-                        <span>所有涉及到发送给服务端修改数据的按钮都会自动将缓存在本地的修改数据自动变为要发送的数据，请在使用前确保你的缓存数据全部是你所需要的</span>
-                    </div>
-                </div>
-            </main>
-            <div class="uninf">
-                <div class="username">
-                    <p class="name"></p>
-                </div>
             </div>
-            <div class="operate">
-                <div class="pwchange">
-                </div>
-                <div class="">
-                </div>
-            </div> -->
-            
+          </div>
         </div>
-    </body>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">线路数量</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">参与活动人数</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">完成活动人数</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">生成码剩余使用次数</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">充值码剩余使用次数</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6" style="width: 25%;">
+          <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 20px;">隐藏路线兑换数量</div>
+            <div class="layui-card-body" style="font-size: 30px;">
+              0
+              <br>
+              <div style="font-size: 15px;">
+                次
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--点线效果-->
+  <script type="text/javascript" color="208,193,236" opacity='0.9' zIndex="-2" count="256" src="../scripts/canvas-nest.js"></script>
+</body>
 </html>

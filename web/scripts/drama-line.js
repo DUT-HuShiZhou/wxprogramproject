@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
+    var lines;
     let urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('choose') != null){
-        var lines = urlParams.get('choose');
+        lines = urlParams.get('choose');
         lines = lines + ";choose";
     }
     else if (urlParams.get('revise') != null){
-        var lines = urlParams.get('revise');
+        lines = urlParams.get('revise');
         lines = lines + ";revise";
     }
 

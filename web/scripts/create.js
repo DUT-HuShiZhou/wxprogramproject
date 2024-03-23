@@ -1,3 +1,4 @@
+// 数据发送顺序：首先发送路线数据，在进行完路线选择后发送剧本数据和点位数据，在选择完剧本后，打开编辑页面
 document.addEventListener('DOMContentLoaded', function() {
     let ifm_fram = document.querySelector(".line-choose-ifm");
 
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (xhr.readyState === 4) {
                         // 单元  剧本名称:剧本内容:剧本ID
                         var data = xhr.responseText;
-                        //data = "测试1:测试1描述:test1";
+                        data = "测试1:测试1描述:test1";
 
                         var root = document.createElement("div");
                         root.style.width = "100%";
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         right.appendChild(marker);
 
                         var button = document.createElement("button");
-                        button.className = "layui-btn";
+                        button.className = "layui-btn save-btn";
                         button.style.marginTop = "20px";
                         button.style.width = "50%";
                         button.textContent = "保存";
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     var name = document.querySelector("input.drama-name");
                                     var marker = document.querySelector("textarea.drama-marker");
                                     name.value = selectedOption.textContent==="请选择剧本"?"":selectedOption.textContent;
-                                    marker.textContent = selectedOption.getAttribute("marker");
+                                    marker.value = selectedOption.getAttribute("marker");
                                     if (name.value != "") {
                                         name.readOnly = false;
                                         marker.readOnly = false;
@@ -171,20 +172,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 button1.onclick = function () {
                                     if (selector.options[selector.selectedIndex].value != "" && selector.options[selector.selectedIndex].value != "none") {
                                         sessionStorage.setItem("DramaID", selector.options[selector.selectedIndex].value);
-        
+                                        layer.close(index);
                                         open_context();
                                     }
                                     else {
-                                        layer.open({
-                                            type: 1,
-                                            area: ["300px", "180px"],
-                                            title: "错误",
-                                            shade: 0.6,
-                                            shadeClose: true,
-                                            maxmin: false,
-                                            anim: Math.floor(Math.random() * 6),
-                                            content: '<div style="padding: 32px;text-align: center;">请选择正确的剧本<hr>或新建剧本以进行下一步操作</div>'
-                                        });
+                                        window_set("错误", ["请选择正确的剧本", "或新建剧本以进行下一步操作"]);
                                     }
                                 };
 
@@ -198,6 +190,39 @@ document.addEventListener('DOMContentLoaded', function() {
                                     layer.close(index);
                                     create_new_drama(open_context);
                                 }
+
+                                var saveBtn = document.querySelector("button.save-btn");
+                                saveBtn.onclick = function () {
+                                    if (selector.selectedIndex != 0) {
+                                        var xhr = new XMLHttpRequest();
+                                        var params = new FormData();
+
+                                        xhr.open("POST", "", true);
+                                        params.append("un", sessionStorage.getItem("un"));
+                                        params.append("LineID", sessionStorage.getItem("LineID"));
+                                        params.append("DramaID", selector.options[selector.selectedIndex].value);
+                                        params.append("NewName", document.querySelector("input.drama-name").value);
+                                        params.append("NewMarker", document.querySelector("textarea.drama-marker").value);
+                                        
+                                        xhr.onreadystatechange = function () {
+                                            if (xhr.readyState === 4) {
+                                                if (xhr.responseText === "true") {
+
+                                                }
+                                                else {
+                                                    window_set("错误", ["出现未知错误","剧本信息修改失败", "请重试"]);
+
+                                                    document.querySelector("input.drama-name").value = selector.options[selector.selectedIndex].textContent;
+                                                    document.querySelector("textarea.drama-marker").value = selector.options[selector.selectedIndex].getAttribute("marker");
+                                                }
+                                            }
+                                        }
+                                        xhr.send(params);
+                                    }
+                                    else {
+                                        window_set("错误", ["请先选择剧本", "再进行后续操作"]);
+                                    }
+                                }
                             }
                         });
                     }
@@ -207,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
-    ifm_fram.src = "drama-line.html?choose=1;test"; // 测试可删
+    ifm_fram.src = "drama-line.html?choose=1;test:666"; // 测试可删
     xhr.open("POST", url, true);
     var params = new FormData();
     params.append("type", "lines");
@@ -217,9 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if(xhr.readyState === 4){
             // num;数据...   数据单元为  线路名称:LineID
             var data = xhr.responseText;
-            ifm_fram.src = "drama-line.html?choose=" + data;
-            //ifm_fram.style.backgroundColor = "white";
-            //ls.style.display = "block";
+            // ifm_fram.src = "drama-line.html?choose=" + data;
+            // ifm_fram.style.backgroundColor = "white";
         }
     };
     

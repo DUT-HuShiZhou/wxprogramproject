@@ -18,15 +18,17 @@
         <div class="column1" style="height: 100vh; width: 20vw;">
             <div class="preview-panel root" title="组件预览">
                 <div class="layui-card" style="width: 100%; height: 98%; display: flex; align-items: center; justify-content: center;">
-                    <div class="layui-card showitem-panel">
-                        <div class="head-item">
-                            <img src="../images/return_item.png" alt="Image" class="return-img img-item" />
-                            <i style="color: black; font-size: 80%">时间显示测试</i>
-                        </div>
-                        <div class="main-item"></div>
-                        <div class="bottom-item">
-                            <img src="../images/help_item.png" alt="Image" class="help-img img-item" />
-                            <img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />
+                    <div class="layui-card root-card" style="width: 270px; height: 345px; display: flex; align-items: center; justify-content: center;"> <!--margin-left: calc((100% - 270px)/2); 左间距自适应-->
+                        <div class="layui-card showitem-panel">
+                            <div class="head-item">
+                                <img src="../images/return_item.png" alt="Image" class="return-img img-item" />
+                                <i style="color: black; font-size: 80%">时间显示测试</i>
+                            </div>
+                            <div class="main-item"></div>
+                            <div class="bottom-item">
+                                <img src="../images/help_item.png" alt="Image" class="help-img img-item" />
+                                <img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +67,7 @@
                         </div>
                         <hr/>
                         <div class="option-part" style="width: 100%; height: 25%;">
-                            <div class="state-option" style="display: flex; width: 100% ; margin-top: 20px;">
+                            <div class="state-option" style="display: flex; width: 100%; margin-top: 20px;">
                                 <span class="title-span" style="width:25%">有效状态</span>
                                 <div class="layui-form type-options" lay-filter="operate-input-form" style="display: flex; width: 50%; height: 70%; margin-left: 25%">
                                     <div class="option1 opt" style="height: 100%;">
@@ -76,26 +78,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="next-point" style="display: flex; width: 100% ; margin-top: 10px;">
-                                <span class="title-span" style="width:25%">下一个点位</span>
-                                <div class="layui-col-md6 option-select">
-                                    <select style="width: 100%;" class="nextpoint">
-                                        <option value="">点击选择</option>
-                                    </select>
-                                </div>
-                                <i class="layui-icon layui-icon-unlink" title="清除"></i>
-                                <script>
-                                    var next_point = document.querySelector("div.next-point");
-                                    var _i = next_point.querySelector("i");
-                                    var selector0 = next_point.querySelector("select.nextpoint");
-                                    _i.addEventListener("mousedown", function (e) {
-                                        if (e.button === 0 && !selector1.hasAttribute("disabled")) {
-                                            selector0.selectedIndex = 0;
-                                        }
-                                    })
-                                </script>
-                            </div>
-                            <div class="next-task" style="display: flex; width: 100% ; margin-top: 20px;">
+                            <div class="next-task" style="display: flex; width: 100%; margin-top: 20px;">
                                 <span class="title-span" style="width:25%">下一个任务</span>
                                 <div class="layui-col-md6 option-select">
                                     <select style="width: 100%;" class="nexttask">
@@ -114,7 +97,7 @@
                                     })
                                 </script>
                             </div>
-                            <div class="bank-show" style="display: flex; width: 100% ; margin-top: 20px;">
+                            <div class="bank-show" style="display: flex; width: 100%; margin-top: 20px;">
                                 <i class="layui-icon layui-icon-about" title="小提示"></i>
                                 <div class="layui-col-md6 option-select">
                                     <select style="width: 100%;" class="question-selector">
@@ -247,16 +230,47 @@
                                     }
                                 </script>
                             </div>
+                            <div class="pageChange-btn" style="display: flex; width: 100%; margin-top: 20px;">
+                                <button type="button" class="layui-btn layui-btn-xs front_narration" style="margin-left: 15px;">前旁白</button>
+                                <button type="button" class="layui-btn layui-btn-xs question_page layui-btn-disabled">问题页面</button>
+                                <button type="button" class="layui-btn layui-btn-xs back_narration">后旁白</button>
+                                <button type="button" class="layui-btn layui-btn-xs prop_drop">道具掉落</button>
+                            </div>
+                            <script>
+                                var btndiv = document.querySelector("div.pageChange-btn");
+                                var buttons = btndiv.querySelectorAll("button");
+                                buttons.forEach(button => {
+                                    button.onclick = function(){
+                                        var _class = button.getAttribute("class").split(" ")[2];
+                                        var pages = document.querySelectorAll("div.operate-part");
+                                        pages.forEach(page => {
+                                            page.style.display = "none";
+                                        })
+                                        var choosed_page = document.querySelector("div#" + _class);
+                                        choosed_page.style.display = "block";
+                                        btndiv.querySelector("button.layui-btn-disabled").classList.remove("layui-btn-disabled");
+                                        button.classList.add("layui-btn-disabled");
+                                    };
+                                })
+                            </script>
                         </div>
                         <hr/>
-                        <div class="operate-part" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
+                        <div class="operate-part operate-part0" id="front_narration" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240); display: none;">
+                            <div class="front-narration-frame">
+                            </div>
+                            <div class="act-sure" style="margin: 15px 0; display: flex; justify-content: center;">
+                                <button type="button" class="layui-btn layui-btn-sm fn-update-btn" id="fn-update-btn0">保存|更新</button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="operate-part operate-part1" id="question_page" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240);">
                             <div class="task-inform">
                                 <div class="task-name" style="display: flex; height: 25px; width: 100%; align-items: center; margin-top: 10px;">
-                                    <span class="title-span" style="width:25%">任务名称</span>
+                                    <span class="title-span" style="width: 25%">任务名称</span>
                                     <input type="text" name="task-name" placeholder="新建任务" class="layui-input task-name" style="height: 100%; width: 55%; margin-left: 10%;">
                                 </div>
                                 <div class="task-name" style="display: flex; height: 80px; width: 100%; align-items: center; margin-top: 10px;">
-                                    <span class="title-span" style="width:25%">任务备注</span>
+                                    <span class="title-span" style="width: 25%">任务备注</span>
                                     <textarea name="task-remark" placeholder="空" class="layui-textarea task-remark" style="height: 100%; min-height: 0; width: 55%; margin-left: 10%; font-size: smaller; resize: none;"></textarea>
                                 </div>
                             </div>
@@ -331,6 +345,19 @@
                             </div>
                             <div class="act-sure" style="margin: 15px 0; display: flex; justify-content: center;">
                                 <button type="button" class="layui-btn layui-btn-sm update-btn" id="update-btn">保存|更新</button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="operate-part operate-part2" id="back_narration" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240); display: none;">
+                            <div class="back-narration-frame">
+                            </div>
+                            <div class="act-sure" style="margin: 15px 0; display: flex; justify-content: center;">
+                                <button type="button" class="layui-btn layui-btn-sm bn-update-btn" id="bn-update-btn1">保存|更新</button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="operate-part operate-part3" id="prop_drop" style="width: 100%; height: 65%; overflow-y: scroll; background-color: rgb(240, 240, 240); display: none;">
+                            <div class="prop-drop-frame">
                             </div>
                         </div>
                     </div>

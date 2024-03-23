@@ -1,8 +1,12 @@
 let place = document.querySelector("div.main-item");
 let infplace = document.querySelector("div.module-frame");
+let fnplace = document.querySelector("div.front-narration-frame");
+let bnplace = document.querySelector("div.back-narration-frame");
 /**Array<type, size, position, url, <title, contain|<question, <options...>, right, grade>>>*/
 let items = [];
 let files_index = [];
+/**前旁白,后旁白,图片url*/
+let narration_contents = [[], [], []];
 
 /**组件数据清空函数 */
 function clearitems () {
@@ -89,6 +93,58 @@ function fresh_form() {
         var form = layui.form;
         form.render();
     });
+}
+
+/**
+ * 获取旁白内容函数
+ * @param {Number} sequence 旁白类型 
+ * @returns {[String, String]} 旁白数据字符串，图片url
+ */
+function fn_updata (sequence) {
+    var contains = "";
+    for (var i = 0; i < narration_contents[sequence].length; i++) {
+        contains = contains + narration_contents[sequence][i];
+    }
+    return [contains, narration_contents[2][sequence]];
+}
+ 
+/**
+ * 旁白数据获取函数
+ */
+function narration_load() {
+    fnplace.innerHTML = "";
+    bnplace.innerHTML = "";
+    var xhr = new XMLHttpRequest();
+    var params = new FormData();
+    
+    params.append("un", sessionStorage.getItem("un"));
+    params.append("LineID",sessionStorage.getItem("LineID"))
+    params.append("PointID", sessionStorage.getItem("PointID"));
+    params.append("DramaID",sessionStorage.getItem("DramaID"));
+    params.append("TaskID", sessionStorage.getItem("TaskID"));
+
+    xhr.open("OPST", "", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...:后旁白图片url:后旁白内容1|后旁白内容2|...\
+            var data = xhr.responseText;
+
+            var images = [];
+            // images.push(data.split(";")[0].split(":")[0]);
+            // images.push(data.split(";")[1].split(":")[0]);
+            var contents = [];
+            // contents.push(data.split(";")[0].split(":")[1].split("|"));
+            // contents.push(data.split(";")[1].split(":")[1].split("|"));
+
+            // narration(0, "bn-update-btn0", images[0], contents[0]);
+            // narration(1, "bn-update-btn1", images[1], contents[1]);
+
+            narration(0, "bn-update-btn0", "", ["hdukhawuikdbhawuioawhduhicbasdjk", "dawdaa"]);
+            narration(1, "bn-update-btn1", "", ["sdaw", "awdaw", "daw"]);
+        };
+    };
+
+    xhr.send(params);
 }
 
 /**datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))*/
@@ -888,9 +944,13 @@ function audio(datas, id, buttonID, mode) {
       });
 }
 
-
-function AR (xD) {
+/**
+ * AR控制函数
+ * @param {Number|String} xD AR模型类型
+ */
+function AR(xD) {
     layui.use(function() {
+        var files_ok = [false, false];
         var layer = layui.layer
 
         var root = document.createElement("div");
@@ -958,9 +1018,10 @@ function AR (xD) {
         });
 
         var upload = layui.upload;
+        var i = 0;
         upload.render({
             elem: '.module-set-button',
-            url: 'http://129.204.130.33:8080/file/upload',
+            url: 'http://8.130.89.101:8080/file/upload',
             accept: 'file', // 普通文件
             data: {
                 "LineID": sessionStorage.getItem("LineID"),
@@ -983,10 +1044,12 @@ function AR (xD) {
                     file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2) === "gitf") {
                         text[0] = file.name + "   " + size;
                         text[1] = text[1]===undefined?"":text[1];
+                        i = 0;
                     }
                     else {
                         text[0] = text[0]===undefined?"":text[0];
                         text[1] = file.name + "   " + size;
+                        i = 1;
                     }
                     file_textarea.textContent = text[0] + "\n" + text[1];
                 });
@@ -1004,17 +1067,293 @@ function AR (xD) {
                 }
                 else {
                     files_index.push(newDict); 
-                }
+                };
 
-                var ARfile_state = document.querySelector("span.AR-state-span");
-                ARfile_state.textContent = "已达标";
-                layer.close(index);
+                files_ok[i] = true;
+
+                if (files_ok[0] === true && files_ok[1] === true) {
+                    var ARfile_state = document.querySelector("span.AR-state-span");
+                    ARfile_state.textContent = "已达标";
+                    layer.close(index);
+                }
             },
             error: function() {
-
+                files_ok[i] = false;
+                layer.msg("上传失败");
             }
         });
     });
+}
+
+/**
+ * 旁白组件添加函数
+ * @param {Number} sequence 旁白位置
+ * @param {String} buttonID 上传绑定按钮 
+ * @param {String} image 旁白图片url
+ * @param {Array<String>} contents 旁白内容数组
+ */
+function narration(sequence, buttonID, image, contents) {
+    // 预览效果添加
+
+    // 编辑栏加载
+    var root = document.createElement("div");
+    root.classList = sequence + "narration-option item";
+    root.style.width = "100%";
+    root.style.marginTop = "10px";
+
+    // 图片上传部分
+    var image_div = document.createElement("div");
+    image_div.classList = "image-item" + sequence;
+    image_div.style.width = "100%";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "旁白图片";
+    image_div.appendChild(title_span);
+
+    var push_div = document.createElement("div");
+    push_div.className = "push-image" + sequence;
+    push_div.style.marginTop = "5px";
+    push_div.style.width = "100%";
+
+    var box = document.createElement("div");
+    box.className = "box";
+    box.style.width = "90%";
+    box.style.margin = "0 5%";
+    box.style.border = "1px dashed black";
+
+    var div_load = document.createElement("div");
+    div_load.classList = "layui-upload-list upload-list" + sequence;
+    div_load.style.width = "100%";
+    div_load.style.display = "flex";
+    div_load.style.flexDirection = "column";
+    div_load.style.alignItems = "center";
+
+    var img = document.createElement("img");
+    img.classList = "layui-upload-img upload-fnImg" + sequence;
+    img.id = "ID-upload-fn-img" + sequence;
+    img.src = image;
+    narration_contents[2][sequence] = image;
+    img.style.width = "90%";
+    img.style.height = "auto";
+    div_load.appendChild(img);
+    box.appendChild(div_load);
+    push_div.appendChild(box)
+
+    // 上传按钮
+    var button = document.createElement("button");
+    button.type = "button";
+    button.classList = "layui-btn push-button" + sequence;
+    button.id = "ID-upload-fnImg-btn" + sequence;
+    button.innerHTML = '<i class="layui-icon layui-icon-upload"></i> 图片上传';
+    button.style.width = "50%";
+    button.style.margin = "5% 25%";
+    push_div.appendChild(button)
+
+    image_div.appendChild(push_div);
+    root.appendChild(image_div);
+
+    // 文本写入部分
+    var contents_div = document.createElement("div");
+    contents_div.classList = "narrastions-item" + sequence;
+    contents_div.style.width = "100%";
+
+    var title_span = document.createElement("span");
+    title_span.className = "title-span";
+    title_span.textContent = "旁白内容";
+    contents_div.appendChild(title_span);
+
+    var text_box = document.createElement("div");
+    text_box.className = "box";
+    text_box.style.margin = "5px 0";
+
+    var textarea = document.createElement("textarea");
+    textarea.classList = "narrations-textarea" + sequence;
+    textarea.style.marginLeft = "5%";
+    textarea.style.width = "90%";
+    textarea.style.resize = "none";
+    textarea.style.height = '256px';
+    textarea.value = contents[0];
+    text_box.appendChild(textarea);
+
+    // 按钮盒子
+    var btn_box = document.createElement("div");
+    btn_box.classList = "layui-btn-group narration-btnBox" + sequence;
+    btn_box.style = "margin-top: 5px;height: 30px; width: 90%; margin-left: 5%; display: block; overflow:hidden; overflow-x:auto";
+
+    function btn_click (Element) {
+        var area = document.querySelector("textarea.narrations-textarea" + sequence);
+        var raw_btn = btn_box.querySelector("button.layui-btn-disabled");
+        raw_btn.classList.remove("layui-btn-disabled");
+        Element.classList.add("layui-btn-disabled");
+        narration_contents[sequence][raw_btn.classList[3].replace("btn-", "")] = area.value;
+        var value = narration_contents[sequence][Element.classList[3].replace("btn-", "")];
+        area.value = value===undefined?"":value;
+    };
+
+    function del_click (elem, Element) {
+        if (elem.button === 2 && btn_box.childElementCount > 2){
+            btn_box.removeChild(Element);
+            var btns = btn_box.querySelectorAll("button.narration-btn");
+            var i;
+            if (Element.classList[4] != undefined) {
+                i = Element.classList[3].replace("btn-", "");
+            }
+            else {
+                i = btn_box.querySelector("button.layui-btn-disabled").classList[3].replace("btn-", "");
+            };
+            i = parseInt(i);
+            narration_contents[sequence][i] = textarea.value;
+            for (var j = Element.classList[3].replace("btn-", ""); j < btns.length; j++) {(
+                function (index) {
+                    btns[index].classList = "narration-btn layui-btn layui-btn-sm btn-" + index;
+                    btns[index].textContent = "对话" + (index + 1);
+
+                    narration_contents[sequence][index] = narration_contents[sequence][index + 1];
+                }
+            )(parseInt(j));}
+            if (btns.length > i) {
+                btns[i].classList.add("layui-btn-disabled");
+                textarea.value = narration_contents[sequence][i];
+            }
+            else {
+                btns[i - 1].classList.add("layui-btn-disabled");
+                textarea.value = narration_contents[sequence][i - 1];
+            }
+            
+            narration_contents[sequence].pop();
+        }
+    }
+
+    for (var i = 0; i < contents.length; i++) {(
+        function(index) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.classList = "narration-btn layui-btn layui-btn-sm btn-" + index;
+            button.title = "右键删除";
+            button.textContent = "对话" + (index + 1);
+            button.onclick = function () {
+                btn_click(button);
+            };
+            button.addEventListener("mousedown", function (e) {
+                del_click(e, button);
+            });
+            btn_box.appendChild(button);
+        }
+    )(i);};
+    btn_box.querySelector("button.btn-0").classList.add("layui-btn-disabled");
+
+    var add_btn = document.createElement("button");
+    add_btn.type = "button";
+    add_btn.innerHTML = '<i class="layui-icon layui-icon-add-1"></i>'
+    add_btn.classList = "add-btn layui-btn layui-btn-sm";
+    btn_box.appendChild(add_btn);
+
+    add_btn.onclick = function () {
+        var new_btn = document.createElement("button");
+        new_btn.type = "button";
+        new_btn.classList = "narration-btn layui-btn layui-btn-sm btn-" + (btn_box.childElementCount - 1);
+        new_btn.title = "右键删除";
+        new_btn.textContent = "对话" + btn_box.childElementCount;
+        btn_box.removeChild(add_btn);
+        btn_box.appendChild(new_btn);
+        btn_box.appendChild(add_btn);
+
+        new_btn.onclick = function () {
+            btn_click(new_btn);
+        };
+        new_btn.addEventListener("mousedown", function (e) {
+            del_click(e, new_btn);
+        });
+        narration_contents[sequence].push("");
+    };
+    
+    text_box.appendChild(btn_box);
+    contents_div.appendChild(text_box);
+    root.appendChild(contents_div);
+    
+    if (sequence === 0) {
+        root.classList.add("fn");
+        fnplace.appendChild(root);
+        narration_contents[0] = contents;
+    }
+    else {
+        root.classList.add("bn");
+        bnplace.appendChild(root);
+        narration_contents[1] = contents;
+    }
+
+    layui.use(function () {
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var element = layui.element;
+        var $ = layui.$;
+        // 单图片上传
+        var uploadInst = upload.render({
+            elem: '#ID-upload-fnImg-btn' + sequence,
+            url: image, // 实际使用时改成您自己的上传接口即可。
+            auto: false,
+            bindAction: "#" + buttonID,
+            accept: 'file', // 普通文件
+            data: {
+                "LineID": sessionStorage.getItem("LineID"),
+                "PointID": sessionStorage.getItem("PointID"),
+                "TaskID": sessionStorage.getItem("TaskID"),
+            }, 
+            choose: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $('#ID-upload-fn-img' + sequence).attr('src', result); // 图片链接（base64）
+                    photo_img.src = result;
+                });
+            },
+            done: function (res) {
+                var newDict = {"image": res.response};
+                var existingIndex = files_index.findIndex(function(item) {
+                    return item.photo !== undefined; 
+                });
+                if (existingIndex !== -1) {
+                    files_index[existingIndex] = newDict;
+                }
+                else {
+                    files_index.push(newDict); 
+                }
+                narration_contents[2][sequence] = res.data;
+            }
+        });
+    })
+}
+
+/**
+ * 窗口创建函数
+ * @param {String} name 窗口名称
+ * @param {[String, String]} area 窗口区域，默认为["300px", "180px"]
+ * @param {String|Array<String>} content 窗口内容，可使用双引号对文字添加css，不可使用单引号
+ */
+function window_set (name, content, area = ["300px", "180px"]) {
+    layui.use(function () {
+        var contain;
+        if (content instanceof Array) {
+            contain = '<div style="padding: 32px;text-align: center;">';
+            for (var i = 0; i < content.length - 1; i++) {
+                contain = contain + content[i] + '<hr>';
+            }
+            contain = contain + content[content.length - 1] + '</div>';
+        }
+        else {
+            contain = '<div style="padding: 32px;text-align: center;">' + content + '</div>';
+        }
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            area: area,
+            title: name,
+            shade: 0.6,
+            shadeClose: true,
+            maxmin: false,
+            anim: Math.floor(Math.random() * 6),
+            content: contain
+        });
+    })
 }
 
 /**

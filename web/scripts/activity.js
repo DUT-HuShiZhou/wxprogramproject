@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     var xhr = new XMLHttpRequest();
-    var url = "";
+    var url = "/webgetactivitylist";
     var params = new FormData();
     xhr.open("POST", url, true);
 

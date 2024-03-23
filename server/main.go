@@ -297,13 +297,13 @@ func main() {
 		if !errflag1 {
 			println("获取用户名失败")
 		} else {
-			println(username)
+			println("用户名（wxGetPoints）:" + username)
 		}
 		id, errflag2 := c.GetPostForm("RouteId")
 		if !errflag2 {
 			println("获取路线id失败")
 		} else {
-			println(id)
+			println("id（wxGetPoints）:" + id)
 			rows, errflag3 := database.Query("select * from route" + id + "of" + username)
 			if errflag3 != nil {
 				println("线路点位获取失败")
@@ -1194,6 +1194,9 @@ func main() {
 			Questioninfo              string
 			Questionanswerdescription string
 			Score                     int
+			HasARornot                int
+			ModeofAR                  string
+			ARResourceUrl             string
 		}
 		errflag5 := database.QueryRow("select missionStatus,nextmissionid,missionnote,mediatype,mediaaddress,questionname,questiondescription,questioninfo,questionanswerdescription,score from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.Missionstatus, &data2send.Nextmissionid, &data2send.Missionnote, &data2send.Mediatype, &data2send.Mediaaddress, &data2send.Questionname, &data2send.Questiondescription, &data2send.Questioninfo, &data2send.Questionanswerdescription, &data2send.Score)
 		if errflag5 != nil {
@@ -1202,6 +1205,71 @@ func main() {
 		} else {
 			var optionslist = strings.Split(data2send.Questioninfo, ";")
 			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+data2send.Mediaaddress+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questioninfo+"~@"+strings.Join(optionslist, "~#")+"~@"+data2send.Questionanswerdescription+"~@"+strconv.Itoa(data2send.Score))
+		}
+	})
+	r.POST("/webgetactivitylist", func(c *gin.Context) {
+		//就用formdata发过来吧
+		un, errflag1 := c.GetPostForm("un") //剧本创建者账号
+		var activityname string
+		var testQRCodeurl string
+		var formalQRCodeurl string
+		var totalParticipateNum int
+		var avarageParticipateTime float64
+		var result string
+		var activitynum int
+		if !errflag1 {
+			println("获取表单数据(剧本创建者账号)失败,（网页获取活动列表）")
+		} else {
+			println(un)
+			errflag3 := database.QueryRow("select count(*) from activitylistof" + un).Scan(&activitynum)
+			if errflag3 != nil {
+				fmt.Println(errflag3)
+				println("数据库查询失败（获取活动数）（网页获取活动列表）")
+			}
+			rows, errflag2 := database.Query("select activityname,testQRCodeurl,formalQRCodeurl,totalParticipateNum,avarageParticipateTime from activitylistof" + un)
+			if errflag2 != nil {
+				fmt.Println(errflag2)
+				println("数据库查询(活动列表数据)失败，（网页获取活动列表）)")
+			} else {
+				for rows.Next() {
+					rows.Scan(&activityname, &testQRCodeurl, &formalQRCodeurl, &totalParticipateNum, &avarageParticipateTime)
+					if result == "" {
+						result = strconv.Itoa(activitynum) + ";" + activityname + ":" + testQRCodeurl + ":" + formalQRCodeurl + ":" + strconv.Itoa(totalParticipateNum) + ":" + strconv.FormatFloat(avarageParticipateTime, 'f', 2, 64)
+					} else {
+						result = result + ";" + activityname + ":" + testQRCodeurl + ":" + formalQRCodeurl + ":" + strconv.Itoa(totalParticipateNum) + ":" + strconv.FormatFloat(avarageParticipateTime, 'f', 2, 64)
+					}
+				}
+				c.String(http.StatusOK, result)
+			}
+		}
+	})
+	r.POST("/webgetquestionbank", func(c *gin.Context) {
+		//用formdata
+		un, errflag1 := c.GetPostForm("un")
+		var missionid int
+		var missionname string
+		var mediatype string //题目类型
+		var score int
+		var result string
+		if !errflag1 {
+			println("获取表单数据（剧本创建者用户名）失败,（网页获取题库列表信息）")
+		} else {
+			println(un)
+			rows, errflag2 := database.Query("select missionid,missionname,mediatype,score from questionbankof" + un)
+			if errflag2 != nil {
+				fmt.Println(errflag2)
+				println("数据库查询（题库列表数据）失败，（网页获取题库列表信息）")
+			} else {
+				for rows.Next() {
+					rows.Scan(&missionid, &missionname, &mediatype, &score)
+					if result == "" {
+						result = strconv.Itoa(missionid) + missionname + mediatype + strconv.Itoa(score)
+					} else {
+						result = result + ";" + strconv.Itoa(missionid) + missionname + mediatype + strconv.Itoa(score)
+					}
+				}
+				c.String(http.StatusOK, result)
+			}
 		}
 	})
 	r.Run(":8000")

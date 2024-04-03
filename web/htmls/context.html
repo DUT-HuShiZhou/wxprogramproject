@@ -101,7 +101,7 @@
                                 <i class="layui-icon layui-icon-about" title="小提示"></i>
                                 <div class="layui-col-md6 option-select">
                                     <select style="width: 100%;" class="question-selector">
-                                        <option value="">点击选择题库</option>
+                                        <option value="">题库选择</option>
                                         <option value="-1">点击使用模板</option>
                                     </select>
                                 </div>
@@ -179,47 +179,57 @@
                                             var opetions = frame_selector.querySelectorAll("option");
                                             if (opetions[frame_selector.selectedIndex].value > 0) {
                                                 var xhr = new XMLHttpRequest();
-                                                var url = "/getFrame";
                                                 var params = new FormData();
                                                 params.append("un", sessionStorage.getItem("un"));
-                                                xhr.open("POST", url, true);
+                                                params.append("ID", frame_selector.childNodes[frame_selector.selectedIndex - 1].value);
+                                                xhr.open("POST", "", true);
                                                 xhr.onreadystatechange = function () {
                                                     if (xhr.readyState === 4) {
-                                                        var datas = xhr.responseText;
-                                                        // ...
+                                                        if (xhr.responseText != ""){
+                                                            // 与题库发送数据一样
+                                                            var name = xhr.responseText.split(";")[0];
+                                                            var datas = xhr.responseText.split(";")[2];
 
-                                                        var page = document.createElement("div")
-                                                        page.style.display = "flex";
-                                                        page.style.flexDirection = "column";
-                                                        page.style.alignItems = "center";
-                                                        page.style.justifyContent = "center";
-                                                        page.style.height = "100%";
-                                                        page.style.width = "100%";
-                                                                            
-                                                        page.innerHTML = '<div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">' +
-                                                        '<div class="layui-card showitem-panel">' +
-                                                        '<div class="head-item">' +
-                                                        '<img src="../images/return_item.png" alt="Image" class="return-img img-item" />' +
-                                                        '<i style="color: black; font-size: 14px">时间显示测试</i>' +
-                                                        '</div>' +
-                                                        '<div class="main-item"></div>' +
-                                                        '<div class="bottom-item">' +
-                                                        '<img src="../images/help_item.png" alt="Image" class="help-img img-item" />' +
-                                                        '<img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />' +
-                                                        '</div></div></div>'
-        
-                                                        var main_div = page.querySelector("div.main-item");
-                                                        // ...
-        
-                                                        layer.open({
-                                                            type: 1,
-                                                            title: false,
-                                                            closeBtn: 0,
-                                                            area: ['420px', '480px'],
-                                                            maxmin: false,
-                                                            shadeClose: true,
-                                                            content: page.outerHTML
-                                                        });
+                                                            var page = document.createElement("div")
+                                                            page.style.display = "flex";
+                                                            page.style.flexDirection = "column";
+                                                            page.style.alignItems = "center";
+                                                            page.style.justifyContent = "center";
+                                                            page.style.height = "100%";
+                                                            page.style.width = "100%";
+                                                                                
+                                                            page.innerHTML = `
+                                                            <div style="font-size:25px !important">` + name + `</div>
+                                                            <div class="layui-card" style="width: 300px; height: 360px; display: flex; align-items: center; justify-content: center;">
+                                                            <div class="layui-card showitem-panel">
+                                                            <div class="head-item">
+                                                            <img src="../images/return_item.png" alt="Image" class="return-img img-item" />
+                                                            <i style="color: black; font-size: 14px">时间显示测试</i>
+                                                            </div>
+                                                            <div class="main-item"></div>
+                                                            <div class="bottom-item">
+                                                            <img src="../images/help_item.png" alt="Image" class="help-img img-item" />
+                                                            <img src="../images/bag_item.png" alt="Image" class="bag-img img-item" />
+                                                            </div></div></div>`
+            
+                                                            var main_div = page.querySelector("div.main-item");
+                                                            itemChoose(datas, main_div, null, true);
+
+            
+                                                            layer.open({
+                                                                type: 1,
+                                                                title: false,
+                                                                closeBtn: 0,
+                                                                area: ['520px', '480px'],
+                                                                maxmin: false,
+                                                                shadeClose: true,
+                                                                content: page.outerHTML
+                                                            });
+                                                        }
+                                                        else {
+                                                            var layer = layui.layer;
+                                                            layer.msg("数据加载失败，请重试或联系维护人员");
+                                                        }
                                                     }
                                                 }
 
@@ -227,6 +237,38 @@
                                             };
                                             return false
                                         });
+                                    }
+                                    a_s[1].onclick = function () {
+                                        var frame_selector = document.querySelector("select.question-selector");
+                                        var opetions = frame_selector.querySelectorAll("option");
+                                        if (opetions[frame_selector.selectedIndex].value > 0) {
+                                            layui.use(function () {
+                                                layui.form
+                                                var layer = layui.layer;
+                                                layer.confirm("此操作在没点击上传按钮前可逆，仅需重载任务即可，是否确认加载该题目", {
+                                                    title: "询问",
+                                                    icon: 3,
+                                                }, function (index) {
+                                                    var xhr = new XMLHttpRequest();
+                                                    var params = new FormData();
+                                                    params.append("un", sessionStorage.getItem("un"));
+                                                    params.append("ID", frame_selector.childNodes[frame_selector.selectedIndex - 1].value);
+                                                    xhr.open("POST", "", true);
+                                                    xhr.onreadystatechange = function () {
+                                                        if (xhr.readyState === 4) {
+                                                            // 与题库发送数据一样
+                                                            // var name = xhr.responseText.split(";")[0];
+                                                            // var datas = xhr.responseText.split(";")[2]; 测试需启用
+                                                            var name = "测试";
+                                                            var datas = "video|90x40|5x0|../video|~!:question|90x60|5x0|*|~!~@~@~@"; //测试需删
+                                                            itemChoose(datas);
+                                                        }
+                                                    
+                                                    }
+                                                });
+                                            });
+                                        }
+                                        return false;
                                     }
                                 </script>
                             </div>

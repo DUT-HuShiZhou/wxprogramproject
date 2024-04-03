@@ -1,12 +1,14 @@
-let place = document.querySelector("div.main-item");
-let infplace = document.querySelector("div.module-frame");
+
 let fnplace = document.querySelector("div.front-narration-frame");
 let bnplace = document.querySelector("div.back-narration-frame");
+let place0 = document.querySelector("div.main-item");
+let infplace0 = document.querySelector("div.module-frame");
 /**Array<type, size, position, url, <title, contain|<question, <options...>, right, grade>>>*/
 let items = [];
 let files_index = [];
 /**前旁白,后旁白,图片url*/
 let narration_contents = [[], [], []];
+let urlPrefix = "http://";
 
 /**组件数据清空函数 */
 function clearitems () {
@@ -18,7 +20,7 @@ function clearitems () {
  * @returns {String} 完整数据格式
  */
 function updateitems () {
-    var datas = items;
+    var datas =  JSON.parse(JSON.stringify(items));
     for (var i = 0; i < datas.length; i++) {
         if (Array.isArray(datas[i][4][1])) {
             datas[i][4][1][1] = datas[i][4][1][1].join("~#");
@@ -163,14 +165,16 @@ function hr_add() {
  * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
- * @param {Boolean} mode 是否启用模板模式
+ * @param {Object} [place=place0] 预览父组件
+ * @param {Object} [infplace=infplace0] 编辑栏父组件 
+ * @param {Boolean} [mode=false] 是否启用预览模式
  */
-function photo(datas, id, buttonID, mode) {
-    files_index.push({"image": datas[3]});
+function photo(datas, id, buttonID, place = place0, infplace = infplace0, mode = false) {
+    files_index.push({"image": urlPrefix + datas[3]});
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
-    items[id][3] = datas[3];
+    items[id][3] = urlPrefix + datas[3];
     items[id][4] = [];
     root_div.className = "photo-item";
     root_div.title = datas[4].split("~!")[0];
@@ -179,15 +183,16 @@ function photo(datas, id, buttonID, mode) {
     var photo_img = document.createElement("img");
     photo_img.className = "photo";
 
-    // photo_img.src = datas[3]; 
+    // photo_img.src = urlPrefix + datas[3]; 
     photo_img.src = "../images/test.jpg";
     photo_img.style.width = "100%";
     photo_img.style.height = "100%";
-    
 
     root_div.appendChild(photo_img);
 
     place.appendChild(root_div);
+
+    if (mode) return;
 
     // 编辑栏加载
     var root = document.createElement("div");
@@ -208,8 +213,6 @@ function photo(datas, id, buttonID, mode) {
     title.name = "图片名称";
     title.value = datas[4].split("~!")[0];
     title.placeholder = title.value;
-    // title.value = "图片测试"
-    // title.placeholder = "图片测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -237,8 +240,6 @@ function photo(datas, id, buttonID, mode) {
     textarea.id = id;
     textarea.value = datas[4].split("~!")[1];
     textarea.placeholder = datas[4].split("~!")[1];
-    // textarea.value = "空";
-    // textarea.placeholder = "空";
     items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
@@ -290,7 +291,7 @@ function photo(datas, id, buttonID, mode) {
         // 单图片上传
         var uploadInst = upload.render({
             elem: '#ID-upload-img-btn',
-            url: datas[3], // 实际使用时改成您自己的上传接口即可。
+            url: urlPrefix + datas[3], // 实际使用时改成您自己的上传接口即可。
             auto: false,
             bindAction: "#" + buttonID,
             accept: 'file', // 普通文件
@@ -327,9 +328,11 @@ function photo(datas, id, buttonID, mode) {
  * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
- * @param {Boolean} mode 是否启用模板模式
+ * @param {Object} [place=place0] 预览父组件
+ * @param {Object} [infplace=infplace0] 编辑栏父组件 
+ * @param {Boolean} [mode=false] 是否启用预览模式
  */
-function question(datas, id, buttonID, mode) {
+function question(datas, id, buttonID, place = place0, infplace = infplace0, mode = false) {
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
@@ -339,7 +342,6 @@ function question(datas, id, buttonID, mode) {
     items[id][4][1][1] = [];
     root_div.className = "question-item";
     root_div.title = datas[4].split("~!")[0];
-    // root_div.title = "问题测试";
 
     var question_div = document.createElement("div");
     question_div.classList = "question";
@@ -353,7 +355,6 @@ function question(datas, id, buttonID, mode) {
     var text_div = document.createElement("div");
     text_div.className = "text";
     text_div.textContent = datas[4].split("~!")[1].split("~@")[0];
-    // text_div.textContent = "问题测试";
     text_div.style.color = "black";
     text_div.style.width = "100%";
     text_div.style.minHeight = "25%";
@@ -361,7 +362,6 @@ function question(datas, id, buttonID, mode) {
     text_div.style.overflowWrap = "break-word";
     text_div.style.wordBreak = "normal";
     text_div.style.whiteSpace = "pre-wrap";
-    text_div.style.setProperty("font-size", "10px", "important");
     question_div.appendChild(text_div);
 
     var choose_div = document.createElement("div");
@@ -371,14 +371,14 @@ function question(datas, id, buttonID, mode) {
     choose_div.style.alignItems = "center";
     choose_div.style.width = "100%";
     choose_div.style.flexGrow = "1";
-    choose_div.style.height = "75%";
+    choose_div.style.maxHeight = "75%";
+    choose_div.style.minHeight = "25%";
 
     var options = [];
     var optiondata = datas[4].split("~!")[1].split("~@")[1].split("~#");
     for (var i = 0; i < optiondata.length; i++) {
         options.push(optiondata[i]);
     };
-    // options = ["测试1", "测试2", "测试3", "测试4"];
     for (var i = 0; i < options.length; i++) {
         var button = document.createElement("button");
         button.type = "button";
@@ -396,6 +396,8 @@ function question(datas, id, buttonID, mode) {
     root_div.appendChild(question_div);
 
     place.appendChild(root_div);
+
+    if (mode) return;
     
     // 编辑栏加载
     var root = document.createElement("div");
@@ -415,8 +417,6 @@ function question(datas, id, buttonID, mode) {
     title.name = "问题名称";
     title.value = datas[4].split("~!")[0];
     title.placeholder = datas[4].split("~!")[0];
-    // title.value = "问题测试";
-    // title.placeholder = "问题测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -443,8 +443,6 @@ function question(datas, id, buttonID, mode) {
     textarea.classList = "layui-textarea question-context";
     textarea.value = datas[4].split("~!")[1].split("~@")[0];
     textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
-    // textarea.value = "问题测试";
-    // textarea.placeholder = "问题测试";
     items[id][4][1][0] = textarea.value;
     textarea.addEventListener("keydown", function (event) {
         event = event || window.event;
@@ -462,6 +460,12 @@ function question(datas, id, buttonID, mode) {
     div.className = "Qbox";
     div.style.marginTop = "5px";
     div.style.width = "100%";
+    
+    var selectionBox = document.createElement("div");
+    selectionBox.className = "selectionBox";
+    selectionBox.marginTop = "5px";
+    selectionBox.width = "100%";
+    div.appendChild(selectionBox);
     for (var i = 0; i < options.length; i++) {
         (function(i){
             var option_div = document.createElement("div");
@@ -482,8 +486,6 @@ function question(datas, id, buttonID, mode) {
             input.name = "选项";
             input.value = datas[4].split("~!")[1].split("~@")[1].split("~#")[i];
             input.placeholder = input.value;
-            // input.value = options[i];
-            // input.placeholder = options[i];
             items[id][4][1][1][i] = input.value;
             input.addEventListener("keydown", function(event) {
                 event = event || window.event;
@@ -499,9 +501,89 @@ function question(datas, id, buttonID, mode) {
                     } 
             });
             option_div.appendChild(input);
-            div.appendChild(option_div);
+            selectionBox.appendChild(option_div);
         })(i);
     }
+
+    var selectionOption_div = document.createElement("div");
+    selectionOption_div.className = "selectionOption";
+    selectionOption_div.style.marginTop = "10px";
+    selectionOption_div.style.width = "100%";
+    selectionOption_div.style.display = "flex";
+    selectionOption_div.style.justifyContent = "space-between";
+    div.appendChild(selectionOption_div);
+
+    var addBtn  = document.createElement("button");
+    addBtn.classList = "layui-btn layui-btn-xs add-selection-btn";
+    addBtn.style.marginLeft = "10%";
+    addBtn.textContent = "添加选项";
+    addBtn.onclick = function () {
+        (function(i){
+            // 预览界面添加
+            var button = document.createElement("button");
+            button.type = "button";
+            button.classList = "layui-btn choice-button";
+            button.style.margin = "0.5%";
+            button.style.lineHeight = "20px";
+            button.style.fontSize = "8px";
+            button.value = i;
+            button.textContent = String.fromCharCode(65 + i) + "."
+            choose_div.appendChild(button);
+
+            // 编辑栏添加
+            var option_div = document.createElement("div");
+            option_div.className = "option-div";
+            option_div.style.display = "flex";
+            option_div.style.alignItems = "center";
+            option_div.style.width = "100%";
+            option_div.style.height = "25px";
+
+            var option_span = document.createElement("span");
+            option_span.className = "title-span";
+            option_span.textContent = String.fromCharCode(65 + i) + "选项";
+            option_div.appendChild(option_span);
+
+            var input = document.createElement("input");
+            input.className = "layui-input input Qname-input";
+            input.type = "text";
+            input.name = "选项";
+            items[id][4][1][1][i] = input.value;
+            input.addEventListener("keydown", function(event) {
+                event = event || window.event;
+		            if (event.key === "Enter") {
+                        options[i] = input.value;
+                        var choices = document.querySelectorAll("button.choice-button");
+                        choices[i].textContent = String.fromCharCode(65 + i) + "." + options[i];
+                        var option = document.querySelectorAll("div.optionbox option");
+                        option[i].textContent = options[i];
+                        fresh_form();
+
+                        items[id][4][1][1][i] = input.value;
+                    } 
+            });
+            option_div.appendChild(input);
+            selectionBox.appendChild(option_div);
+        })(selectionBox.childElementCount);
+    }
+
+    var delBtn =document.createElement("button");
+    delBtn.classList = "layui-btn layui-btn-xs del-selection-btn";
+    delBtn.style.marginRight = "10%";
+    delBtn.textContent = "删除选项";
+    delBtn.title = "删除最后一个选项";
+    delBtn.onclick = function () {
+        if (selectionBox.childElementCount === 1) {
+            msg_set("删除失败，选项数量不足");
+        }
+        else{
+            items[id][4][1][1].pop();
+            selectionBox.removeChild(selectionBox.childNodes[selectionBox.childElementCount - 1]);
+            choose_div.removeChild(choose_div.childNodes[choose_div.childElementCount - 1]);
+        }
+    }
+
+    selectionOption_div.appendChild(addBtn);
+    selectionOption_div.appendChild(delBtn);
 
     var right_div = document.createElement("div");
     right_div.className = "rightgrade";
@@ -559,7 +641,6 @@ function question(datas, id, buttonID, mode) {
     input.style.height = "25px";
     input.step = "1";
     input.value = datas[4].split("~!")[1].split("~@")[3];
-    // input.value = "0";
     items[id][4][1][3] = input.value;
     input.min = "0";
     input.max = "100";
@@ -592,19 +673,20 @@ function question(datas, id, buttonID, mode) {
  * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
- * @param {Boolean} mode 是否启用模板模式
+ * @param {Object} [place=place0] 预览父组件
+ * @param {Object} [infplace=infplace0] 编辑栏父组件 
+ * @param {Boolean} [mode=false] 是否启用预览模式
  */
-function video(datas, id, buttonID, mode) {
-    files_index.push({"video": datas[3]});
+function video(datas, id, buttonID, place = place0, infplace = infplace0, mode = false) {
+    files_index.push({"video": urlPrefix + datas[3]});
     sessionStorage.setItem("video", "0");
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
-    items[id][3] = datas[3];
+    items[id][3] = urlPrefix + datas[3];
     items[id][4] = [];
     root_div.className = "video-item";
-    // root_div.title = datas[4].split("~!")[0];
-    root_div.title = "视频测试";
+    root_div.title = datas[4].split("~!")[0];
 
     var video_div = document.createElement("video");
     video_div.className = "video";
@@ -631,7 +713,7 @@ function video(datas, id, buttonID, mode) {
 
     var video_source = document.createElement("source");
     video_source.className = "video-source";
-    // video_source.src = datas[3]; 
+    // video_source.src = urlPrefix + datas[3]; 
     // video_source.type = "video/" + datas[3].split(".")[datas[3].split(".").length - 1];
     video_source.src = "../video/video_test.mp4";
     video_source.type = "video/mp4";
@@ -642,6 +724,8 @@ function video(datas, id, buttonID, mode) {
 
     root_div.appendChild(video_div);
     place.appendChild(root_div);
+
+    if (mode) return;
 
     // 编辑栏加载
     var root = document.createElement("div");
@@ -659,10 +743,8 @@ function video(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "视频名称";
-    // title.value = datas[4].split("~!")[0];
-    // title.placeholder = title.value;
-    title.value = "视频测试"
-    title.placeholder = "视频测试";
+    title.value = datas[4].split("~!")[0];
+    title.placeholder = title.value;
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -687,10 +769,8 @@ function video(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea video-remark";
-    // textarea.value = datas[4].split("~!")[1];
-    // textarea.placeholder = datas[4].split("~!")[1];
-    textarea.value = "空";
-    textarea.placeholder = "空";
+    textarea.value = datas[4].split("~!")[1];
+    textarea.placeholder = datas[4].split("~!")[1];
     items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
@@ -731,7 +811,7 @@ function video(datas, id, buttonID, mode) {
         // 渲染
         upload.render({
             elem: '.video-accept', // 绑定多个元素
-            url: datas[3], // 此处配置你自己的上传接口即可
+            url: urlPrefix + datas[3], // 此处配置你自己的上传接口即可
             auto: false,
             bindAction: "#" + buttonID,
             accept: 'file', // 普通文件
@@ -795,21 +875,23 @@ function video(datas, id, buttonID, mode) {
  * @param {Array} datas datas数据结构: type, size(width x height,百分比单位,单位省略), position(left x top,百分比单位,单位省略), url, status(名称~!备注或题目内容(内容~@选项~#选项~#选项~#选项~@正确选项~@分值))
  * @param {Number} id 序号
  * @param {String} buttonID 绑定上传按钮的id
- * @param {Boolean} mode 是否启用模板模式
+ * @param {Object} [place=place0] 预览父组件
+ * @param {Object} [infplace=infplace0] 编辑栏父组件 
+ * @param {Boolean} [mode=false] 是否启用预览模式
  */
-function audio(datas, id, buttonID, mode) {
-    files_index.push({"audio": datas[3]});
+function audio(datas, id, buttonID, place = place0, infplace = infplace0, mode = false) {
+    files_index.push({"audio": urlPrefix + datas[3]});
     // 预览加载
     var root_div = SP_load(datas[1], datas[2], id);
     items[id][0] = datas[0];
-    items[id][3] = datas[3];
+    items[id][3] = urlPrefix + datas[3];
     items[id][4] = [];
     root_div.className = "audio-item";
-    root_div.title = "音频测试";
+    root_div.title = datas[4].split("~!")[0];
 
     var audio_div = document.createElement("audio");
     audio_div.className = "audio";
-    // audio_div.src = datas[3]; 
+    // audio_div.src = urlPrefix + datas[3]; 
     audio_div.src = "../audio/test.mp3";
     audio_div.setAttribute("controls", "true");
     audio_div.style.width = "100%";
@@ -817,6 +899,8 @@ function audio(datas, id, buttonID, mode) {
 
     root_div.appendChild(audio_div);
     place.appendChild(root_div);
+
+    if (mode) return;
 
     // 编辑栏加载
     var root = document.createElement("div");
@@ -834,10 +918,8 @@ function audio(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "音频名称";
-    // title.value = datas[4].split("~!")[0];
-    // title.placeholder = datas[4].split("~!")[0];
-    title.value = "音频测试"
-    title.placeholder = "音频测试";
+    title.value = datas[4].split("~!")[0];
+    title.placeholder = datas[4].split("~!")[0];
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -862,10 +944,8 @@ function audio(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea audio-remark";
-    // textarea.value = datas[4].split("~!")[1];
-    // textarea.placeholder = datas[4].split("~!")[1];
-    textarea.value = "空";
-    textarea.placeholder = "空";
+    textarea.value = datas[4].split("~!")[1];
+    textarea.placeholder = datas[4].split("~!")[1];
     items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
@@ -906,7 +986,7 @@ function audio(datas, id, buttonID, mode) {
         // 渲染
         upload.render({
             elem: '.audio-accept', // 绑定多个元素
-            url: datas[3], // 此处配置你自己的上传接口即可
+            url: urlPrefix + datas[3], // 此处配置你自己的上传接口即可
             auto: false, // 取消自动上传
             bindAction: "#" + buttonID, // 绑定上传按钮自动实现点击上传功能
             accept: 'file', // 普通文件
@@ -950,6 +1030,9 @@ function audio(datas, id, buttonID, mode) {
  * @param {Number|String} xD AR模型类型
  */
 function AR(xD) {
+    var place = document.querySelector("div.main-item");
+    var infplace = document.querySelector("div.module-frame");
+
     layui.use(function() {
         var files_ok = [false, false];
         var layer = layui.layer
@@ -1326,6 +1409,43 @@ function narration(sequence, buttonID, image, contents) {
 }
 
 /**
+ * 
+ * @param {String} datas 格式详见上方datas
+ * @param {Object} path0 预览父组件
+ * @param {Object} path1 编辑栏父组件
+ * @param {boolean} [module_mod=false] 是否启动预览模式 
+ */
+function itemChoose (datas, path0, path1, module_mod = false) {
+    datas = datas.split(":");
+    var data = [];
+    datas.forEach(d => {
+        data.push(d.split("|"));
+    })
+    for(var i = 0; i < data.length; i++) {
+        (function(i) {
+            switch (data[i][0]) {
+                case "photo":
+                    photo(data[i], i, "update-btn", path0, path1, module_mod);
+                    break;
+                case "question":
+                    question(data[i], i, "update-btn", path0, path1, module_mod);
+                    break;
+                case "video":
+                    video(data[i], i, "update-btn", path0, path1, module_mod);
+                    break;
+                case "audio":
+                    audio(data[i], i, "update-btn", path0, path1, module_mod);
+                    break;
+                default:
+                    break;
+            }
+        })(i);
+    }
+
+    key_bind();
+}
+
+/**
  * 窗口创建函数
  * @param {String} name 窗口名称
  * @param {[String, String]} area 窗口区域，默认为["300px", "180px"]
@@ -1355,6 +1475,17 @@ function window_set (name, content, area = ["300px", "180px"]) {
             anim: Math.floor(Math.random() * 6),
             content: contain
         });
+    })
+}
+
+/**
+ * 信息创建函数
+ * @param {String} context 
+ */
+function msg_set (context) {
+    layui.use(function () {
+        var layer = layui.layer;
+        layer.msg(context);
     })
 }
 

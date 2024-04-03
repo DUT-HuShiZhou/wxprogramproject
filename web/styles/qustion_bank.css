@@ -1,16 +1,8 @@
- /* 样式同上 */
- #addQuestionModal {
+.edit-root {
+    overflow-y: scroll;
+}
+.edit-root::-webkit-scrollbar{
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    z-index: 1000;
-    width: 720px;
-    height: 533px;
 }
 
 .layui-card::-webkit-scrollbar{
@@ -70,4 +62,33 @@
     object-fit: cover;
     height: 100%;
     width: auto;
+}
+
+
+
+
+.QName-td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 52%;
+}
+
+tr {
+    max-height: 60px !important;
+    min-height: 60px !important;
+}
+
+table,
+thead,
+tbody,
+tr {
+    table-layout: fixed;
+}
+
+.tbody-div {
+    overflow-y: scroll;
+}
+.tbody-div::-webkit-scrollbar {
+    display: none;
 }

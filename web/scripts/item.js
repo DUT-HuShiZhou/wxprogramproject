@@ -123,24 +123,25 @@ function narration_load() {
     params.append("DramaID",sessionStorage.getItem("DramaID"));
     params.append("TaskID", sessionStorage.getItem("TaskID"));
 
-    xhr.open("OPST", "", true);
+    xhr.open("POST", "/webGetOverlay", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
-            //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...:后旁白图片url:后旁白内容1|后旁白内容2|...\
+            //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...;后旁白图片url:后旁白内容1|后旁白内容2|...\
             var data = xhr.responseText;
 
             var images = [];
-            // images.push(data.split(";")[0].split(":")[0]);
-            // images.push(data.split(";")[1].split(":")[0]);
+            images.push(data.split(";")[0].split(":")[0]);
+            images.push(data.split(";")[1].split(":")[0]);
             var contents = [];
-            // contents.push(data.split(";")[0].split(":")[1].split("|"));
-            // contents.push(data.split(";")[1].split(":")[1].split("|"));
+            contents.push(data.split(";")[0].split(":")[1].split("|"));
+            contents.push(data.split(";")[1].split(":")[1].split("|"));
 
-            // narration(0, "bn-update-btn0", images[0], contents[0]);
-            // narration(1, "bn-update-btn1", images[1], contents[1]);
+            narration(0, "bn-update-btn0", images[0], contents[0]);
+            narration(1, "bn-update-btn1", images[1], contents[1]);
+            alert(6);
 
-            narration(0, "bn-update-btn0", "", ["hdukhawuikdbhawuioawhduhicbasdjk", "dawdaa"]);
-            narration(1, "bn-update-btn1", "", ["sdaw", "awdaw", "daw"]);
+            //narration(0, "bn-update-btn0", "", ["hdukhawuikdbhawuioawhduhicbasdjk", "dawdaa"]);
+            //narration(1, "bn-update-btn1", "", ["sdaw", "awdaw", "daw"]);
         };
     };
 
@@ -172,8 +173,8 @@ function photo(datas, id, buttonID, mode) {
     items[id][3] = datas[3];
     items[id][4] = [];
     root_div.className = "photo-item";
-    // root_div.title = datas[4].split("~!")[0];
-    root_div.title = "测试名称";
+    root_div.title = datas[4].split("~!")[0];
+    // root_div.title = "测试名称";
 
     var photo_img = document.createElement("img");
     photo_img.className = "photo";
@@ -205,10 +206,10 @@ function photo(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "图片名称";
-    // title.value = datas[4].split("~!")[0];
-    // title.placeholder = title.value;
-    title.value = "图片测试"
-    title.placeholder = "图片测试";
+    title.value = datas[4].split("~!")[0];
+    title.placeholder = title.value;
+    // title.value = "图片测试"
+    // title.placeholder = "图片测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -234,10 +235,10 @@ function photo(datas, id, buttonID, mode) {
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea photo-remark";
     textarea.id = id;
-    // textarea.value = datas[4].split("~!")[1];
-    // textarea.placeholder = datas[4].split("~!")[1];
-    textarea.value = "空";
-    textarea.placeholder = "空";
+    textarea.value = datas[4].split("~!")[1];
+    textarea.placeholder = datas[4].split("~!")[1];
+    // textarea.value = "空";
+    // textarea.placeholder = "空";
     items[id][4][1] = textarea.value;
     remark_div.appendChild(textarea);
     root.appendChild(remark_div);
@@ -337,8 +338,8 @@ function question(datas, id, buttonID, mode) {
     items[id][4][1] = [];
     items[id][4][1][1] = [];
     root_div.className = "question-item";
-    // root_div.title = datas[4].split("~!")[0];
-    root_div.title = "问题测试";
+    root_div.title = datas[4].split("~!")[0];
+    // root_div.title = "问题测试";
 
     var question_div = document.createElement("div");
     question_div.classList = "question";
@@ -351,8 +352,8 @@ function question(datas, id, buttonID, mode) {
 
     var text_div = document.createElement("div");
     text_div.className = "text";
-    // text_div.textContent = datas[4].split("~!")[1].split("~@")[0];
-    text_div.textContent = "问题测试";
+    text_div.textContent = datas[4].split("~!")[1].split("~@")[0];
+    // text_div.textContent = "问题测试";
     text_div.style.color = "black";
     text_div.style.width = "100%";
     text_div.style.minHeight = "25%";
@@ -373,11 +374,11 @@ function question(datas, id, buttonID, mode) {
     choose_div.style.height = "75%";
 
     var options = [];
-    // var optiondata = datas[4].split("~!")[1].split("~@")[0].split("~#");
-    // for (var i = 0; i < optiondata.length; i++) {
-    //     options.push(optiondata[i]);
-    // };
-    options = ["测试1", "测试2", "测试3", "测试4"];
+    var optiondata = datas[4].split("~!")[1].split("~@")[1].split("~#");
+    for (var i = 0; i < optiondata.length; i++) {
+        options.push(optiondata[i]);
+    };
+    // options = ["测试1", "测试2", "测试3", "测试4"];
     for (var i = 0; i < options.length; i++) {
         var button = document.createElement("button");
         button.type = "button";
@@ -412,10 +413,10 @@ function question(datas, id, buttonID, mode) {
     title.classList = "layui-input input";
     title.type = "text";
     title.name = "问题名称";
-    // title.value = datas[4].split("~!")[0];
-    // title.placeholder = datas[4].split("~!")[0];
-    title.value = "问题测试";
-    title.placeholder = "问题测试";
+    title.value = datas[4].split("~!")[0];
+    title.placeholder = datas[4].split("~!")[0];
+    // title.value = "问题测试";
+    // title.placeholder = "问题测试";
     items[id][4][0] = title.value;
     title.style.border = "none";
     title.addEventListener("keydown", function (event) {
@@ -440,10 +441,10 @@ function question(datas, id, buttonID, mode) {
 
     var textarea = document.createElement("textarea");
     textarea.classList = "layui-textarea question-context";
-    // textarea.value = datas[4].split("~!")[1].split("~@")[0];
-    // textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
-    textarea.value = "问题测试";
-    textarea.placeholder = "问题测试";
+    textarea.value = datas[4].split("~!")[1].split("~@")[0];
+    textarea.placeholder = datas[4].split("~!")[1].split("~@")[0];
+    // textarea.value = "问题测试";
+    // textarea.placeholder = "问题测试";
     items[id][4][1][0] = textarea.value;
     textarea.addEventListener("keydown", function (event) {
         event = event || window.event;
@@ -479,10 +480,10 @@ function question(datas, id, buttonID, mode) {
             input.className = "layui-input input Qname-input";
             input.type = "text";
             input.name = "选项";
-            // input.value = datas[4].split("~!")[1].split("~@")[1].split("~#")[i];
-            // input.placeholder = input.value;
-            input.value = options[i];
-            input.placeholder = options[i];
+            input.value = datas[4].split("~!")[1].split("~@")[1].split("~#")[i];
+            input.placeholder = input.value;
+            // input.value = options[i];
+            // input.placeholder = options[i];
             items[id][4][1][1][i] = input.value;
             input.addEventListener("keydown", function(event) {
                 event = event || window.event;
@@ -531,7 +532,7 @@ function question(datas, id, buttonID, mode) {
             select.appendChild(option);
         })(i);
     };
-    // select.selectedIndex = datas[4].split("~!")[1].split("~@")[2];
+    select.selectedIndex = datas[4].split("~!")[1].split("~@")[2];
     items[id][4][1][2] = select.selectedIndex;
     select.addEventListener("change", function (event) {
         items[id][4][1][2] = select.selectedIndex;
@@ -557,8 +558,8 @@ function question(datas, id, buttonID, mode) {
     input.setAttribute("lay-affix", "number");
     input.style.height = "25px";
     input.step = "1";
-    // input.value = datas[4].split("~!")[1].split("~@")[3];
-    input.value = "0";
+    input.value = datas[4].split("~!")[1].split("~@")[3];
+    // input.value = "0";
     items[id][4][1][3] = input.value;
     input.min = "0";
     input.max = "100";
@@ -1094,6 +1095,7 @@ function AR(xD) {
  */
 function narration(sequence, buttonID, image, contents) {
     // 预览效果添加
+    alert(7);
 
     // 编辑栏加载
     var root = document.createElement("div");

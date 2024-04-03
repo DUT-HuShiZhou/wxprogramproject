@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/xid"
 )
 
 func main() {
@@ -1158,7 +1159,7 @@ func main() {
 			c.String(http.StatusOK, result)
 		}
 	})
-	r.POST("/webGetTasks", func(c *gin.Context) {
+	r.POST("/webGetTask", func(c *gin.Context) {
 		un, errflag1 := c.GetPostForm("un")
 		if !errflag1 {
 			println("获取表单数据（用户名）失败，（网页获取任务具体信息）")
@@ -1189,6 +1190,7 @@ func main() {
 			Missionnote               string
 			Mediatype                 string
 			Mediaaddress              string
+			Mediadescription          string
 			Questionname              string
 			Questiondescription       string
 			Questioninfo              string
@@ -1198,14 +1200,101 @@ func main() {
 			ModeofAR                  string
 			ARResourceUrl             string
 		}
-		errflag5 := database.QueryRow("select missionStatus,nextmissionid,missionnote,mediatype,mediaaddress,questionname,questiondescription,questioninfo,questionanswerdescription,score from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.Missionstatus, &data2send.Nextmissionid, &data2send.Missionnote, &data2send.Mediatype, &data2send.Mediaaddress, &data2send.Questionname, &data2send.Questiondescription, &data2send.Questioninfo, &data2send.Questionanswerdescription, &data2send.Score)
+		errflag5 := database.QueryRow("select missionStatus,nextmissionid,missionnote,mediatype,mediaaddress,mediadescription,questionname,questiondescription,questioninfo,questionanswerdescription,score from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.Missionstatus, &data2send.Nextmissionid, &data2send.Missionnote, &data2send.Mediatype, &data2send.Mediaaddress, &data2send.Mediadescription, &data2send.Questionname, &data2send.Questiondescription, &data2send.Questioninfo, &data2send.Questionanswerdescription, &data2send.Score)
 		if errflag5 != nil {
 			fmt.Println(errflag5)
 			println("数据库查询失败（网页获取任务具体信息）")
 		} else {
 			var optionslist = strings.Split(data2send.Questioninfo, ";")
-			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+data2send.Mediaaddress+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questioninfo+"~@"+strings.Join(optionslist, "~#")+"~@"+data2send.Questionanswerdescription+"~@"+strconv.Itoa(data2send.Score))
+			var currectanswerindex int
+			for index, item := range optionslist {
+				if item == data2send.Questionanswerdescription {
+					currectanswerindex = index
+				}
+			}
+			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+strings.Replace(data2send.Mediaaddress, "http://129.204.130.33:8080", "", -1)+"|"+strings.Split(data2send.Mediadescription, ";")[0]+"~!"+strings.Split(data2send.Mediadescription, ";")[1]+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questiondescription+"~@"+strings.Join(optionslist, "~#")+"~@"+strconv.Itoa(currectanswerindex)+"~@"+strconv.Itoa(data2send.Score))
 		}
+	})
+	r.POST("/webUpdateTask", func(c *gin.Context) {
+		//更新任务数据
+		un, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（剧本创建者）失败（更新已有剧本）")
+		}
+		dramascriptid, errflag2 := c.GetPostForm("DramaID")
+		if !errflag2 {
+			println("获取表单数据（剧本id）失败（更新已有剧本）")
+		}
+		missionid, errflag3 := c.GetPostForm("TaskID")
+		if !errflag3 {
+			println("获取表单数据（任务id）失败（更新已有剧本）")
+		}
+		questiontype, errflag4 := c.GetPostForm("questiontype")
+		if !errflag4 {
+			println("获取表单数据（问题类型）失败（更新已有剧本）")
+		}
+		taskdata, errflag5 := c.GetPostForm("taskDatas")
+		if !errflag5 {
+			println("获取表单数据（任务数据）失败（更新已有剧本）")
+		}
+		if questiontype == "selection" {
+			var data2send struct {
+				Missionstatus       int
+				Nextmissionid       int
+				Missionnote         string
+				Mediatype           string
+				Mediaaddress        string
+				Medianame           string
+				Medianote           string
+				Questionname        string
+				Questiondescription string
+				Questionoptionlist  string
+				Currectanswerindex  int
+				Score               int
+			}
+			//拆解taskdata获得各变量
+			var errflag6 error
+			var errflag7 error
+			var errflag8 error
+			data2send.Missionstatus, errflag6 = strconv.Atoi(strings.Split(taskdata, ";")[0])
+			if errflag6 != nil {
+				fmt.Println(errflag6)
+				println("拆解taskdata失败(获取任务状态)")
+			}
+			data2send.Nextmissionid, errflag7 = strconv.Atoi(strings.Split(taskdata, ";")[1])
+			if errflag6 != nil {
+				fmt.Println(errflag6)
+				println("拆解taskdata失败(获取下一个任务id)")
+			}
+			data2send.Missionnote = strings.Split(taskdata, ";")[2]
+			componentdata := strings.Split(taskdata, ";")[3]
+			mediadata := strings.Split(componentdata, ":")[0]
+			questiondata := strings.Split(componentdata, ":")[1]
+			data2send.Mediatype = strings.Split(mediadata, "|")[0]
+			data2send.Mediaaddress = strings.Split(mediadata, "|")[3]
+			data2send.Medianame = strings.Split(strings.Split(mediadata, "|")[4], "~!")[0]
+			data2send.Medianote = strings.Split(strings.Split(mediadata, "|")[4], "~!")[1]
+			data2send.Questionname = strings.Split(strings.Split(questiondata, "|")[4], "~!")[0]
+			data2send.Questiondescription = strings.Split(strings.Split(strings.Split(questiondata, "|")[4], "~!")[1], "~@")[0]
+			optionlist := strings.Split(strings.Split(strings.Split(strings.Split(questiondata, "|")[4], "~!")[1], "~@")[1], "~#")
+			data2send.Questionoptionlist = strings.Join(optionlist, ";")
+			data2send.Currectanswerindex, errflag7 = strconv.Atoi(strings.Split(strings.Split(strings.Split(questiondata, "|")[4], "~!")[1], "~@")[2])
+			if errflag7 != nil {
+				fmt.Println(errflag7)
+				println("拆解taskdata失败(获取正确答案id)")
+			}
+			data2send.Score, errflag8 = strconv.Atoi(strings.Split(strings.Split(strings.Split(questiondata, "|")[4], "~!")[1], "~@")[3])
+			if errflag8 != nil {
+				fmt.Println(errflag8)
+				println("拆解taskdata失败(获取任务总分值)")
+			}
+			_, errflag9 := database.Exec("update dramascript"+dramascriptid+"of"+un+" set missionStatus=?,nextmissionid=?,missionnote=?,mediatype=?,mediaaddress=?,mediadescription=?,questionname=?,questiontype=?,questiondescription=?,questioninfo=?,questionanswerdescription=?,score=? where missionid=?", data2send.Missionstatus, data2send.Nextmissionid, data2send.Missionnote, data2send.Mediatype, data2send.Mediaaddress, data2send.Medianame+";"+data2send.Medianote, data2send.Questionname, questiontype, data2send.Questiondescription, data2send.Questionoptionlist, optionlist[data2send.Currectanswerindex], data2send.Score, missionid)
+			if errflag9 != nil {
+				fmt.Println(errflag9)
+				println("数据库操作失败（更新已有任务信息）（更新已有剧本)")
+			}
+		}
+
 	})
 	r.POST("/webgetactivitylist", func(c *gin.Context) {
 		//就用formdata发过来吧
@@ -1271,6 +1360,72 @@ func main() {
 				c.String(http.StatusOK, result)
 			}
 		}
+	})
+	r.POST("/webGetOverlay", func(c *gin.Context) {
+		//数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...:后旁白图片url:后旁白内容1|后旁白内容2|... 获取旁白内容是前后一起的
+		un, errflag1 := c.GetPostForm("un") //剧本创建者用户名
+		if !errflag1 {
+			println("表单数据读取错误（用户名）（获取任务的前后旁白）")
+		}
+		dramascriptid, errflag2 := c.GetPostForm("DramaID")
+		if !errflag2 {
+			println("表单数据读取错误（剧本id）(获取任务的前后旁白)")
+		}
+		missionid, errflag3 := c.GetPostForm("TaskID")
+		if !errflag3 {
+			println("表单数据读取错误（任务id）(获取任务的前后旁白)")
+		}
+		var hasbeforeoverlay int
+		var hasafteroverlay int
+		var result string
+		var data2send struct {
+			beforeoverlayimageurl string
+			beforeoverlayinfo     string
+			afteroverlayimageurl  string
+			afteroverlayinfo      string
+		}
+		errflag4 := database.QueryRow("select hasbeforeoverlay,hasafteroverlay from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&hasbeforeoverlay, &hasafteroverlay)
+		if errflag4 != nil {
+			fmt.Println(errflag4)
+			println("数据库读取失败（是否有前/后旁白）（获取任务的前后旁白）")
+		}
+		if hasbeforeoverlay == 0 { //没有前旁白
+			result = result + ";"
+			if hasafteroverlay == 0 { //如果同时满足没有后旁白
+				c.String(http.StatusOK, result)
+			} else {
+				errflag5 := database.QueryRow("select afteroverlayimageurl,afteroverlayinfo from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.afteroverlayimageurl, &data2send.afteroverlayinfo)
+				if errflag5 != nil {
+					fmt.Println(errflag5)
+					println("数据库读取失败（后旁白图片和内容）（获取任务的前后旁白）")
+				}
+				result = result + strings.ReplaceAll(data2send.afteroverlayimageurl, "http://129.204.130.33:8080", "") + ":" + strings.Replace(data2send.afteroverlayinfo, ";", "|", -1)
+				c.String(http.StatusOK, result)
+			}
+		} else { //有前旁白
+			if hasafteroverlay == 0 { //没后旁白
+				errflag6 := database.QueryRow("select beforeoverlayimageurl,beforeoverlayinfo from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.beforeoverlayimageurl, &data2send.beforeoverlayinfo)
+				if errflag6 != nil {
+					fmt.Println(errflag6)
+					println("数据库读取失败（前旁白图片和内容）（获取任务的前后旁白）")
+				}
+				result = strings.ReplaceAll(data2send.beforeoverlayimageurl, "http://129.204.130.33:8080", "") + ":" + strings.Replace(data2send.beforeoverlayinfo, ";", "|", -1) + ";"
+				c.String(http.StatusOK, result)
+			} else { //有后旁白
+				errflag7 := database.QueryRow("select beforeoverlayimageurl,beforeoverlayinfo,afteroverlayimageurl,afteroverlayinfo from dramascript"+dramascriptid+"of"+un+" where missionid=?", missionid).Scan(&data2send.beforeoverlayimageurl, &data2send.beforeoverlayinfo, &data2send.afteroverlayimageurl, &data2send.afteroverlayinfo)
+				if errflag7 != nil {
+					fmt.Println(errflag7)
+					println("数据库读取失败（前、后旁白图片和内容）（获取任务的前后旁白）")
+				}
+				result = strings.ReplaceAll(data2send.beforeoverlayimageurl, "http://129.204.130.33:8080", "") + ":" + strings.Replace(data2send.beforeoverlayinfo, ";", "|", -1) + ";" + strings.ReplaceAll(data2send.afteroverlayimageurl, "http://129.204.130.33:8080", "") + ":" + strings.Replace(data2send.afteroverlayinfo, ";", "|", -1)
+				c.String(http.StatusOK, result)
+			}
+		}
+	})
+	r.POST("/genNewID", func(c *gin.Context) {
+		//这个函数需要在剧本中新建一条记录并且生成id发送给前端
+		newID := xid.New()
+		println("生成的id：" + newID.String())
 	})
 	r.Run(":8000")
 }

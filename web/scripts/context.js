@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
+            //point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -299,12 +299,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         xhr.send(params);
 
-        if (elemnet.getAttribute("ID") === "测试"){
+        /*if (elemnet.getAttribute("ID") === "测试"){
             task_panel_load([["视频模板", "1", "视频", "video|selection"], ["图片模板", "0", "图片", "photo|selection"], ["音频模板", "1", "音频", "audio|selection"]], elemnet.getAttribute("ID"));
         }
         else {
             task_panel_load([],);
         };
+        */
     };
 
     /**
@@ -350,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append("ID", tasks[i][2]);//应该是题目的id
 
                     var xhr = new XMLHttpRequest();
-                    var url = "/getTask";//这里需要实现选择功能
+                    var url = "/webGetTask";//这里需要实现选择功能
 
                     xhr.open("POST", url, true);
                     xhr.onreadystatechange = function () {
@@ -364,30 +365,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             var source = data.split(";");
 
-                            // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                            task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
 
                             reload_task();
                         };
                     }
 
                     xhr.send(params);
-
-                    var items = ""
-                    switch (i) {
-                        case 0: 
-                            items = "video|90x40|5x0|../video:question|90x60|5x0|*";
-                            break;
-                        case 1:
-                            items = "photo|90x40|5x0|../photo:question|90x60|5x0|*";
-                            break;
-                        case 2:
-                            items = "audio|90x40|5x0|../audio:question|90x60|5x0|*";
-                            break;
-                        default:
-                            items = "";
-                            break;
-                    };
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:1"]);
                 };
                 task_div.appendChild(button);
 
@@ -438,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 var source = data.split(";");
 
-                                // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                                task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
                                 
                                 reload_task();
                             };
@@ -446,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         xhr.send(params);
 
-                        var items = ""
+                        /*var items = ""
                         switch (i) {
                             case 0: 
                                 items = "video|90x40|5x0|../video:question|90x60|5x0|*";
@@ -461,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 items = "";
                                 break;
                         };
-                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);
+                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);*/
                     };
                     task_div.appendChild(button);
 
@@ -616,13 +600,13 @@ document.addEventListener('DOMContentLoaded', function() {
         name_input.placeholder = name;
 
         if (objs.length != 0) {
-            state_change(type, objs[1]);
+            state_change(type, objs[0]);
 
             var remark = document.querySelector("textarea.task-remark");
-            remark.value = objs[2];
-            remark.placeholder = objs[2];
+            remark.value = objs[1];
+            remark.placeholder = objs[1];
 
-            var items = objs[3].split(":");
+            var items = objs[2].split(":");
             var datas = [];
             items.forEach(item => {
                 datas.push(item.split("|"));
@@ -631,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (objs[4].split(":").length > 1) {
                 // 1|AR类型|获取数据URL
-                var ar_set = objs[4].split(":")
+                var ar_set = objs[3].split(":")
                 layui.use("form", function () {
                     var form = layui.form;
                     form.val('operate-input-form', {
@@ -806,7 +790,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem("newtask") != "false"){
             // 二次确定
             var xhr = new XMLHttpRequest();
-            var url = "/getTaskID";
+            var url = "/genNewID";
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
             params.append("LineID", sessionStorage.getItem("LineID"));
@@ -841,7 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("content", fn_updata(1)[0]);
         params.append("url", fn_updata(1)[1]);
         
-        xhr.open("POST", "", true);
+        xhr.open("POST", "/pushdatas", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {
@@ -867,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon: 3,
             }, function (index) {
                 var xhr = new XMLHttpRequest();
-                var url = "/pushDatas";
+                var url = "/webUpdateTask";
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
                 params.append("LineID", sessionStorage.getItem("LineID"));
@@ -892,7 +876,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var indexs = get_fileresponse();
                 for (var key in indexs) {
-                    params.appendChild(key, indexs[key]);
+                    params.append(key, indexs[key]);
                 };
 
                 xhr.open("POST", url, true);

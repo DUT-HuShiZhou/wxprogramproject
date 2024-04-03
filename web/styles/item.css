@@ -34,3 +34,12 @@
     height: 75px;
     resize: none;
 }
+
+.choice-button {
+    width: 90%;
+    height: 25%;
+    min-height: 25%;
+    text-align: left;
+    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
+    font-size: small !important;
+}

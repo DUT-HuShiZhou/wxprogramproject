@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         open_context();
                                     }
                                     else {
-                                        window_set("错误", ["请选择正确的剧本", "或新建剧本以进行下一步操作"]);
+                                        msg_set("请选择正确的剧本或新建剧本以进行下一步操作");
                                     }
                                 };
 
@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // num;数据...   数据单元为  线路名称:LineID
             var data = xhr.responseText;
             // ifm_fram.src = "drama-line.html?choose=" + data;
-            // ifm_fram.style.backgroundColor = "white";
         }
     };
     

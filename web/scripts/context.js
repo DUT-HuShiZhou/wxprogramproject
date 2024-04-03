@@ -8,6 +8,44 @@ document.addEventListener('DOMContentLoaded', function() {
     let update_btn = document.querySelector("button.update-btn"); 
     let bn_update_btn = document.querySelector("button.bn-update-btn");
 
+    question_datas = ["1:你好:666","2:再见:777"];
+    var question_selector = document.querySelector("select.question-selector");
+    for(var i = 0; i < question_datas.length; i++) {
+        (function (i) {
+            var option = document.createElement("option");
+            option.value = question_datas[i].split(":")[0];
+            option.textContent = question_datas[i].split(":")[1];
+            option.title = question_datas[i].split(":")[2];
+            question_selector.appendChild(option);
+        })(i)    
+    };
+
+    // 获取题库数据
+    var xhr = new XMLHttpRequest();
+    var params = new FormData();
+    params.append("un", sessionStorage.getItem("un"));
+    xhr.open("POST", "", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4){
+            if (xhr.responseText != "" && xhr.responseText != "*") {
+                // 数据单元  id:name:marker
+                var question_datas = xhr.split(";");
+                var question_selector = document.querySelector("select.question-selector");
+                for(var i = 0; i < question_datas.length; i++) {
+                    (function (i) {
+                        var option = document.createElement("option");
+                        option.value = question_datas[i].split(":")[0];
+                        option.textContent = question_datas[i].split(":")[1];
+                        option.title = question_datas[i].split(":")[2];
+                        question_selector.appendChild(option);
+                    })(i)    
+                };
+            }
+            else if (xhr.responseText === "*") {} 
+            else msg_set("发生未知错误，无法获取题库数据，请重试或联系维护人员");
+        }
+    }
+
     // 屏蔽全局右键
     document.oncontextmenu = (e) => {
         e.preventDefault()
@@ -22,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
+            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]]; // 测试需删
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -217,8 +255,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                 _div_.style.backgroundColor = item[5];
                                 _div_.style.color = item[6];
 
-                                Items.push(item[7].trim() + "|" + item[0] + "x" + item[1] + "|" + item[2] + "x" + item[3] + "|" + "*");
-
+                                if (item[7].trim() != "selection" && item[7].trim() != "question") {
+                                    Items.push(item[7].trim() + "|" + item[0] + "x" + item[1] + "|" + item[2] + "x" + item[3] + "|" + "*|~!");
+                                }
+                                else {
+                                    Items.push(item[7].trim() + "|" + item[0] + "x" + item[1] + "|" + item[2] + "x" + item[3] + "|" + "*|~!~@~@~@");
+                                }
                                 main_div.appendChild(_div_);
                             }
                             
@@ -254,8 +296,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             var type = form.val('operate-input-form').type;
 
                             init_panel();
+                            alert(6);
 
                             task_load(type, 0, taskname, [nexttask, taskmarket, btn.getAttribute("item"), ""]);
+                            alert(6);
 
                             sessionStorage.setItem("module-type", btn.getAttribute("module-type"));
                             layer.close(index);
@@ -350,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.append("ID", tasks[i][2]);//应该是题目的id
 
                     var xhr = new XMLHttpRequest();
-                    var url = "/getTask";//这里需要实现选择功能
+                    var url = "/webGetTask";//这里需要实现选择功能
 
                     xhr.open("POST", url, true);
                     xhr.onreadystatechange = function () {
@@ -359,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             sessionStorage.setItem("newtask", "false");
                             sessionStorage.setItem("module-type", tasks[i][3]);
 
-                            // 任务状态(status应该是);下一个点位【这个需要删除】;下一个任务id;任务备注;题库内容;ar功能 //这里需要把下一个点位这个机制删除掉 @李立
+                            // 任务状态(status应该是);下一个任务id;任务备注;题库内容;ar功能
                             var data = xhr.responseText;
 
                             var source = data.split(";");
@@ -375,19 +419,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     var items = ""
                     switch (i) {
                         case 0: 
-                            items = "video|90x40|5x0|../video:question|90x60|5x0|*";
+                            items = "video|90x40|5x0|../video|~!:question|90x60|5x0|*|~!~@~@~@";
                             break;
                         case 1:
-                            items = "photo|90x40|5x0|../photo:question|90x60|5x0|*";
+                            items = "photo|90x40|5x0|../photo|~!:question|90x60|5x0|*|~!~@~@~@";
                             break;
                         case 2:
-                            items = "audio|90x40|5x0|../audio:question|90x60|5x0|*";
+                            items = "audio|90x40|5x0|../audio|~!:question|90x60|5x0|*|~!~@~@~@";
                             break;
                         default:
                             items = "";
                             break;
                     };
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:1"]);
+                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["", tasks[i][2], items, "1:1"]);
                 };
                 task_div.appendChild(button);
 
@@ -497,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             params.append("un", sessionStorage.getItem("un"));
                             params.append("PointID", pointID);
                             params.append("DramaID",sessionStorage.getItem("DramaID"));
-                            params.append("ID", tasks[i][1]);
+                            params.append("TaskID", sessionStorage.getItem("TaskID"));
 
                             var xhr = new XMLHttpRequest();
                             var url = "/getTask";//这里要实现删除功能
@@ -560,7 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     init_panel();
 
                     task_load(1, 0, "新建任务", []);
-                    reload_task
+                    reload_task();
                 };
                 task_div.appendChild(button);
 
@@ -616,13 +660,13 @@ document.addEventListener('DOMContentLoaded', function() {
         name_input.placeholder = name;
 
         if (objs.length != 0) {
-            state_change(type, objs[1]);
+            state_change(type, objs[0]);
 
             var remark = document.querySelector("textarea.task-remark");
-            remark.value = objs[2];
-            remark.placeholder = objs[2];
+            remark.value = objs[1];
+            remark.placeholder = objs[1];
 
-            var items = objs[3].split(":");
+            var items = objs[2].split(":");
             var datas = [];
             items.forEach(item => {
                 datas.push(item.split("|"));
@@ -631,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (objs[4].split(":").length > 1) {
                 // 1|AR类型|获取数据URL
-                var ar_set = objs[4].split(":")
+                var ar_set = objs[3].split(":")
                 layui.use("form", function () {
                     var form = layui.form;
                     form.val('operate-input-form', {
@@ -750,6 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
         narration_load();
     };
 
+    // 选择状态更改函数
     function task_select (elem) {
         var tasks = document.querySelectorAll("div.task-panel");
         tasks.forEach(task => {
@@ -790,7 +835,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {
-                    window_set("提示", "修改成功");
+                    msg_set("修改成功");
                 }
                 else {
                     window_set("未知错误", "修改失败");
@@ -845,7 +890,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {
-                    window_set("提示", "修改成功");
+                    msg_set("修改成功");
                 }
                 else {
                     window_set("未知错误", "修改失败");
@@ -861,6 +906,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function update_event (TaskID) {
         layui.use("form", function () {
+            layui.form
             var layer = layui.layer;
             layer.confirm("此操作将修改服务器上的全部相关内容，且无法撤销，请再一次确认是否进行？", {
                 title: "询问",
@@ -892,20 +938,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var indexs = get_fileresponse();
                 for (var key in indexs) {
-                    params.appendChild(key, indexs[key]);
+                    params.append(key, indexs[key]);
                 };
 
                 xhr.open("POST", url, true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         // 重加载点位任务数据以及任务面板数据
-
-                        layer.close(index);
                         layer.msg("上传成功");
                     };
                 };
-
                 xhr.send(params);
+                layer.close(index);
             });
         });
     }

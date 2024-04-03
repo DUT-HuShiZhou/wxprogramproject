@@ -37,12 +37,6 @@ body {
     display: none;
 }
 
-.choice-button {
-    width: 90%;
-    text-align: left;
-    background-image: linear-gradient(to bottom right, #5efce8, #736efe);
-}
-
 .bottom-item {
     display: flex;
     justify-content: space-between;

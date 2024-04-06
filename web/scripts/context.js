@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var xhr = new XMLHttpRequest();
     var params = new FormData();
     params.append("un", sessionStorage.getItem("un"));
-    xhr.open("POST", "", true);
+    xhr.open("POST", "/webGetQuestionBankOptions", true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4){
             if (xhr.responseText != "" && xhr.responseText != "*") {

@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
             
-            point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]]; // 测试需删
+            //point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -343,12 +343,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         xhr.send(params);
 
-        if (elemnet.getAttribute("ID") === "测试"){
+        /*if (elemnet.getAttribute("ID") === "测试"){
             task_panel_load([["视频模板", "1", "视频", "video|selection"], ["图片模板", "0", "图片", "photo|selection"], ["音频模板", "1", "音频", "audio|selection"]], elemnet.getAttribute("ID"));
         }
         else {
             task_panel_load([],);
         };
+        */
     };
 
     /**
@@ -408,30 +409,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             var source = data.split(";");
 
-                            // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                            task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
 
                             reload_task();
                         };
                     }
 
                     xhr.send(params);
-
-                    var items = ""
-                    switch (i) {
-                        case 0: 
-                            items = "video|90x40|5x0|../video|~!:question|90x60|5x0|*|~!~@~@~@";
-                            break;
-                        case 1:
-                            items = "photo|90x40|5x0|../photo|~!:question|90x60|5x0|*|~!~@~@~@";
-                            break;
-                        case 2:
-                            items = "audio|90x40|5x0|../audio|~!:question|90x60|5x0|*|~!~@~@~@";
-                            break;
-                        default:
-                            items = "";
-                            break;
-                    };
-                    task_load(Number(tasks[i][1]), 0, tasks[i][0], ["", tasks[i][2], items, "1:1"]);
                 };
                 task_div.appendChild(button);
 
@@ -482,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 var source = data.split(";");
 
-                                // task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
+                                task_load(Number(tasks[i][1]), Number(source[0]), tasks[i][0], source.splice(1));
                                 
                                 reload_task();
                             };
@@ -490,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         xhr.send(params);
 
-                        var items = ""
+                        /*var items = ""
                         switch (i) {
                             case 0: 
                                 items = "video|90x40|5x0|../video:question|90x60|5x0|*";
@@ -505,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 items = "";
                                 break;
                         };
-                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);
+                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);*/
                     };
                     task_div.appendChild(button);
 

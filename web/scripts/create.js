@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (xhr.readyState === 4) {
                         // 单元  剧本名称:剧本内容:剧本ID
                         var data = xhr.responseText;
-                        data = "测试1:测试1描述:test1";
+                        //data = "测试1:测试1描述:test1";
 
                         var root = document.createElement("div");
                         root.style.width = "100%";
@@ -232,7 +232,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, false);
 
-    ifm_fram.src = "drama-line.html?choose=1;test:666"; // 测试可删
     xhr.open("POST", url, true);
     var params = new FormData();
     params.append("type", "lines");
@@ -242,7 +241,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if(xhr.readyState === 4){
             // num;数据...   数据单元为  线路名称:LineID
             var data = xhr.responseText;
-            // ifm_fram.src = "drama-line.html?choose=" + data;
+            ifm_fram.src = "drama-line.html?choose=" + data;
+            // ifm_fram.style.backgroundColor = "white";
         }
     };
     

@@ -128,21 +128,22 @@ function narration_load() {
     xhr.open("POST", "/webGetOverlay", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
-            //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...:后旁白图片url:后旁白内容1|后旁白内容2|...\
+            //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...;后旁白图片url:后旁白内容1|后旁白内容2|...\
             var data = xhr.responseText;
 
             var images = [];
-            // images.push(urlPrefix + data.split(";")[0].split(":")[0]);
-            // images.push(urlPrefix + data.split(";")[1].split(":")[0]);
+            images.push(data.split(";")[0].split(":")[0]);
+            images.push(data.split(";")[1].split(":")[0]);
             var contents = [];
-            // contents.push(data.split(";")[0].split(":")[1].split("|"));
-            // contents.push(data.split(";")[1].split(":")[1].split("|"));
+            contents.push(data.split(";")[0].split(":")[1].split("|"));
+            contents.push(data.split(";")[1].split(":")[1].split("|"));
 
-            // narration(0, "bn-update-btn0", images[0], contents[0]);
-            // narration(1, "bn-update-btn1", images[1], contents[1]);
+            narration(0, "bn-update-btn0", images[0], contents[0]);
+            narration(1, "bn-update-btn1", images[1], contents[1]);
+            alert(6);
 
-            narration(0, "bn-update-btn0", "", ["hdukhawuikdbhawuioawhduhicbasdjk", "dawdaa"]);
-            narration(1, "bn-update-btn1", "", ["sdaw", "awdaw", "daw"]);
+            //narration(0, "bn-update-btn0", "", ["hdukhawuikdbhawuioawhduhicbasdjk", "dawdaa"]);
+            //narration(1, "bn-update-btn1", "", ["sdaw", "awdaw", "daw"]);
         };
     };
 
@@ -177,6 +178,7 @@ function photo(datas, id, buttonID, place = place0, infplace = infplace0, mode =
     items[id][4] = [];
     root_div.className = "photo-item";
     root_div.title = datas[4].split("~!")[0];
+    // root_div.title = "测试名称";
 
     var photo_img = document.createElement("img");
     photo_img.className = "photo";
@@ -1176,6 +1178,7 @@ function AR(xD) {
  */
 function narration(sequence, buttonID, image, contents) {
     // 预览效果添加
+    alert(7);
 
     // 编辑栏加载
     var root = document.createElement("div");

@@ -1,24 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     let point_menu = document.querySelector("ul.point-menu");
     let operate_panel = document.querySelector("div.operate-root");
+    let task_panel = document.querySelector("div#tasks-div");
     let main_item = document.querySelector("div.preview-panel div.main-item");
     let module_frame = document.querySelector("div.module-frame");
 
     let fn_update_btn = document.querySelector("button.fn-update-btn");
     let update_btn = document.querySelector("button.update-btn"); 
     let bn_update_btn = document.querySelector("button.bn-update-btn");
-
-    question_datas = ["1:你好:666","2:再见:777"];
-    var question_selector = document.querySelector("select.question-selector");
-    for(var i = 0; i < question_datas.length; i++) {
-        (function (i) {
-            var option = document.createElement("option");
-            option.value = question_datas[i].split(":")[0];
-            option.textContent = question_datas[i].split(":")[1];
-            option.title = question_datas[i].split(":")[2];
-            question_selector.appendChild(option);
-        })(i)    
-    };
 
     // 获取题库数据
     var xhr = new XMLHttpRequest();
@@ -59,8 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .then((AMap) => {
             /**点位名称|点位描述|纬度|经度|点位ID */
             var point_datas = JSON.parse(sessionStorage.getItem("line_points")); 
-            
-            //point_datas = [["你好", "不好", 38.878799, 121.600998, "测试"],["再见", "再也不见", 38.868799, 121.600992, "空目标"]];
 
             const layer = new AMap.createDefaultLayer({
                 zooms: [3, 20], //可见级别
@@ -316,6 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function point_choose_action (elemnet) {
         operate_panel.style.display = "none";
+        task_panel.innerHTML = "";
 
         var params = new FormData();
         params.append("un", sessionStorage.getItem("un"));
@@ -342,14 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         xhr.send(params);
-
-        /*if (elemnet.getAttribute("ID") === "测试"){
-            task_panel_load([["视频模板", "1", "视频", "video|selection"], ["图片模板", "0", "图片", "photo|selection"], ["音频模板", "1", "音频", "audio|selection"]], elemnet.getAttribute("ID"));
-        }
-        else {
-            task_panel_load([],);
-        };
-        */
     };
 
     /**
@@ -473,23 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
 
                         xhr.send(params);
-
-                        /*var items = ""
-                        switch (i) {
-                            case 0: 
-                                items = "video|90x40|5x0|../video:question|90x60|5x0|*";
-                                break;
-                            case 1:
-                                items = "photo|90x40|5x0|../photo:question|90x60|5x0|*";
-                                break;
-                            case 2:
-                                items = "audio|90x40|5x0|../audio:question|90x60|5x0|*";
-                                break;
-                            default:
-                                items = "";
-                                break;
-                        };
-                        task_load(Number(tasks[i][1]), 0, tasks[i][0], ["空目标", "", tasks[i][2], items, "1:2"]);*/
                     };
                     task_div.appendChild(button);
 

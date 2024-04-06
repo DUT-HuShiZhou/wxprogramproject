@@ -8,27 +8,27 @@ document.addEventListener('DOMContentLoaded', function() {
     let update_btn = document.querySelector("button.update-btn"); 
     let bn_update_btn = document.querySelector("button.bn-update-btn");
 
-    question_datas = ["1:你好:666","2:再见:777"];
-    var question_selector = document.querySelector("select.question-selector");
-    for(var i = 0; i < question_datas.length; i++) {
-        (function (i) {
-            var option = document.createElement("option");
-            option.value = question_datas[i].split(":")[0];
-            option.textContent = question_datas[i].split(":")[1];
-            option.title = question_datas[i].split(":")[2];
-            question_selector.appendChild(option);
-        })(i)    
-    };
+    // question_datas = ["1:你好:666","2:再见:777"];
+    // var question_selector = document.querySelector("select.question-selector");
+    // for(var i = 0; i < question_datas.length; i++) {
+    //     (function (i) {
+    //         var option = document.createElement("option");
+    //         option.value = question_datas[i].split(":")[0];
+    //         option.textContent = question_datas[i].split(":")[1];
+    //         option.title = question_datas[i].split(":")[2];
+    //         question_selector.appendChild(option);
+    //     })(i)    
+    // };
 
     // 获取题库数据
     var xhr = new XMLHttpRequest();
     var params = new FormData();
     params.append("un", sessionStorage.getItem("un"));
-    xhr.open("POST", "", true);
+    xhr.open("POST", "/webGetQuestionBankOptions", true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4){
             if (xhr.responseText != "" && xhr.responseText != "*") {
-                // 数据单元  id:name:marker 这个marker是什么意思
+                // 数据单元  id:name:marker 这个marker是什么意思 marker是题目的描述备注missionnote那里 这个函数要将题库列表中所有信息浓缩成一个字符串发送出来
                 var question_datas = xhr.split(";");
                 var question_selector = document.querySelector("select.question-selector");
                 for(var i = 0; i < question_datas.length; i++) {

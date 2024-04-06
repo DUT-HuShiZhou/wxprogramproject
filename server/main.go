@@ -1499,8 +1499,34 @@ func main() {
 					currectanswerindex = index
 				}
 			}
-			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+strings.Replace(data2send.Mediaaddress, "http://129.204.130.33:8080", "", -1)+"|"+strings.Split(data2send.Mediadescription, ";")[0]+"~!"+strings.Split(data2send.Mediadescription, ";")[1]+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questiondescription+"~@"+strings.Join(optionslist, "~#")+"~@"+strconv.Itoa(currectanswerindex)+"~@"+strconv.Itoa(data2send.Score))
+			c.String(http.StatusOK, data2send.Questionname+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+strings.Replace(data2send.Mediaaddress, "http://129.204.130.33:8080", "", -1)+"|"+strings.Split(data2send.Mediadescription, ";")[0]+"~!"+strings.Split(data2send.Mediadescription, ";")[1]+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questiondescription+"~@"+strings.Join(optionslist, "~#")+"~@"+strconv.Itoa(currectanswerindex)+"~@"+strconv.Itoa(data2send.Score))
 		}
+	})
+	r.POST("/webGetQuestionBankOptions", func(c *gin.Context) {
+		un, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（剧本创建者用户名）失败（在剧本编辑器中选择题库功能加载题库中的题目）")
+		}
+		var result string
+		var data2send struct {
+			QuestionID   int    //这里是题库的，所以是题库id,数据库中需要把missionid改为questionid
+			QuestionName string //这里是问题的名字
+			QuestionNote string //这里是题目的备注，应该是数据库中的questiondescription
+		}
+		rows, errflag2 := database.Query("select missionid,questionname,questiondescription from questionbankof" + un)
+		if errflag2 != nil {
+			fmt.Println(errflag2)
+			println("数据库查询失败（在剧本编辑器中选择题库功能加载题库中的题目）")
+		}
+		for rows.Next() {
+			rows.Scan(&data2send.QuestionID, &data2send.QuestionName, &data2send.QuestionNote)
+			if result == "" {
+				result += strconv.Itoa(data2send.QuestionID) + ":" + data2send.QuestionName + ":" + data2send.QuestionNote
+			} else {
+				result += ";" + strconv.Itoa(data2send.QuestionID) + ":" + data2send.QuestionName + ":" + data2send.QuestionNote
+			}
+		}
+		c.String(http.StatusOK, result)
 	})
 	r.Run(":8000")
 }

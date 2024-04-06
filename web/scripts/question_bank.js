@@ -145,7 +145,7 @@ function renderQuestionTable(questions) {
  * @param {String|Number} datas 题目内容，0为新建内容
  */
 function openEditPanel (datas) {
-    if (id != 0) editPanelCreate(datas);
+    if (datas != 0) editPanelCreate(datas);
     else editPanelCreate("");
 }
 
@@ -291,6 +291,7 @@ function editPanelCreate (datas) {
     edit_div.appendChild(div);
 
     itemChoose(datas, document.querySelector("div.main-item"), document.querySelector("div.module-frame"));
+    alert(6)
 
     layui.use(function(){
         var layer = layui.layer;

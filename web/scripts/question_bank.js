@@ -5,11 +5,11 @@ let typeSelector = document.querySelector("select.type-selector");
 let searchInput = document.querySelector("input.searchInput");
 let allDatas = [];
 
-allDatas = [[1, "图片daaaaaaaaaaaaaaaaaaaaaa", "Image-selection", "4", "*"]
-            , [2, "视频", "Video-selection", "4", "*"]
-            , [3, "音频", "Audio-selection", "4", "*"]]; // 测试可删
+// allDatas = [[1, "图片daaaaaaaaaaaaaaaaaaaaaa", "Image-selection", "4", "*"]
+//             , [2, "视频", "Video-selection", "4", "*"]
+//             , [3, "音频", "Audio-selection", "4", "*"]]; // 测试可删
 get_obj(0); // 测试可删
-renderQuestionTable(allDatas); // 测试可删
+// renderQuestionTable(allDatas); // 测试可删
 
 layui.use(function(){
     var form = layui.form;
@@ -40,18 +40,18 @@ function get_obj (Page) {
     var xhr = new XMLHttpRequest();
     var params = new FormData();
     params.append("un", sessionStorage.getItem("un"));
-    params.append("Page", Page);
-    xhr.open("POST", "", true);
+    params.append("Page", Page);//这个是什么东西,是不是设置了一页中最多显示的条数
+    xhr.open("POST", "/webGetQuestionBank", true);//这个函数是一个获取题库列表的初步信息的一个函数
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.responseText) {
-                // allDatas = [];测试需启动
-                // 数据元 id:name:category:grade:url
+                allDatas = [];//测试需启动
+                // 数据元 id:name:category:grade:url url是什么
                 var data = xhr.responseText.split(";");
                 for (var i = 0; i < data.length; i++) {
-                    // allDatas[i] = data[i].split(":"); 测试需启动
+                    allDatas[i] = data[i].split(":");//测试需启动
                 }
-                // renderQuestionTable(allDatas); 测试需启动
+                renderQuestionTable(allDatas); //测试需启动
             }
         }
     }
@@ -83,7 +83,7 @@ function renderQuestionTable(questions) {
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
             params.append("ID", question[0]);
-            xhr.open("POST", "", true);
+            xhr.open("POST", "/webQuestionBankGetTask", true);
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {

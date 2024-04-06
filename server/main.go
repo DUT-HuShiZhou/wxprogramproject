@@ -1427,5 +1427,80 @@ func main() {
 		newID := xid.New()
 		println("生成的id：" + newID.String())
 	})
+	r.POST("/webGetQuestionBank", func(c *gin.Context) {
+		un, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（剧本创建者）失败（获取题库列表初步信息）")
+		}
+		var Question struct {
+			Questionid   int
+			QuestionName string
+			Mediatype    string
+			Questiontype string
+			Score        int
+		}
+		var result string
+		rows, errflag2 := database.Query("select missionid,questionname,mediatype,questiontype,score from questionbankof" + un)
+		if errflag2 != nil {
+			fmt.Println(errflag2)
+			println("获取数据库数据（题库题目简易信息）失败（获取题库列表初步信息）")
+		}
+		for rows.Next() {
+			errflag3 := rows.Scan(&Question.Questionid, &Question.QuestionName, &Question.Mediatype, &Question.Questiontype, &Question.Score)
+			if errflag3 != nil {
+				println("获取数据库数据（题库题目简易信息）失败（获取题库列表初步信息）")
+			}
+			if result == "" {
+				result = result + strconv.Itoa(Question.Questionid) + ":" + Question.QuestionName + ":" + Question.Mediatype + "-" + Question.Questiontype + ":" + strconv.Itoa(Question.Score) + ":" + "*"
+			} else {
+				result = result + ";" + strconv.Itoa(Question.Questionid) + ":" + Question.QuestionName + ":" + Question.Mediatype + "-" + Question.Questiontype + ":" + strconv.Itoa(Question.Score) + ":" + "*"
+			}
+		}
+		c.String(http.StatusOK, result)
+	})
+	r.POST("/webQuestionBankGetTask", func(c *gin.Context) {
+		un, errflag1 := c.GetPostForm("un")
+		if !errflag1 {
+			println("获取表单数据（用户名）失败，（网页获取任务具体信息）")
+		} else {
+			println(un)
+		}
+		missionid, errflag4 := c.GetPostForm("ID")
+		if !errflag4 {
+			println("获取表单数据（任务ID）失败，（网页获取任务具体信息）")
+		} else {
+			println(missionid)
+		}
+		var data2send struct {
+			Missionstatus             int
+			Nextmissionid             int
+			Missionnote               string
+			Mediatype                 string
+			Mediaaddress              string
+			Mediadescription          string
+			Questionname              string
+			Questiondescription       string
+			Questioninfo              string
+			Questionanswerdescription string
+			Score                     int
+			HasARornot                int
+			ModeofAR                  string
+			ARResourceUrl             string
+		}
+		errflag5 := database.QueryRow("select missionStatus,nextmissionid,missionnote,mediatype,mediaaddress,mediadescription,questionname,questiondescription,questioninfo,questionanswerdescription,score from questionbankof"+un+" where missionid=?", missionid).Scan(&data2send.Missionstatus, &data2send.Nextmissionid, &data2send.Missionnote, &data2send.Mediatype, &data2send.Mediaaddress, &data2send.Mediadescription, &data2send.Questionname, &data2send.Questiondescription, &data2send.Questioninfo, &data2send.Questionanswerdescription, &data2send.Score)
+		if errflag5 != nil {
+			fmt.Println(errflag5)
+			println("数据库查询失败（网页获取任务具体信息）")
+		} else {
+			var optionslist = strings.Split(data2send.Questioninfo, ";")
+			var currectanswerindex int
+			for index, item := range optionslist {
+				if item == data2send.Questionanswerdescription {
+					currectanswerindex = index
+				}
+			}
+			c.String(http.StatusOK, strconv.Itoa(data2send.Missionstatus)+";"+strconv.Itoa(data2send.Nextmissionid)+";"+data2send.Missionnote+";"+data2send.Mediatype+"|90x40|5x0|"+strings.Replace(data2send.Mediaaddress, "http://129.204.130.33:8080", "", -1)+"|"+strings.Split(data2send.Mediadescription, ";")[0]+"~!"+strings.Split(data2send.Mediadescription, ";")[1]+":question|90x60|5x0|*|"+data2send.Questionname+"~!"+data2send.Questiondescription+"~@"+strings.Join(optionslist, "~#")+"~@"+strconv.Itoa(currectanswerindex)+"~@"+strconv.Itoa(data2send.Score))
+		}
+	})
 	r.Run(":8000")
 }

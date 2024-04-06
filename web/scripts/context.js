@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4){
             if (xhr.responseText != "" && xhr.responseText != "*") {
-                // 数据单元  id:name:marker
+                // 数据单元  id:name:marker 这个marker是什么意思
                 var question_datas = xhr.split(";");
                 var question_selector = document.querySelector("select.question-selector");
                 for(var i = 0; i < question_datas.length; i++) {

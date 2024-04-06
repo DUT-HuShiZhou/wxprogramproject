@@ -125,7 +125,7 @@ function narration_load() {
     params.append("DramaID",sessionStorage.getItem("DramaID"));
     params.append("TaskID", sessionStorage.getItem("TaskID"));
 
-    xhr.open("POST", "", true);
+    xhr.open("POST", "/webGetOverlay", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             //数据内容：前旁白图片url:前旁白内容1|前旁白内容2|...:后旁白图片url:后旁白内容1|后旁白内容2|...\

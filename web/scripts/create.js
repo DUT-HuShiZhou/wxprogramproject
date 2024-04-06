@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         else {
                             var xhr = new XMLHttpRequest();
-                            var url = "/webcreatenewdramacript";
+                            var url = "/webcreatenewdramascript";
                             xhr.open("POST", url, true);
                             var params = new FormData();
                             params.append("un", sessionStorage.getItem("un"));//剧本创建者

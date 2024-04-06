@@ -831,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("content", fn_updata(0)[0]);
         params.append("url", fn_updata(0)[1]);
         
-        xhr.open("POST", "", true);
+        xhr.open("POST", "/pushdatas", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {
@@ -851,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sessionStorage.getItem("newtask") != "false"){
             // 二次确定
             var xhr = new XMLHttpRequest();
-            var url = "/getTaskID";
+            var url = "/genNewID";
             var params = new FormData();
             params.append("un", sessionStorage.getItem("un"));
             params.append("LineID", sessionStorage.getItem("LineID"));
@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("content", fn_updata(1)[0]);
         params.append("url", fn_updata(1)[1]);
         
-        xhr.open("POST", "", true);
+        xhr.open("POST", "/pushdatas", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {
@@ -913,7 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon: 3,
             }, function (index) {
                 var xhr = new XMLHttpRequest();
-                var url = "/pushDatas";
+                var url = "/webUpdateTask";
                 var params = new FormData();
                 params.append("un", sessionStorage.getItem("un"));
                 params.append("LineID", sessionStorage.getItem("LineID"));

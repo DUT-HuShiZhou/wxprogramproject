@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (xhr.responseText === "*") {} 
             else msg_set("发生未知错误，无法获取题库数据，请重试或联系维护人员");
         }
+        xhr.send(params);
     }
 
     // 屏蔽全局右键

@@ -142,23 +142,10 @@ function renderQuestionTable(questions) {
 
 /**
  * 打开编辑面板函数
- * @param {Number} id 题目ID，0为新建内容
+ * @param {String|Number} datas 题目内容，0为新建内容
  */
-function openEditPanel (id) {
-    if (id != 0) {
-        var xhr = new XMLHttpRequest();
-        var params = new FormData();
-        params.append("un", sessionStorage.getItem("un"));
-        params.append("ID", id);
-        xhr.open("POST", "", true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.responseText != "") {
-                    editPanelCreate(xhr.responseText);
-                }
-            }
-        }
-    }
+function openEditPanel (datas) {
+    if (id != 0) editPanelCreate(datas);
     else editPanelCreate("");
 }
 

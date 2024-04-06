@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
         params.append("content", fn_updata(0)[0]);
         params.append("url", fn_updata(0)[1]);
         
-        xhr.open("POST", "", true);
+        xhr.open("POST", "/pushdatas", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.responseText === true) {

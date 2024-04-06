@@ -1,6 +1,7 @@
 // 数据发送顺序：首先发送路线数据，在进行完路线选择后发送剧本数据和点位数据，在选择完剧本后，打开编辑页面
 document.addEventListener('DOMContentLoaded', function() {
     let ifm_fram = document.querySelector(".line-choose-ifm");
+    get_questionbank()
 
     var xhr = new XMLHttpRequest();
     var url = "/searchRoute";//这里需要改 发送给你名称+id
@@ -246,6 +247,27 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     xhr.send(params);
+
+    function get_questionbank () {
+        // 获取题库数据
+        var xhr = new XMLHttpRequest();
+        var params = new FormData();
+        params.append("un", sessionStorage.getItem("un"));
+        xhr.open("POST", "/webGetQuestionBankOptions", true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4){
+                if (xhr.responseText != "" && xhr.responseText != "*") {
+                    sessionStorage.setItem("QuestionBank", xhr.responseText);
+                }
+                else if (xhr.responseText === "*") {sessionStorage.setItem("QuestionBank", "");}
+                else {
+                    msg_set("发生未知错误，无法获取题库数据，请重试或联系维护人员");
+                    sessionStorage.setItem("QuestionBank", "");
+                }
+            }
+        }
+        xhr.send(params);
+    }
 
     function create_new_drama (callback) {
         layui.use(function () {

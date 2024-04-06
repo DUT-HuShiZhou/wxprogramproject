@@ -104,9 +104,10 @@ function fresh_form() {
  */
 function fn_updata (sequence) {
     var contains = "";
-    for (var i = 0; i < narration_contents[sequence].length; i++) {
-        contains = contains + narration_contents[sequence][i];
+    for (var i = 0; i < narration_contents[sequence].length - 1; i++) {
+        contains = contains + narration_contents[sequence][i] + ";";
     }
+    contains = contains + narration_contents[narration_contents[sequence].length - 1];
     return [contains, narration_contents[2][sequence]];
 }
  

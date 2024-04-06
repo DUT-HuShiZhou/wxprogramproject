@@ -9,33 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let update_btn = document.querySelector("button.update-btn"); 
     let bn_update_btn = document.querySelector("button.bn-update-btn");
 
-    // 获取题库数据
-    var xhr = new XMLHttpRequest();
-    var params = new FormData();
-    params.append("un", sessionStorage.getItem("un"));
-    xhr.open("POST", "/webGetQuestionBankOptions", true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4){
-            if (xhr.responseText != "" && xhr.responseText != "*") {
-                // 数据单元  id:name:marker 这个marker是什么意思
-                var question_datas = xhr.split(";");
-                var question_selector = document.querySelector("select.question-selector");
-                for(var i = 0; i < question_datas.length; i++) {
-                    (function (i) {
-                        var option = document.createElement("option");
-                        option.value = question_datas[i].split(":")[0];
-                        option.textContent = question_datas[i].split(":")[1];
-                        option.title = question_datas[i].split(":")[2];
-                        question_selector.appendChild(option);
-                    })(i)    
-                };
-            }
-            else if (xhr.responseText === "*") {} 
-            else msg_set("发生未知错误，无法获取题库数据，请重试或联系维护人员");
-        }
-        xhr.send(params);
-    }
-
     // 屏蔽全局右键
     document.oncontextmenu = (e) => {
         e.preventDefault()
@@ -156,6 +129,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     state_change(value, []);
                 });
             });
+
+            // 题库加载
+            var question_datas = sessionStorage.getItem("QuestionBank").split(";");
+            var question_selector = document.querySelector("select.question-selector");
+            for(var i = 0; i < question_datas.length; i++) {
+                (function (i) {
+                    var option = document.createElement("option");
+                    option.value = question_datas[i].split(":")[0];
+                    option.textContent = question_datas[i].split(":")[1];
+                    option.title = question_datas[i].split(":")[2];
+                    question_selector.appendChild(option);
+                })(i)    
+            };
 
         })
         .catch((e) => {
